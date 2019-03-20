@@ -15,17 +15,17 @@ class BlockRedstoneLamp extends Solid implements IRedstone {
     use RedstoneTrait;
 
     protected $id = self::REDSTONE_LAMP;
-	
-	public function __construct(int $meta = 0){
-		$this->meta = $meta;
-	}
     
-    public function getName() : string {
-		return "Redstone Lamp";
+    public function __construct(int $meta = 0){
+        $this->meta = $meta;
     }
     
-	public function getHardness() : float {
-		return 0.3;
+    public function getName() : string {
+        return "Redstone Lamp";
+    }
+    
+    public function getHardness() : float {
+        return 0.3;
     }
 
     public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
@@ -37,7 +37,7 @@ class BlockRedstoneLamp extends Solid implements IRedstone {
         return true;
     }
 
-	public function getDrops(Item $item) : array {
+    public function getDrops(Item $item) : array {
         return [Item::get(self::REDSTONE_LAMP, 0, 1)];
     }
 

@@ -27,28 +27,28 @@ class BlockNote extends NoteBlock implements IRedstone {
     public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
         $this->getLevel()->setBlock($this, $this);
         
-		Tile::createTile("BlockEntityNoteBlock", $this->getLevel(), BlockEntityNoteBlock::createNBT($this->asVector3()));
+        Tile::createTile("BlockEntityNoteBlock", $this->getLevel(), BlockEntityNoteBlock::createNBT($this->asVector3()));
         return true;
     }
 
-	public function onActivate(Item $item, Player $player = null) : bool {
+    public function onActivate(Item $item, Player $player = null) : bool {
         if ($this->getSide(Facing::UP)->getId() != 0) {
             return true;
         }
 
-		if($player instanceof Player){
-			$tile = $this->getLevel()->getTile($this);
-			$note = null;
-			if($tile instanceof BlockEntityNoteBlock){
-				$note = $tile;
-			}else{
+        if($player instanceof Player){
+            $tile = $this->getLevel()->getTile($this);
+            $note = null;
+            if($tile instanceof BlockEntityNoteBlock){
+                $note = $tile;
+            }else{
                 $note = Tile::createTile("BlockEntityNoteBlock", $this->getLevel(), BlockEntityNoteBlock::createNBT($this->asVector3()));
             }
             $note->addPitch();
 
             $this->playSound();
-		}
-		return true;
+        }
+        return true;
     }
     
     public function playSound() : void {
@@ -101,5 +101,5 @@ class BlockNote extends NoteBlock implements IRedstone {
         } elseif (!$this->isBlockPowered($this->asVector3()) && $note->isPowered()) {
             $note->setPowered(false);
         }
-	}
+    }
 }

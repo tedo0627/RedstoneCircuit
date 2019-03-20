@@ -11,19 +11,19 @@ use redstone\blockEntities\BlockEntityDispenser;
 
 class DispenserInventory extends ContainerInventory {
 
-	public function __construct(BlockEntityDispenser $tile){
-		parent::__construct($tile);
-	}
+    public function __construct(BlockEntityDispenser $tile){
+        parent::__construct($tile);
+    }
 
-	public function getNetworkType() : int {
-		return WindowTypes::DISPENSER;
-	}
+    public function getNetworkType() : int {
+        return WindowTypes::DISPENSER;
+    }
 
-	public function getName() : string {
-		return "Dispenser";
-	}
+    public function getName() : string {
+        return "Dispenser";
+    }
 
-	public function getDefaultSize() : int {
-		return 9;
-	}
+    public function getDefaultSize() : int {
+        return 9;
+    }
 }

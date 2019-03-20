@@ -11,19 +11,19 @@ use redstone\blockEntities\BlockEntityCommandBlock;
 
 class CommandInventory extends ContainerInventory {
 
-	public function __construct(BlockEntityCommandBlock $tile){
-		parent::__construct($tile);
-	}
+    public function __construct(BlockEntityCommandBlock $tile){
+        parent::__construct($tile);
+    }
 
-	public function getNetworkType() : int {
-		return WindowTypes::COMMAND_BLOCK;
-	}
+    public function getNetworkType() : int {
+        return WindowTypes::COMMAND_BLOCK;
+    }
 
-	public function getName() : string {
-		return "Command Block";
-	}
+    public function getName() : string {
+        return "Command Block";
+    }
 
-	public function getDefaultSize() : int {
-		return 0;
-	}
+    public function getDefaultSize() : int {
+        return 0;
+    }
 }

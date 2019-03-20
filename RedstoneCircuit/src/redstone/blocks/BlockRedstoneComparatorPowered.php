@@ -2,6 +2,8 @@
 
 namespace redstone\blocks;
 
+use pocketmine\Server;
+
 use redstone\utils\Facing;
 
 class BlockRedstoneComparatorPowered extends BlockRedstoneComparatorUnpowered {
@@ -12,25 +14,21 @@ class BlockRedstoneComparatorPowered extends BlockRedstoneComparatorUnpowered {
         return "Powered Comparator";
     }
 
-	public function onScheduledUpdate() : void {
+    public function onScheduledUpdate() : void {
+        $this->recalculateoutputPower();
         if ($this->getOutputPower() <= 0) {
             $this->getLevel()->setBlock($this, new BlockRedstoneComparatorUnpowered($this->getDamage()));
         }
-        
-        $this->updateAroundRedstone($this);
-        $direction = Facing::ALL;
-        for ($i = 0; $i < count($direction); ++$i) {
-            $this->updateAroundRedstone($this->asVector3()->getSide($direction[$i]));
-        }
-	}
+        $this->updateAroundDiodeRedstone($this);
+    }
 
     public function getStrongPower(int $face) : int {
         return $this->getWeakPower($face);
     }
 
     public function getWeakPower(int $face) : int {
-		if ($face == $this->getInputFace()) {
-			return $this->getOutputPower();
+        if ($face == $this->getInputFace()) {
+            return $this->getOutputPower();
         }
         return 0;
     }
@@ -41,5 +39,5 @@ class BlockRedstoneComparatorPowered extends BlockRedstoneComparatorUnpowered {
 
     public function onRedstoneUpdate() : void {
         $this->level->scheduleDelayedBlockUpdate($this, 2);
-	}
+    }
 }

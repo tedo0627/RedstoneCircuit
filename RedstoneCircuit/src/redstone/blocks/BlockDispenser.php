@@ -20,34 +20,35 @@ use redstone\blockEntities\BlockEntityDispenser;
 class BlockDispenser extends Solid implements IRedstone {
     use RedstoneTrait;
 
-	protected $id = self::DISPENSER;
-	
-	public function __construct(int $meta = 0){
-		$this->meta = $meta;
-	}
+    protected $id = self::DISPENSER;
+    
+    public function __construct(int $meta = 0){
+        $this->meta = $meta;
+    }
 
     public function getName() : string {
-		return "Dispenser";
+        return "Dispenser";
     }
     
-	public function getHardness() : float {
-		return 3.5;
-	}
+    public function getHardness() : float {
+        return 3.5;
+    }
 
-	public function getToolType() : int{
-		return BlockToolType::TYPE_PICKAXE;
-	}
+    public function getToolType() : int{
+        return BlockToolType::TYPE_PICKAXE;
+    }
 
-	public function getToolHarvestLevel() : int{
-		return TieredTool::TIER_WOODEN;
-	}
-	
-	public function getVariantBitmask() : int {
-		return 0;
-	}
+    public function getToolHarvestLevel() : int{
+        return TieredTool::TIER_WOODEN;
+    }
+    
+    public function getVariantBitmask() : int {
+        return 0;
+    }
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
-		if($player !== null) {
+    public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
+        $damage = 0;
+        if($player !== null) {
             $faces = [4, 2, 5, 3];
             $damage = $faces[$player->getDirection()];
             if ($player->getPitch() > 45) {
@@ -64,22 +65,22 @@ class BlockDispenser extends Solid implements IRedstone {
         return true;
     }
 
-	public function onActivate(Item $item, Player $player = null) : bool{
-		if($player instanceof Player){
-			$tile = $this->getLevel()->getTile($this);
-			$dropdispenserper = null;
-			if($tile instanceof BlockEntityDispenser){
-				$dispenser = $tile;
-			}else{
+    public function onActivate(Item $item, Player $player = null) : bool{
+        if($player instanceof Player){
+            $tile = $this->getLevel()->getTile($this);
+            $dropdispenserper = null;
+            if($tile instanceof BlockEntityDispenser){
+                $dispenser = $tile;
+            }else{
                 $dispenser = Tile::createTile("BlockEntityDispenser", $this->getLevel(), BlockEntityDispenser::createNBT($this));
             }
 
             $player->addWindow($dispenser->getInventory());
-		}
-		return true;
+        }
+        return true;
     }
     
-	public function onScheduledUpdate() : void {
+    public function onScheduledUpdate() : void {
         $dispenser = $this->getBlockEntity();
         $dispenser->dropItem();
     }
@@ -127,5 +128,5 @@ class BlockDispenser extends Solid implements IRedstone {
             $this->level->scheduleDelayedBlockUpdate($this, 4);
         }
 
-	}
+    }
 }

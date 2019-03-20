@@ -54,5 +54,5 @@ class BlockWoodenDoor extends WoodenDoor implements IRedstone {
 
         $this->level->setBlock($up, $up, true);
         $this->level->setBlock($down, $down, true);
-	}
+    }
 }

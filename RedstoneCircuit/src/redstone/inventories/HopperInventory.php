@@ -7,23 +7,23 @@ use pocketmine\inventory\ContainerInventory;
 use pocketmine\network\mcpe\protocol\types\WindowTypes;
 
 
-use redstone\blockEntities\BlockEntityDropper;
+use redstone\blockEntities\BlockEntityHopper;
 
-class DropperInventory extends ContainerInventory {
+class HopperInventory extends ContainerInventory {
 
-    public function __construct(BlockEntityDropper $tile){
+    public function __construct(BlockEntityHopper $tile){
         parent::__construct($tile);
     }
 
     public function getNetworkType() : int {
-        return WindowTypes::DROPPER;
+        return WindowTypes::HOPPER;
     }
 
     public function getName() : string {
-        return "Dropper";
+        return "Hopper";
     }
 
     public function getDefaultSize() : int {
-        return 9;
+        return 5;
     }
 }

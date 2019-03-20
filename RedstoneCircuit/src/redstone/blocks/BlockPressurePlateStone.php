@@ -16,13 +16,13 @@ class BlockPressurePlateStone extends BlockPressurePlateBase {
         return "Stone Pressure Plate";
     }
 
-	public function getToolType() : int {
-		return BlockToolType::TYPE_PICKAXE;
-	}
+    public function getToolType() : int {
+        return BlockToolType::TYPE_PICKAXE;
+    }
 
-	public function getToolHarvestLevel() : int {
-		return TieredTool::TIER_WOODEN;
-	}
+    public function getToolHarvestLevel() : int {
+        return TieredTool::TIER_WOODEN;
+    }
 
     public function computeDamage() : int {
         $count = 0;

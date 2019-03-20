@@ -14,7 +14,7 @@ class BlockEntityNoteBlock extends Tile {
     protected $note = 0;
     protected $powered = false;
     
-	protected function readSaveData(CompoundTag $nbt) : void {
+    protected function readSaveData(CompoundTag $nbt) : void {
         if ($nbt->hasTag("note")) {
             $this->note = $nbt->getByte("note");
         }

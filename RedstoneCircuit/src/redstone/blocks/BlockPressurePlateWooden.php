@@ -14,13 +14,13 @@ class BlockPressurePlateWooden extends BlockPressurePlateBase {
         return "Wooden Pressure Plate";
     }
 
-	public function getToolType() : int {
-		return BlockToolType::TYPE_AXE;
-	}
+    public function getToolType() : int {
+        return BlockToolType::TYPE_AXE;
+    }
 
-	public function getToolHarvestLevel() : int {
-		return TieredTool::TIER_WOODEN;
-	}
+    public function getToolHarvestLevel() : int {
+        return TieredTool::TIER_WOODEN;
+    }
 
     public function computeDamage() : int {
         $count = count($this->level->getNearbyEntities($this->bb()));

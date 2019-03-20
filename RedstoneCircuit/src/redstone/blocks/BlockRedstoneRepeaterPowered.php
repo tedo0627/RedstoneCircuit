@@ -15,34 +15,29 @@ use redstone\utils\Facing;
 
 class BlockRedstoneRepeaterPowered extends BlockRedstoneRepeaterUnpowered {
 
-	protected $id = self::POWERED_REPEATER;
+    protected $id = self::POWERED_REPEATER;
 
-	public function __construct(int $meta = 0){
-		$this->meta = $meta;
-	}
+    public function __construct(int $meta = 0){
+        $this->meta = $meta;
+    }
 
-	public function getName() : string {
-		return "Powered Repeater";
-	}
+    public function getName() : string {
+        return "Powered Repeater";
+    }
 
-	public function onScheduledUpdate() : void {
+    public function onScheduledUpdate() : void {
         $this->getLevel()->setBlock($this, new BlockRedstoneRepeaterUnpowered($this->getDamage()));
-        
-        $this->updateAroundRedstone($this);
-        $direction = Facing::ALL;
-        for ($i = 0; $i < count($direction); ++$i) {
-            $this->updateAroundRedstone($this->asVector3()->getSide($direction[$i]));
-        }
-	}
+        $this->updateAroundDiodeRedstone($this);
+    }
 
     public function getStrongPower(int $face) : int {
         return $this->getWeakPower($face);
     }
 
     public function getWeakPower(int $face) : int {
-		if ($face == $this->getInputFace()) {
-			return 15;
-		}
+        if ($face == $this->getInputFace()) {
+            return 15;
+        }
         return 0;
     }
 
@@ -57,5 +52,5 @@ class BlockRedstoneRepeaterPowered extends BlockRedstoneRepeaterUnpowered {
         if (!$this->isSidePowered($this->asVector3(), $this->getInputFace())) {
             $this->level->scheduleDelayedBlockUpdate($this, $this->getDelayTime());
         }
-	}
+    }
 }

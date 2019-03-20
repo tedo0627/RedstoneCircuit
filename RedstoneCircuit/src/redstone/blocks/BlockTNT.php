@@ -23,5 +23,5 @@ class BlockTNT extends TNT implements IRedstone {
         if ($this->isBlockPowered($this->asVector3())) {
             $this->ignite();
         }
-	}
+    }
 }

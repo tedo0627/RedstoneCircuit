@@ -35,5 +35,5 @@ class BlockTrapdoor extends Trapdoor implements IRedstone {
         }
 
         $this->level->setBlock($this, $this, true);
-	}
+    }
 }

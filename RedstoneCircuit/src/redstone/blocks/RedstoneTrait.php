@@ -27,6 +27,37 @@ trait RedstoneTrait {
             }
         }
     }
+    
+    public function updateAroundDiodeRedstone(Vector3 $pos) : void {
+        $cash = [];
+        $direction = Facing::ALL;
+        for ($i = 0; $i < count($direction); ++$i) {
+            $block = $this->level->getBlock($pos->getSide($direction[$i]));
+            if (array_search($block, $cash) != false) {
+                continue;
+            }
+            $cash[] = $block;
+
+            for ($j = 0; $j < count($direction); ++$j) {
+                if (Facing::opposite($direction[$i]) == $direction[$j]) {
+                    continue;
+                }
+    
+                $sideBlock = $this->level->getBlock($block->getSide($direction[$j]));
+                if (array_search($sideBlock, $cash) != false) {
+                    continue;
+                }
+                $cash[] = $sideBlock;
+            }
+        }
+
+        for ($i = 0; $i < count($cash); ++$i) {
+            $block = $cash[$i];
+            if ($block instanceof IRedstone) {
+                $block->onRedstoneUpdate();
+            }
+        }
+    }
 
     public function getRedstonePower(Vector3 $pos, int $face) : int {
         $block = $this->level->getBlock($pos);

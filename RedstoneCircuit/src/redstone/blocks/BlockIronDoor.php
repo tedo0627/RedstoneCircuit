@@ -4,6 +4,7 @@ namespace redstone\blocks;
 
 use pocketmine\Player;
 
+use pocketmine\block\BlockToolType;
 use pocketmine\block\IronDoor;
 
 use pocketmine\item\Item;
@@ -17,9 +18,17 @@ use redstone\utils\Facing;
 class BlockIronDoor extends IronDoor implements IRedstone {
     use RedstoneTrait;
 
-	public function onActivate(Item $item, Player $player = null) : bool{
-		return true;
-	}
+    public function getToolType() : int {
+        return BlockToolType::TYPE_PICKAXE;
+    }
+
+    public function getToolHarvestLevel() : int {
+        return TieredTool::TIER_WOODEN;
+    }
+
+    public function onActivate(Item $item, Player $player = null) : bool{
+        return true;
+    }
     
     public function getStrongPower(int $face) : int {
         return 0;
@@ -60,5 +69,5 @@ class BlockIronDoor extends IronDoor implements IRedstone {
 
         $this->level->setBlock($up, $up, true);
         $this->level->setBlock($down, $down, true);
-	}
+    }
 }

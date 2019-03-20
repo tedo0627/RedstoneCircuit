@@ -35,5 +35,5 @@ class BlockFenceGate extends FenceGate implements IRedstone {
         }
 
         $this->level->setBlock($this, $this, true);
-	}
+    }
 }

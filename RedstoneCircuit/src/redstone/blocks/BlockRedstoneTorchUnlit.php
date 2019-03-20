@@ -6,42 +6,37 @@ use redstone\utils\Facing;
 
 class BlockRedstoneTorchUnlit extends BlockRedstoneTorch {
     
-	protected $id = self::UNLIT_REDSTONE_TORCH;
+    protected $id = self::UNLIT_REDSTONE_TORCH;
 
-	public function __construct(int $meta = 0){
-		$this->meta = $meta;
-	}
+    public function __construct(int $meta = 0){
+        $this->meta = $meta;
+    }
 
-	public function getName() : string {
-		return "Unlit Redstone Torch";
-	}
+    public function getName() : string {
+        return "Unlit Redstone Torch";
+    }
 
-	public function getLightLevel() : int {
-		return 0;
-	}
+    public function getLightLevel() : int {
+        return 0;
+    }
 
-	public function onScheduledUpdate() : void {
+    public function onScheduledUpdate() : void {
         if (!$this->isSidePowered($this, $this->getFace())) {
             $this->getLevel()->setBlock($this, new BlockRedstoneTorch($this->getDamage()));
-            
-            $this->updateAroundRedstone($this);
-            $direction = Facing::ALL;
-            for ($i = 0; $i < count($direction); ++$i) {
-                $this->updateAroundRedstone($this->asVector3()->getSide($direction[$i]));
-            }
+            $this->updateAroundDiodeRedstone($this);
         }
-	}
+    }
 
-	/**
+    /**
      * @param int $face
-	 */
+     */
     public function getStrongPower(int $face) : int {
         return 0;
     }
 
-	/**
+    /**
      * @param int $face
-	 */
+     */
     public function getWeakPower(int $face) : int {
         return 0;
     }
@@ -57,5 +52,5 @@ class BlockRedstoneTorchUnlit extends BlockRedstoneTorch {
         if (!$this->isSidePowered($this, $this->getFace())) {
             $this->level->scheduleDelayedBlockUpdate($this, 2);
         }
-	}
+    }
 }

@@ -17,36 +17,27 @@ use redstone\utils\Facing;
 class BlockRedstoneRepeaterUnpowered extends BlockRedstoneDiode {
 
     protected $id = self::UNPOWERED_REPEATER;
-	protected $itemId = Item::REPEATER;
+    protected $itemId = Item::REPEATER;
 
     public function getName() : string {
         return "Unpowered Repeater";
     }
     
-	public function onActivate(Item $item, Player $player = null) : bool {
+    public function onActivate(Item $item, Player $player = null) : bool {
         if ($this->getDamage() >= 12) {
             $this->setDamage($this->getDamage() - 12);
         } else {
             $this->setDamage($this->getDamage() + 4);
         }
         $this->level->setBlock($this, $this);
-        $this->updateAroundRedstone($this);
-        $direction = Facing::ALL;
-        for ($i = 0; $i < count($direction); ++$i) {
-            $this->updateAroundRedstone($this->asVector3()->getSide($direction[$i]));
-        }
-		return true;
+        $this->updateAroundDiodeRedstone($this);
+        return true;
     }
 
-	public function onScheduledUpdate() : void {
+    public function onScheduledUpdate() : void {
         $this->getLevel()->setBlock($this, new BlockRedstoneRepeaterPowered($this->getDamage()));
-        
-        $this->updateAroundRedstone($this);
-        $direction = Facing::ALL;
-        for ($i = 0; $i < count($direction); ++$i) {
-            $this->updateAroundRedstone($this->asVector3()->getSide($direction[$i]));
-        }
-	}
+        $this->updateAroundDiodeRedstone($this);
+    }
     
     public function isLocked() : bool {
         $face = Facing::rotate($this->getInputFace(), Facing::AXIS_Y, false);
@@ -74,5 +65,5 @@ class BlockRedstoneRepeaterUnpowered extends BlockRedstoneDiode {
         if ($this->isSidePowered($this->asVector3(), $this->getInputFace())) {
             $this->level->scheduleDelayedBlockUpdate($this, $this->getDelayTime());
         }
-	}
+    }
 }

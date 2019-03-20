@@ -39,9 +39,9 @@ use redstone\blocks\BlockCommandRepeating;
 use redstone\inventories\CommandInventory;
 
 class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Container, Nameable, CommandSender {
-	use NameableTrait {
-		addAdditionalSpawnData as addNameSpawnData;
-	}
+    use NameableTrait {
+        addAdditionalSpawnData as addNameSpawnData;
+    }
     use ContainerTrait;
 
     protected $inventory;
@@ -53,7 +53,7 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
     protected $conditionalMode = false;
     protected $powered = false;
     
-	protected function readSaveData(CompoundTag $nbt) : void {
+    protected function readSaveData(CompoundTag $nbt) : void {
         $this->inventory = new CommandInventory($this);
 
         if ($nbt->hasTag("commandBlockMode")) {
@@ -75,9 +75,9 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
             $this->powered = $nbt->getByte("powered") == 1;
         }
 
-		$this->loadName($nbt);
+        $this->loadName($nbt);
 
-		$this->scheduleUpdate();
+        $this->scheduleUpdate();
     }
 
     protected function writeSaveData(CompoundTag $nbt) : void {
@@ -88,117 +88,117 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
         $nbt->setByte("conditionalMode", $this->conditionalMode ? 1 : 0);
         $nbt->setByte("powered", $this->powered ? 1 : 0);
 
-		$this->saveName($nbt);
+        $this->saveName($nbt);
     }
 
-	public function getDefaultName() : string {
+    public function getDefaultName() : string {
         return "CommandBlock";
-	}
-	
-	public function getInventory(){
-		return $this->inventory;
-	}
+    }
+    
+    public function getInventory(){
+        return $this->inventory;
+    }
 
-	public function getRealInventory(){
-		return $this->inventory;
-	}
+    public function getRealInventory(){
+        return $this->inventory;
+    }
 
-	protected function addAdditionalSpawnData(CompoundTag $nbt) : void {
+    protected function addAdditionalSpawnData(CompoundTag $nbt) : void {
         $nbt->setInt("commandBlockMode", $this->getCommandBlockMode());
         $nbt->setString("Command", $this->getCommand());
         $nbt->setString("LastOutput", $this->getLastOutput());
         $nbt->setByte("auto", $this->isAuto() ? 1 : 0);
         $nbt->setByte("conditionalMode", $this->isConditionalMode() ? 1 : 0);
-		$nbt->setByte("powered", $this->isPowered() ? 1 : 0);
-		
-		$this->addNameSpawnData($nbt);
-	}
-	
-	public function onUpdate() : bool{
-		if ($this->isRepeating()) {
-			$block = $this->getBlock();
-			if (!($block instanceof BlockCommand)) {
-				$this->close();
-			}
-
-			if (!$this->isPowered() && !$this->isAuto()) {
-				return true;
-			}
-
-			if ($this->getCommand() == "") {
-				return true;
-			}
-
-			$this->dispatch();
-		}
-		return true;
-	}
+        $nbt->setByte("powered", $this->isPowered() ? 1 : 0);
+        
+        $this->addNameSpawnData($nbt);
+    }
     
-	public function dispatch() : void {
-		$block = $this->getBlock();
-		if (!($block instanceof BlockCommand)) {
-			$this->close();
-		}
+    public function onUpdate() : bool{
+        if ($this->isRepeating()) {
+            $block = $this->getBlock();
+            if (!($block instanceof BlockCommand)) {
+                $this->close();
+            }
 
-		if (!$this->isPowered() && !$this->isAuto()) {
-			return;
-		}
+            if (!$this->isPowered() && !$this->isAuto()) {
+                return true;
+            }
 
-		$args = [];
-		preg_match_all('/"((?:\\\\.|[^\\\\"])*)"|(\S+)/u', $this->getCommand(), $matches);
-		foreach($matches[0] as $k => $_){
-			for($i = 1; $i <= 2; ++$i){
-				if($matches[$i][$k] !== ""){
-					$args[$k] = stripslashes($matches[$i][$k]);
-					break;
-				}
-			}
-		}
-		$sentCommandLabel = "";
-		$target = $this->getServer()->getCommandMap()->matchCommand($sentCommandLabel, $args);
+            if ($this->getCommand() == "") {
+                return true;
+            }
 
-		if($target === null){
-			$this->sendMessage($this->getServer()->getLanguage()->translateString(TextFormat::RED . "%commands.generic.notFound"));
-			return;
-		}
+            $this->dispatch();
+        }
+        return true;
+    }
+    
+    public function dispatch() : void {
+        $block = $this->getBlock();
+        if (!($block instanceof BlockCommand)) {
+            $this->close();
+        }
 
-		$target->timings->startTiming();
+        if (!$this->isPowered() && !$this->isAuto()) {
+            return;
+        }
+
+        $args = [];
+        preg_match_all('/"((?:\\\\.|[^\\\\"])*)"|(\S+)/u', $this->getCommand(), $matches);
+        foreach($matches[0] as $k => $_){
+            for($i = 1; $i <= 2; ++$i){
+                if($matches[$i][$k] !== ""){
+                    $args[$k] = stripslashes($matches[$i][$k]);
+                    break;
+                }
+            }
+        }
+        $sentCommandLabel = "";
+        $target = $this->getServer()->getCommandMap()->matchCommand($sentCommandLabel, $args);
+
+        if($target === null){
+            $this->sendMessage($this->getServer()->getLanguage()->translateString(TextFormat::RED . "%commands.generic.notFound"));
+            return;
+        }
+
+        $target->timings->startTiming();
 
         $conditions = false;
-		try{
-			$conditions = $target->execute($this, $sentCommandLabel, $args);
-		}catch(InvalidCommandSyntaxException $e){
-			$this->sendMessage($this->getServer()->getLanguage()->translateString("commands.generic.usage", [$target->getUsage()]));
-		}finally{
-			$target->timings->stopTiming();
-		}
+        try{
+            $conditions = $target->execute($this, $sentCommandLabel, $args);
+        }catch(InvalidCommandSyntaxException $e){
+            $this->sendMessage($this->getServer()->getLanguage()->translateString("commands.generic.usage", [$target->getUsage()]));
+        }finally{
+            $target->timings->stopTiming();
+        }
 
-		$damage = $block->getDamage();
-		$block = $block->getSide($damage > 8 ? $damage - 8 : $damage);
-		if (!($block instanceof BlockCommandChain)) {
-			return;
-		}
+        $damage = $block->getDamage();
+        $block = $block->getSide($damage > 8 ? $damage - 8 : $damage);
+        if (!($block instanceof BlockCommandChain)) {
+            return;
+        }
 
-		$tile = $block->getBlockEntity();
-		if ($tile->isConditionalMode() && !$conditions) {
-			return;
-		}
+        $tile = $block->getBlockEntity();
+        if ($tile->isConditionalMode() && !$conditions) {
+            return;
+        }
 
-		$tile->dispatch();
-		return;
-	}
+        $tile->dispatch();
+        return;
+    }
 
-	public function isNormal() : bool {
-		return $this->getCommandBlockMode() == 0;
-	}
+    public function isNormal() : bool {
+        return $this->getCommandBlockMode() == 0;
+    }
 
-	public function isRepeating() : bool {
-		return $this->getCommandBlockMode() == 1;
-	}
+    public function isRepeating() : bool {
+        return $this->getCommandBlockMode() == 1;
+    }
 
-	public function isChain() : bool {
-		return $this->getCommandBlockMode() == 2;
-	}
+    public function isChain() : bool {
+        return $this->getCommandBlockMode() == 2;
+    }
     
     public function getCommandBlockMode() : int {
         return $this->commandBlockMode;
@@ -206,7 +206,7 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
 
     public function setCommandBlockMode(int $mode) : void {
         if ($this->commandBlockMode != $mode) {
-			$damage = $this->getBlock()->getDamage();
+            $damage = $this->getBlock()->getDamage();
             if ($mode == 0) {
                 $this->level->setBlock($this, new BlockCommand($damage));
             } elseif ($mode == 1) {
@@ -223,10 +223,10 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
     }
 
     public function setCommand(string $command) : void {
-		if ($this->command != $command) {
-			$this->command = $command;
-			$this->onChanged();
-		}
+        if ($this->command != $command) {
+            $this->command = $command;
+            $this->onChanged();
+        }
     }
 
     public function getLastOutput() : string {
@@ -234,10 +234,10 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
     }
 
     public function setLastOutput(string $out) : void {
-		if ($this->lastOutput != $out) {
-			$this->lastOutput = $out;
-			$this->onChanged();
-		}
+        if ($this->lastOutput != $out) {
+            $this->lastOutput = $out;
+            $this->onChanged();
+        }
     }
 
     public function isAuto() : bool {
@@ -245,10 +245,10 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
     }
 
     public function setAuto(bool $auto) : void {
-		if ($this->auto != $auto) {
-			$this->auto = $auto;
-			$this->onChanged();
-		}
+        if ($this->auto != $auto) {
+            $this->auto = $auto;
+            $this->onChanged();
+        }
     }
 
     public function isConditionalMode() : bool {
@@ -262,149 +262,149 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
             $block = $this->getBlock();
             $block->setDamage($block->getDamage() ^ 0x08);
             $this->level->setBlock($this, $block, true);
-			$this->onChanged();
+            $this->onChanged();
         }
-	}
-	
-	public function isPowered() : bool {
-		return $this->powered;
-	}
+    }
+    
+    public function isPowered() : bool {
+        return $this->powered;
+    }
 
-	public function setPowered(bool $power) : void {
-		$this->powered = $power;
-	}
+    public function setPowered(bool $power) : void {
+        $this->powered = $power;
+    }
 
     //interface CommandSender
 
-	public function sendMessage($message) {
+    public function sendMessage($message) {
         $this->setLastOutput($message);
     }
 
-	public function getServer() {
+    public function getServer() {
         return Server::getInstance();
     }
 
-	public function getScreenLineHeight() : int {
+    public function getScreenLineHeight() : int {
         return 1;
     }
 
-	public function setScreenLineHeight(int $height = null) {
+    public function setScreenLineHeight(int $height = null) {
 
     }
 
     //interface Permissible
 
-	private $attachments = [];
+    private $attachments = [];
 
-	private $permissions = [];
+    private $permissions = [];
 
-	public function isOp() : bool{
-		return true;
-	}
-
-	public function setOp(bool $value){
-
-	}
-    
-	public function isPermissionSet($name) : bool{
-		return isset($this->permissions[$name instanceof Permission ? $name->getName() : $name]);
-	}
-
-	public function hasPermission($name) : bool{
-		if($name instanceof Permission){
-			$name = $name->getName();
-		}
-
-		if($this->isPermissionSet($name)){
-			return $this->permissions[$name]->getValue();
-		}
-
-		if(($perm = PermissionManager::getInstance()->getPermission($name)) !== null){
-			$perm = $perm->getDefault();
-
-			return $perm === Permission::DEFAULT_TRUE or ($this->isOp() and $perm === Permission::DEFAULT_OP) or (!$this->isOp() and $perm === Permission::DEFAULT_NOT_OP);
-		}else{
-			return Permission::$DEFAULT_PERMISSION === Permission::DEFAULT_TRUE or ($this->isOp() and Permission::$DEFAULT_PERMISSION === Permission::DEFAULT_OP) or (!$this->isOp() and Permission::$DEFAULT_PERMISSION === Permission::DEFAULT_NOT_OP);
-		}
-
-	}
-
-	public function addAttachment(Plugin $plugin, string $name = null, bool $value = null) : PermissionAttachment{
-		if(!$plugin->isEnabled()){
-			throw new PluginException("Plugin " . $plugin->getDescription()->getName() . " is disabled");
-		}
-
-		$result = new PermissionAttachment($plugin, $this->parent ?? $this);
-		$this->attachments[spl_object_hash($result)] = $result;
-		if($name !== null and $value !== null){
-			$result->setPermission($name, $value);
-		}
-
-		$this->recalculatePermissions();
-
-		return $result;
-	}
-
-	public function removeAttachment(PermissionAttachment $attachment){
-		if(isset($this->attachments[spl_object_hash($attachment)])){
-			unset($this->attachments[spl_object_hash($attachment)]);
-			if(($ex = $attachment->getRemovalCallback()) !== null){
-				$ex->attachmentRemoved($attachment);
-			}
-
-			$this->recalculatePermissions();
-
-		}
-
-	}
-
-	public function recalculatePermissions(){
-		Timings::$permissibleCalculationTimer->startTiming();
-
-		$this->clearPermissions();
-		$permManager = PermissionManager::getInstance();
-		$defaults = $permManager->getDefaultPermissions($this->isOp());
-		$permManager->subscribeToDefaultPerms($this->isOp(), $this->parent ?? $this);
-
-		foreach($defaults as $perm){
-			$name = $perm->getName();
-			$this->permissions[$name] = new PermissionAttachmentInfo($this->parent ?? $this, $name, null, true);
-			$permManager->subscribeToPermission($name, $this->parent ?? $this);
-			$this->calculateChildPermissions($perm->getChildren(), false, null);
-		}
-
-		foreach($this->attachments as $attachment){
-			$this->calculateChildPermissions($attachment->getPermissions(), false, $attachment);
-		}
-
-		Timings::$permissibleCalculationTimer->stopTiming();
+    public function isOp() : bool{
+        return true;
     }
 
-	public function clearPermissions(){
-		$permManager = PermissionManager::getInstance();
-		$permManager->unsubscribeFromAllPermissions($this->parent ?? $this);
+    public function setOp(bool $value){
 
-		$permManager->unsubscribeFromDefaultPerms(false, $this->parent ?? $this);
-		$permManager->unsubscribeFromDefaultPerms(true, $this->parent ?? $this);
-
-		$this->permissions = [];
-	}
+    }
     
-	private function calculateChildPermissions(array $children, bool $invert, ?PermissionAttachment $attachment){
-		$permManager = PermissionManager::getInstance();
-		foreach($children as $name => $v){
-			$perm = $permManager->getPermission($name);
-			$value = ($v xor $invert);
-			$this->permissions[$name] = new PermissionAttachmentInfo($this->parent ?? $this, $name, $attachment, $value);
-			$permManager->subscribeToPermission($name, $this->parent ?? $this);
+    public function isPermissionSet($name) : bool{
+        return isset($this->permissions[$name instanceof Permission ? $name->getName() : $name]);
+    }
 
-			if($perm instanceof Permission){
-				$this->calculateChildPermissions($perm->getChildren(), !$value, $attachment);
-			}
-		}
-	}
+    public function hasPermission($name) : bool{
+        if($name instanceof Permission){
+            $name = $name->getName();
+        }
 
-	public function getEffectivePermissions() : array{
-		return $this->permissions;
-	}
+        if($this->isPermissionSet($name)){
+            return $this->permissions[$name]->getValue();
+        }
+
+        if(($perm = PermissionManager::getInstance()->getPermission($name)) !== null){
+            $perm = $perm->getDefault();
+
+            return $perm === Permission::DEFAULT_TRUE or ($this->isOp() and $perm === Permission::DEFAULT_OP) or (!$this->isOp() and $perm === Permission::DEFAULT_NOT_OP);
+        }else{
+            return Permission::$DEFAULT_PERMISSION === Permission::DEFAULT_TRUE or ($this->isOp() and Permission::$DEFAULT_PERMISSION === Permission::DEFAULT_OP) or (!$this->isOp() and Permission::$DEFAULT_PERMISSION === Permission::DEFAULT_NOT_OP);
+        }
+
+    }
+
+    public function addAttachment(Plugin $plugin, string $name = null, bool $value = null) : PermissionAttachment{
+        if(!$plugin->isEnabled()){
+            throw new PluginException("Plugin " . $plugin->getDescription()->getName() . " is disabled");
+        }
+
+        $result = new PermissionAttachment($plugin, $this->parent ?? $this);
+        $this->attachments[spl_object_hash($result)] = $result;
+        if($name !== null and $value !== null){
+            $result->setPermission($name, $value);
+        }
+
+        $this->recalculatePermissions();
+
+        return $result;
+    }
+
+    public function removeAttachment(PermissionAttachment $attachment){
+        if(isset($this->attachments[spl_object_hash($attachment)])){
+            unset($this->attachments[spl_object_hash($attachment)]);
+            if(($ex = $attachment->getRemovalCallback()) !== null){
+                $ex->attachmentRemoved($attachment);
+            }
+
+            $this->recalculatePermissions();
+
+        }
+
+    }
+
+    public function recalculatePermissions(){
+        Timings::$permissibleCalculationTimer->startTiming();
+
+        $this->clearPermissions();
+        $permManager = PermissionManager::getInstance();
+        $defaults = $permManager->getDefaultPermissions($this->isOp());
+        $permManager->subscribeToDefaultPerms($this->isOp(), $this->parent ?? $this);
+
+        foreach($defaults as $perm){
+            $name = $perm->getName();
+            $this->permissions[$name] = new PermissionAttachmentInfo($this->parent ?? $this, $name, null, true);
+            $permManager->subscribeToPermission($name, $this->parent ?? $this);
+            $this->calculateChildPermissions($perm->getChildren(), false, null);
+        }
+
+        foreach($this->attachments as $attachment){
+            $this->calculateChildPermissions($attachment->getPermissions(), false, $attachment);
+        }
+
+        Timings::$permissibleCalculationTimer->stopTiming();
+    }
+
+    public function clearPermissions(){
+        $permManager = PermissionManager::getInstance();
+        $permManager->unsubscribeFromAllPermissions($this->parent ?? $this);
+
+        $permManager->unsubscribeFromDefaultPerms(false, $this->parent ?? $this);
+        $permManager->unsubscribeFromDefaultPerms(true, $this->parent ?? $this);
+
+        $this->permissions = [];
+    }
+    
+    private function calculateChildPermissions(array $children, bool $invert, ?PermissionAttachment $attachment){
+        $permManager = PermissionManager::getInstance();
+        foreach($children as $name => $v){
+            $perm = $permManager->getPermission($name);
+            $value = ($v xor $invert);
+            $this->permissions[$name] = new PermissionAttachmentInfo($this->parent ?? $this, $name, $attachment, $value);
+            $permManager->subscribeToPermission($name, $this->parent ?? $this);
+
+            if($perm instanceof Permission){
+                $this->calculateChildPermissions($perm->getChildren(), !$value, $attachment);
+            }
+        }
+    }
+
+    public function getEffectivePermissions() : array{
+        return $this->permissions;
+    }
 }

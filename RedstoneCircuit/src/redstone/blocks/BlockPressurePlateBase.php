@@ -22,30 +22,30 @@ use redstone\utils\Facing;
 
 abstract class BlockPressurePlateBase extends Transparent implements IRedstone {
     use RedstoneTrait;
-	
-	public function __construct(int $meta = 0){
-		$this->meta = $meta;
-    }
-	
-	public function getVariantBitmask() : int {
-		return 0;
-	}
     
-	public function getHardness() : float {
-		return 0.5;
-	}
+    public function __construct(int $meta = 0){
+        $this->meta = $meta;
+    }
+    
+    public function getVariantBitmask() : int {
+        return 0;
+    }
+    
+    public function getHardness() : float {
+        return 0.5;
+    }
 
-	public function isSolid() : bool {
-		return false;
-	}
+    public function isSolid() : bool {
+        return false;
+    }
 
-	public function hasEntityCollision() : bool {
-		return true;
-	}
+    public function hasEntityCollision() : bool {
+        return true;
+    }
 
-	public function canPassThrough() : bool {
-		return true;
-	}
+    public function canPassThrough() : bool {
+        return true;
+    }
     
     public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
         $under = $this->getSide(Facing::DOWN);
@@ -59,22 +59,22 @@ abstract class BlockPressurePlateBase extends Transparent implements IRedstone {
         return true;
     }
 
-	public function onBreak(Item $item, Player $player = null) : bool {
+    public function onBreak(Item $item, Player $player = null) : bool {
         $this->getLevel()->setBlock($this, BlockFactory::get(Block::AIR));
         $this->updateAroundRedstone($this);
         $this->updateAroundRedstone($this->asVector3()->getSide(Facing::DOWN));
         return true;
     }
 
-	public function onNearbyBlockChange() : void {
+    public function onNearbyBlockChange() : void {
         $under = $this->getSide(Facing::DOWN);
-		if ($under->isSolid() && !$under->isTransparent()) {
+        if ($under->isSolid() && !$under->isTransparent()) {
             return;
         }
         $this->level->useBreakOn($this);
-	}
+    }
 
-	public function onScheduledUpdate() : void {
+    public function onScheduledUpdate() : void {
         $damage = $this->computeDamage();
         if ($damage > 0) {
             return;
@@ -91,7 +91,7 @@ abstract class BlockPressurePlateBase extends Transparent implements IRedstone {
         }
     }
 
-	public function onEntityCollide(Entity $entity) : void {
+    public function onEntityCollide(Entity $entity) : void {
         $damage = $this->computeDamage();
         if ($damage <= 0) {
             return;
@@ -107,25 +107,25 @@ abstract class BlockPressurePlateBase extends Transparent implements IRedstone {
             $this->updateAroundRedstone($this->asVector3()->getSide(Facing::DOWN));
         }
         $this->level->scheduleDelayedBlockUpdate($this, $this->getDelay());
-	}
+    }
 
-	public function getBoundingBox() : ?AxisAlignedBB {
-		return null;
-	}
+    public function getBoundingBox() : ?AxisAlignedBB {
+        return null;
+    }
 
-	public function getCollisionBoxes() : array {
-		return [];
-	}
+    public function getCollisionBoxes() : array {
+        return [];
+    }
     
-	protected function bb() : AxisAlignedBB {
-		return new AxisAlignedBB(
-			$this->x + 0.0625,
-			$this->y,
-			$this->z + 0.0625,
-			$this->x + 0.9375,
-			$this->y + 0.0625,
-			$this->z + 0.9375
-		);
+    protected function bb() : AxisAlignedBB {
+        return new AxisAlignedBB(
+            $this->x + 0.0625,
+            $this->y,
+            $this->z + 0.0625,
+            $this->x + 0.9375,
+            $this->y + 0.0625,
+            $this->z + 0.9375
+        );
     }
 
     public abstract function computeDamage() : int;
@@ -158,5 +158,5 @@ abstract class BlockPressurePlateBase extends Transparent implements IRedstone {
     }
 
     public function onRedstoneUpdate() : void {
-	}
+    }
 }

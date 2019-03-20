@@ -20,34 +20,35 @@ use redstone\blockEntities\BlockEntityDropper;
 class BlockDropper extends Solid implements IRedstone {
     use RedstoneTrait;
 
-	protected $id = self::DROPPER;
-	
-	public function __construct(int $meta = 0){
-		$this->meta = $meta;
-	}
+    protected $id = self::DROPPER;
+    
+    public function __construct(int $meta = 0){
+        $this->meta = $meta;
+    }
 
     public function getName() : string {
-		return "Dropper";
+        return "Dropper";
     }
     
-	public function getHardness() : float {
-		return 3.5;
-	}
+    public function getHardness() : float {
+        return 3.5;
+    }
 
-	public function getToolType() : int{
-		return BlockToolType::TYPE_PICKAXE;
-	}
+    public function getToolType() : int{
+        return BlockToolType::TYPE_PICKAXE;
+    }
 
-	public function getToolHarvestLevel() : int{
-		return TieredTool::TIER_WOODEN;
-	}
-	
-	public function getVariantBitmask() : int {
-		return 0;
-	}
+    public function getToolHarvestLevel() : int{
+        return TieredTool::TIER_WOODEN;
+    }
+    
+    public function getVariantBitmask() : int {
+        return 0;
+    }
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
-		if($player !== null) {
+    public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
+        $damage = 0;
+        if($player !== null) {
             $faces = [4, 2, 5, 3];
             $damage = $faces[$player->getDirection()];
             if ($player->getPitch() > 45) {
@@ -60,26 +61,26 @@ class BlockDropper extends Solid implements IRedstone {
         $this->setDamage($damage);
         $this->level->setBlock($this, $this, true, true);
         
-		Tile::createTile("Dropper", $this->getLevel(), BlockEntityDropper::createNBT($this->asVector3()));
+        Tile::createTile("Dropper", $this->getLevel(), BlockEntityDropper::createNBT($this->asVector3()));
         return true;
     }
 
-	public function onActivate(Item $item, Player $player = null) : bool{
-		if($player instanceof Player){
-			$tile = $this->getLevel()->getTile($this);
-			$dropper = null;
-			if($tile instanceof BlockEntityDropper){
-				$dropper = $tile;
-			}else{
+    public function onActivate(Item $item, Player $player = null) : bool{
+        if($player instanceof Player){
+            $tile = $this->getLevel()->getTile($this);
+            $dropper = null;
+            if($tile instanceof BlockEntityDropper){
+                $dropper = $tile;
+            }else{
                 $dropper = Tile::createTile("BlockEntityDropper", $this->getLevel(), BlockEntityDropper::createNBT($this));
             }
 
             $player->addWindow($dropper->getInventory());
-		}
-		return true;
+        }
+        return true;
     }
     
-	public function onScheduledUpdate() : void {
+    public function onScheduledUpdate() : void {
         $dropper = $this->getBlockEntity();
         $dropper->dropItem();
     }
@@ -127,5 +128,5 @@ class BlockDropper extends Solid implements IRedstone {
             $this->level->scheduleDelayedBlockUpdate($this, 4);
         }
 
-	}
+    }
 }

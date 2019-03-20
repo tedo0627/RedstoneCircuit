@@ -21,10 +21,10 @@ abstract class BlockRedstoneDiode extends Flowable implements IRedstone {
     public function __construct(int $meta = 0){
         $this->meta = $meta;
     }
-	
-	public function getVariantBitmask() : int {
-		return 0;
-	}
+    
+    public function getVariantBitmask() : int {
+        return 0;
+    }
     
     public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
         $under = $this->getSide(Facing::DOWN);
@@ -33,37 +33,29 @@ abstract class BlockRedstoneDiode extends Flowable implements IRedstone {
         }
 
         $faces = [
-			0 => 1,
-			1 => 2,
-			2 => 3,
-			3 => 0
-		];
+            0 => 1,
+            1 => 2,
+            2 => 3,
+            3 => 0
+        ];
         $this->setDamage($faces[$player instanceof Player ? $player->getDirection() : 0]);
         $this->level->setBlock($this, $this);
-        $this->updateAroundRedstone($this);
-        $direction = Facing::ALL;
-        for ($i = 0; $i < count($direction); ++$i) {
-            $this->updateAroundRedstone($this->asVector3()->getSide($direction[$i]));
-        }
+        $this->updateAroundDiodeRedstone($this);
         return true;
     }
     
-	public function onBreak(Item $item, Player $player = null) : bool {
+    public function onBreak(Item $item, Player $player = null) : bool {
         $this->getLevel()->setBlock($this, BlockFactory::get(Block::AIR));
-        $this->updateAroundRedstone($this);
-        $direction = Facing::ALL;
-        for ($i = 0; $i < count($direction); ++$i) {
-            $this->updateAroundRedstone($this->asVector3()->getSide($direction[$i]));
-        }
+        $this->updateAroundDiodeRedstone($this);
         return true;
-	}
+    }
 
     public function getInputFace() : int {
         $faces = [
-			0 => Facing::SOUTH,
-			1 => Facing::WEST,
-			2 => Facing::NORTH,
-			3 => Facing::EAST
+            0 => Facing::SOUTH,
+            1 => Facing::WEST,
+            2 => Facing::NORTH,
+            3 => Facing::EAST
         ];
         return $faces[$this->getDamage() % 4];
     }
@@ -85,5 +77,5 @@ abstract class BlockRedstoneDiode extends Flowable implements IRedstone {
     }
 
     public function onRedstoneUpdate() : void {
-	}
+    }
 }

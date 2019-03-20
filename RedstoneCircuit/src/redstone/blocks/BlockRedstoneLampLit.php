@@ -7,12 +7,12 @@ class BlockRedstoneLampLit extends BlockRedstoneLamp {
     protected $id = self::LIT_REDSTONE_LAMP;
 
     public function getName() : string {
-		return "Lit Redstone Lamp";
+        return "Lit Redstone Lamp";
     }
 
-	public function getLightLevel() : int {
-		return 15;
-	}
+    public function getLightLevel() : int {
+        return 15;
+    }
 
     public function onRedstoneUpdate() : void {
         if (!$this->isBlockPowered($this)) {
@@ -20,9 +20,9 @@ class BlockRedstoneLampLit extends BlockRedstoneLamp {
         }
     }
 
-	public function onScheduledUpdate() : void {
+    public function onScheduledUpdate() : void {
         if (!$this->isBlockPowered($this)) {
             $this->getLevel()->setBlock($this, new BlockRedstoneLamp());
         }
-	}
+    }
 }

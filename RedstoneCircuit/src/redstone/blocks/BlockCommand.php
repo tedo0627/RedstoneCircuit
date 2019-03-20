@@ -21,18 +21,18 @@ use redstone\blockEntities\BlockEntityCommandBlock;
 class BlockCommand extends Solid implements IRedstone {
     use RedstoneTrait;
 
-	protected $id = self::COMMAND_BLOCK;
+    protected $id = self::COMMAND_BLOCK;
 
-	public function __construct(int $meta = 0){
-		$this->meta = $meta;
-	}
-
-    public function getName() : string {
-		return "Command Block";
+    public function __construct(int $meta = 0){
+        $this->meta = $meta;
     }
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
-		if($player !== null) {
+    public function getName() : string {
+        return "Command Block";
+    }
+
+    public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
+        if($player !== null) {
             if (!$player->isOp() || !$player->isCreative()) {
                 return false;
             }
@@ -49,12 +49,12 @@ class BlockCommand extends Solid implements IRedstone {
         $this->setDamage($damage);
         $this->level->setBlock($this, $this, true, true);
         
-		Tile::createTile("BlockEntityCommandBlock", $this->getLevel(), BlockEntityCommandBlock::createNBT($this->asVector3()));
+        Tile::createTile("BlockEntityCommandBlock", $this->getLevel(), BlockEntityCommandBlock::createNBT($this->asVector3()));
         return true;
     }
 
-	public function onActivate(Item $item, Player $player = null) : bool {
-		if($player instanceof Player){
+    public function onActivate(Item $item, Player $player = null) : bool {
+        if($player instanceof Player){
             if (!$player->isOp() || !$player->isCreative()) {
                 return true;
             }
@@ -66,11 +66,11 @@ class BlockCommand extends Solid implements IRedstone {
             } else {
                 $player->addWindow($inventory);
             }
-		}
-		return true;
+        }
+        return true;
     }
-	public function getDrops(Item $item) : array {
-		return [];
+    public function getDrops(Item $item) : array {
+        return [];
     }
     
     public function getBlockEntity() : BlockEntityCommandBlock {
@@ -113,5 +113,5 @@ class BlockCommand extends Solid implements IRedstone {
         } elseif (!$power) {
             $tile->setPowered(false);
         }
-	}
+    }
 }

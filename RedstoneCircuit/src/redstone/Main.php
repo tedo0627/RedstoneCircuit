@@ -19,6 +19,7 @@ use redstone\blockEntities\BlockEntityDispenser;
 use redstone\blockEntities\BlockEntityDropper;
 use redstone\blockEntities\BlockEntityHopper;
 use redstone\blockEntities\BlockEntityNoteBlock;
+use redstone\blockEntities\BlockEntityObserver;
 use redstone\blockEntities\BlockEntityPistonArm;
 use redstone\blockEntities\BlockEntityRedstoneComparator;
 
@@ -35,6 +36,7 @@ use redstone\blocks\BlockIronDoor;
 use redstone\blocks\BlockIronTrapdoor;
 use redstone\blocks\BlockLever;
 use redstone\blocks\BlockNote;
+use redstone\blocks\BlockObserver;
 use redstone\blocks\BlockPiston;
 use redstone\blocks\BlockPressurePlateStone;
 use redstone\blocks\BlockPressurePlateWooden;
@@ -108,6 +110,8 @@ class Main extends PluginBase {
         BlockFactory::registerBlock(new BlockRedstoneComparatorPowered(), true);
         BlockFactory::registerBlock(new BlockRedstoneComparatorUnpowered(), true);
 
+        BlockFactory::registerBlock(new BlockObserver(), true);
+
 
         BlockFactory::registerBlock(new BlockRedstone(), true);
 
@@ -166,6 +170,7 @@ class Main extends PluginBase {
         Tile::registerTile(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
         Tile::registerTile(BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
         Tile::registerTile(BlockEntityNoteBlock::class, ["NoteBlock", "minecraft:note_block"]);
+        Tile::registerTile(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
         Tile::registerTile(BlockEntityRedstoneComparator::class, ["Comparator", "minecraft:comparator"]);
         //Tile::registerTile(BlockEntityPistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
     }
@@ -176,10 +181,12 @@ class Main extends PluginBase {
         ItemFactory::registerItem(new ItemBlock(Block::COMMAND_BLOCK, 0, Item::COMMAND_BLOCK), true);
         ItemFactory::registerItem(new ItemBlock(Block::DROPPER, 0, Item::DROPPER), true);
         ItemFactory::registerItem(new ItemBlock(Block::DISPENSER, 0, Item::DISPENSER), true);
-        ItemFactory::registerItem(new ItemBlock(Block::PISTON, 0, Item::PISTON), true);
+        ItemFactory::registerItem(new ItemBlock(Block::OBSERVER, 0, Item::OBSERVER), true);
+        //ItemFactory::registerItem(new ItemBlock(Block::PISTON, 0, Item::PISTON), true);
     }
 
     private function initCreativeItem() : void {
+        Item::addCreativeItem(Item::get(Item::OBSERVER));
         Item::addCreativeItem(Item::get(Item::REPEATER));
         Item::addCreativeItem(Item::get(Item::COMPARATOR));
         Item::addCreativeItem(Item::get(Item::HOPPER));

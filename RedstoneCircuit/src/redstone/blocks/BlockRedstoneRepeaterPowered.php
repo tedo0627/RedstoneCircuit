@@ -28,6 +28,7 @@ class BlockRedstoneRepeaterPowered extends BlockRedstoneRepeaterUnpowered {
     public function onScheduledUpdate() : void {
         $this->getLevel()->setBlock($this, new BlockRedstoneRepeaterUnpowered($this->getDamage()));
         $this->updateAroundDiodeRedstone($this);
+        $this->getLevel()->getBlock($this)->onRedstoneUpdate();
     }
 
     public function getStrongPower(int $face) : int {

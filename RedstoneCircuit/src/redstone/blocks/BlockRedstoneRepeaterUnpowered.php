@@ -37,6 +37,7 @@ class BlockRedstoneRepeaterUnpowered extends BlockRedstoneDiode {
     public function onScheduledUpdate() : void {
         $this->getLevel()->setBlock($this, new BlockRedstoneRepeaterPowered($this->getDamage()));
         $this->updateAroundDiodeRedstone($this);
+        $this->getLevel()->getBlock($this)->onRedstoneUpdate();
     }
     
     public function isLocked() : bool {

@@ -127,6 +127,5 @@ class BlockDispenser extends Solid implements IRedstone {
             $this->level->setBlock($this, $this);
             $this->level->scheduleDelayedBlockUpdate($this, 4);
         }
-
     }
 }

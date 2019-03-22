@@ -1,7 +1,7 @@
 # RedstoneCircuit_PMMP-Plugin
-レッドストーン回路が一部動作するようになるプラグイン
+This plugin makes the redstone circuit will work.
 
-nukkitのソースを一部使用しているためGPLライセンスとなっています
+This plugin used nukkit source.
 
-## ダウンロード
-[Download](https://github.com/tedo0627/RedstoneCircuit_PMMP-Plugin/releases/download/1.0.0/RedstoneCircuit_v0.1.phar)
+## Download
+[ClickHere](https://github.com/tedo0627/RedstoneCircuit_PMMP-Plugin/releases/download/1.0.0/RedstoneCircuit_v0.1.phar)

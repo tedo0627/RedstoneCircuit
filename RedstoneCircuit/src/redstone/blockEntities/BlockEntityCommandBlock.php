@@ -11,6 +11,8 @@ use pocketmine\command\utils\InvalidCommandSyntaxException;
 
 use pocketmine\inventory\InventoryHolder;
 
+use pocketmine\lang\TextContainer;
+
 use pocketmine\nbt\tag\CompoundTag;
 
 use pocketmine\permission\Permission;
@@ -277,6 +279,11 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
     //interface CommandSender
 
     public function sendMessage($message) {
+        if($message instanceof TextContainer){
+            $message = $this->getServer()->getLanguage()->translate($message);
+        }else{
+            $message = $this->getServer()->getLanguage()->translateString($message);
+        }
         $this->setLastOutput($message);
     }
 

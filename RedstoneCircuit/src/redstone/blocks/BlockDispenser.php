@@ -9,6 +9,7 @@ use pocketmine\block\BlockToolType;
 use pocketmine\block\Solid;
 
 use pocketmine\item\Item;
+use pocketmine\item\TieredTool;
 
 use pocketmine\math\Vector3;
 

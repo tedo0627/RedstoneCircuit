@@ -7,9 +7,9 @@ use pocketmine\Player;
 use pocketmine\block\Block;
 use pocketmine\block\BlockToolType;
 use pocketmine\block\Solid;
-use pocketmine\item\TieredTool;
 
 use pocketmine\item\Item;
+use pocketmine\item\TieredTool;
 
 use pocketmine\math\Vector3;
 

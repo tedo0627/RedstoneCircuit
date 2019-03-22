@@ -1,0 +1,4 @@
+---
+# Save the state of redstone machines, water, and other activity.
+isSaveScheduledBlockUpdate: true
+...

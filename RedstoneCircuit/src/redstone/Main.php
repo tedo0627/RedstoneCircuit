@@ -54,15 +54,46 @@ use redstone\blocks\BlockWeightedPressurePlateLight;
 use redstone\blocks\BlockWeightedPressurePlateHeavy;
 use redstone\blocks\BlockWoodenDoor;
 
+use redstone\listeners\EventListener;
+use redstone\listeners\ScheduledBlockUpdateListener;
+
+use redstone\utils\ScheduledBlockUpdateLoader;
+
 class Main extends PluginBase {
 
+    private static $instance;
+
+    public static function getInstance() : Main {
+        return Main::$instance;
+    }
+
+    private $scheduledBlockUpdateLoader;
+
     public function onEnable() {
+        Main::$instance = $this;
+
+        $this->scheduledBlockUpdateLoader = new ScheduledBlockUpdateLoader();
+
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
 
         $this->initBlocks();
         $this->initBlockEntities();
         $this->initItems();
         $this->initCreativeItem();
+    }
+
+    public function onDisable() {
+        if (!$this->scheduledBlockUpdateLoader->isActivate()) {
+            return;
+        }
+
+        foreach($this->getServer()->getLevels() as $level){
+            $this->scheduledBlockUpdateLoader->saveLevel($level);
+        }
+    }
+
+    public function getScheduledBlockUpdateLoader() : ScheduledBlockUpdateLoader {
+        return $this->scheduledBlockUpdateLoader;
     }
 
     private function initBlocks() : void {

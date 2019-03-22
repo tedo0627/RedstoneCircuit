@@ -40,6 +40,7 @@ abstract class BlockRedstoneDiode extends Flowable implements IRedstone {
         ];
         $this->setDamage($faces[$player instanceof Player ? $player->getDirection() : 0]);
         $this->level->setBlock($this, $this);
+        $this->onRedstoneUpdate();
         $this->updateAroundDiodeRedstone($this);
         return true;
     }

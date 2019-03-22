@@ -3,3 +3,4 @@ main: redstone\Main
 version: 0.1
 api: [3.6.0]
 author: tedo0627
+load: STARTUP

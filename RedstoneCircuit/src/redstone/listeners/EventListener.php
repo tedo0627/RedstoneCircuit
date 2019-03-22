@@ -1,6 +1,6 @@
 <?php
 
-namespace redstone;
+namespace redstone\listeners;
 
 use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketReceiveEvent;

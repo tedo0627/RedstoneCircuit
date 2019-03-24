@@ -69,6 +69,7 @@ class BlockCommand extends Solid implements IRedstone {
         }
         return true;
     }
+
     public function getDrops(Item $item) : array {
         return [];
     }

@@ -33,7 +33,7 @@ class BlockButtonWooden extends BlockButtonBase {
             return;
         }
         
-        $entities = $this->level->getNearbyEntities($this->bb());
+        $entities = $this->getLevel()->getNearbyEntities($this->bb());
         for ($i = 0; $i < count($entities); ++$i) {
             if ($entities[$i] instanceof Arrow) {
                 return;
@@ -41,8 +41,8 @@ class BlockButtonWooden extends BlockButtonBase {
         }
 
         $this->setDamage($this->getDamage() - 8);
-        $this->level->setBlock($this, $this);
-        $this->level->broadcastLevelSoundEvent($this->add(0.5, 0.5, 0.5), LevelSoundEventPacket::SOUND_POWER_OFF);
+        $this->getLevel()->setBlock($this, $this);
+        $this->getLevel()->broadcastLevelSoundEvent($this->add(0.5, 0.5, 0.5), LevelSoundEventPacket::SOUND_POWER_OFF);
         
         $this->updateAroundRedstone($this);
         $this->updateAroundRedstone($this->asVector3()->getSide($this->getFace()));
@@ -55,13 +55,13 @@ class BlockButtonWooden extends BlockButtonBase {
 
         if (!$this->isPowerSource()) {
             $this->setDamage($this->getDamage() + 8);
-            $this->level->setBlock($this, $this);
-            $this->level->broadcastLevelSoundEvent($this->add(0.5, 0.5, 0.5), LevelSoundEventPacket::SOUND_POWER_ON);
+            $this->getLevel()->setBlock($this, $this);
+            $this->getLevel()->broadcastLevelSoundEvent($this->add(0.5, 0.5, 0.5), LevelSoundEventPacket::SOUND_POWER_ON);
             $this->updateAroundRedstone($this);
             $this->updateAroundRedstone($this->asVector3()->getSide($this->getFace()));
         }
 
-        $this->level->scheduleDelayedBlockUpdate($this, 1);
+        $this->getLevel()->scheduleDelayedBlockUpdate($this, 1);
     }
 
     public function hasEntityCollision() : bool {

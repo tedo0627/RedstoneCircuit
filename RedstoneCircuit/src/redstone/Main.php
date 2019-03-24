@@ -14,7 +14,9 @@ use pocketmine\item\ItemFactory;
 use pocketmine\tile\Tile;
 
 
+use redstone\blockEntities\BlockEntityChest;
 use redstone\blockEntities\BlockEntityCommandBlock;
+use redstone\blockEntities\BlockEntityDaylightDetector;
 use redstone\blockEntities\BlockEntityDispenser;
 use redstone\blockEntities\BlockEntityDropper;
 use redstone\blockEntities\BlockEntityHopper;
@@ -28,6 +30,8 @@ use redstone\blocks\BlockButtonWooden;
 use redstone\blocks\BlockCommand;
 use redstone\blocks\BlockCommandChain;
 use redstone\blocks\BlockCommandRepeating;
+use redstone\blocks\BlockDayLightDetector;
+use redstone\blocks\BlockDayLightDetectorInverted;
 use redstone\blocks\BlockDispenser;
 use redstone\blocks\BlockDropper;
 use redstone\blocks\BlockFenceGate;
@@ -52,6 +56,9 @@ use redstone\blocks\BlockRedstoneTorchUnlit;
 use redstone\blocks\BlockRedstoneWire;
 use redstone\blocks\BlockTNT;
 use redstone\blocks\BlockTrapdoor;
+use redstone\blocks\BlockTrappedChest;
+use redstone\blocks\BlockTripWire;
+use redstone\blocks\BlockTripWireHook;
 use redstone\blocks\BlockWeightedPressurePlateLight;
 use redstone\blocks\BlockWeightedPressurePlateHeavy;
 use redstone\blocks\BlockWoodenDoor;
@@ -110,8 +117,6 @@ class Main extends PluginBase {
         BlockFactory::registerBlock(new BlockRedstoneComparatorPowered(), true);
         BlockFactory::registerBlock(new BlockRedstoneComparatorUnpowered(), true);
 
-        BlockFactory::registerBlock(new BlockObserver(), true);
-
 
         BlockFactory::registerBlock(new BlockRedstone(), true);
 
@@ -124,6 +129,16 @@ class Main extends PluginBase {
         BlockFactory::registerBlock(new BlockPressurePlateWooden(), true);
         BlockFactory::registerBlock(new BlockWeightedPressurePlateLight(), true);
         BlockFactory::registerBlock(new BlockWeightedPressurePlateHeavy(), true);
+
+        BlockFactory::registerBlock(new BlockDayLightDetector(), true);
+        BlockFactory::registerBlock(new BlockDayLightDetectorInverted(), true);
+
+        BlockFactory::registerBlock(new BlockObserver(), true);
+
+        BlockFactory::registerBlock(new BlockTrappedChest(), true);
+        
+        BlockFactory::registerBlock(new BlockTripwireHook(), true);
+        BlockFactory::registerBlock(new BlockTripwire(), true);
 
 
         BlockFactory::registerBlock(new BlockRedstoneLamp(), true);
@@ -165,14 +180,16 @@ class Main extends PluginBase {
     }
 
     private function initBlockEntities() : void {
+        Tile::registerTile(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
         Tile::registerTile(BlockEntityCommandBlock::class, ["CommandBlock", "minecraft:command_block"]);
+        Tile::registerTile(BlockEntityDaylightDetector::class, ["DaylightDetector", "minecraft:daylight_detector"]);
         Tile::registerTile(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
         Tile::registerTile(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
         Tile::registerTile(BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
         Tile::registerTile(BlockEntityNoteBlock::class, ["NoteBlock", "minecraft:note_block"]);
         Tile::registerTile(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
-        Tile::registerTile(BlockEntityRedstoneComparator::class, ["Comparator", "minecraft:comparator"]);
         //Tile::registerTile(BlockEntityPistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
+        Tile::registerTile(BlockEntityRedstoneComparator::class, ["Comparator", "minecraft:comparator"]);
     }
 
     private function initItems() : void {

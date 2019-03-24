@@ -116,7 +116,11 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
         $this->addNameSpawnData($nbt);
     }
     
-    public function onUpdate() : bool{
+    public function onUpdate() : bool {
+        if ($this->isClosed()) {
+            return false;
+        }
+
         if ($this->isRepeating()) {
             $block = $this->getBlock();
             if (!($block instanceof BlockCommand)) {

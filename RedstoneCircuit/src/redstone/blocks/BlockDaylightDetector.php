@@ -5,6 +5,7 @@ namespace redstone\blocks;
 use pocketmine\Player;
 
 use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 use pocketmine\block\DaylightSensor;
 
 use pocketmine\item\Item;

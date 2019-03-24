@@ -3,15 +3,21 @@
 namespace redstone\blockEntities;
 
 use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
+use pocketmine\block\Sapling;
 
 use pocketmine\entity\Entity;
+use pocketmine\entity\Living;
 
 use pocketmine\inventory\InventoryHolder;
 
 use pocketmine\item\Item;
+use pocketmine\item\Armor;
+use pocketmine\item\Crops;
 use pocketmine\item\ProjectileItem;
 
 use pocketmine\math\Vector3;
+use pocketmine\math\AxisAlignedBB;
 
 use pocketmine\nbt\tag\CompoundTag;
 
@@ -24,6 +30,8 @@ use pocketmine\tile\Nameable;
 use pocketmine\tile\NameableTrait;
 use pocketmine\tile\Tile;
 use pocketmine\tile\Spawnable;
+
+use pocketmine\utils\Random;
 
 
 use redstone\inventories\DispenserInventory;
@@ -81,7 +89,8 @@ class BlockEntityDispenser extends Spawnable implements InventoryHolder, Contain
 
         $slot = $random[mt_rand(0, count($random) - 1)];
         $item = $inventory->getItem($slot);
-        $drop = clone($item);
+
+        $drop = clone $item;
         $drop->setCount(1);
 
         $block = $this->getBlock();
@@ -98,11 +107,17 @@ class BlockEntityDispenser extends Spawnable implements InventoryHolder, Contain
 
         $motion = new Vector3();
         $motion = $motion->getSide($damage);
-        $pos = new Vector3($this->x + $motion->x * 2 + 0.5, $this->y + ($motion->y < 0 ? $motion->y : 0.5), $this->z + $motion->z * 2 + 0.5);
+        $pos = new Vector3($this->x + $motion->x + 0.5, $this->y + $motion->y + 0.5, $this->z + $motion->z + 0.5);
+        if ($motion->y <= 0) {
+            $motion->y = 0.2;
+        }
 
-        /*
         if ($drop instanceof ProjectileItem) {
-            $nbt = Entity::createBaseNBT($this, $motion, 0, 0);
+            $nbt = Entity::createBaseNBT($pos, $motion, 0, 0);
+
+            $method = new \ReflectionMethod(get_class($drop), 'addExtraTags');
+            $method->setAccessible(true);
+            $method->invoke($drop, $nbt);
 
             $projectile = Entity::createEntity($drop->getProjectileEntityType(), $this->getLevel(), $nbt);
             if($projectile !== null){
@@ -110,9 +125,99 @@ class BlockEntityDispenser extends Spawnable implements InventoryHolder, Contain
             }
             $projectile->spawnToAll();
             $this->level->broadcastLevelSoundEvent($this, LevelSoundEventPacket::SOUND_THROW, 0);
+            $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
             return;
         }
-        */
+
+        if ($drop instanceof Armor) {
+            $p = $this->getSide($damage);
+            $area = new AxisAlignedBB($p->x, $p->y, $p->z, $p->x + 1, $p->y + 1, $p->z + 1);
+            $entities = $this->getLevel()->getNearbyEntities($area);
+            for ($i = 0; $i < count($entities); ++$i) {
+                $entity = $entities[$i];
+                if (!($entity instanceof Living)) {
+                    continue;
+                }
+
+                $id = $drop->getId();
+                if ($id == 86 || $id == 298 || $id == 302 || $id == 306 || $id == 310 || $id == 314 || $id == 397 || $id == 469) {
+                    $armor = $entity->getArmorInventory()->getHelmet();
+                    if ($armor->getId() != 0) {
+                        continue;
+                    }
+                    $entity->getArmorInventory()->setHelmet($drop);
+                    $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
+                    return;
+                } else if ($id == 299 || $id == 303 || $id == 307 || $id == 311 || $id == 315) {
+                    $armor = $entity->getArmorInventory()->getChestplate();
+                    if ($armor->getId() != 0) {
+                        continue;
+                    }
+                    $entity->getArmorInventory()->setChestplate($drop);
+                    $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
+                    return;
+                } else if ($id == 300 || $id == 304 || $id == 308 || $id == 312 || $id == 316) {
+                    $armor = $entity->getArmorInventory()->getLeggings();
+                    if ($armor->getId() != 0) {
+                        continue;
+                    }
+                    $entity->getArmorInventory()->setLeggings($drop);
+                    $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
+                    return;
+                } else if ($id == 301 || $id == 305 || $id == 309 || $id == 313 || $id == 317) {
+                    $armor = $entity->getArmorInventory()->getBoots();
+                    if ($armor->getId() != 0) {
+                        continue;
+                    }
+                    $entity->getArmorInventory()->setBoots($drop);
+                    $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
+                    return;
+                }
+            }
+        }
+
+        if ($drop->getId() == 46) {
+            $mot = (new Random())->nextSignedFloat() * M_PI * 2;
+            $nbt = Entity::createBaseNBT($pos, new Vector3(-sin($mot) * 0.02, 0.2, -cos($mot) * 0.02));
+            $nbt->setShort("Fuse", 80);
+
+            $tnt = Entity::createEntity("PrimedTNT", $this->getLevel(), $nbt);
+
+            if($tnt !== null){
+                $tnt->spawnToAll();
+            }
+            return;
+        }
+
+        if ($drop->getId() == 259) {
+            $drop->applyDamage(1);
+            $inventory->setItem($slot, $drop);
+			$this->getLevel()->setBlock($this->getSide($damage), BlockFactory::get(Block::FIRE), true);
+            $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
+            return;
+        }
+
+        if ($drop->getId() == 262) {
+            $motion = $motion->multiply(1.3);
+            $nbt = Entity::createBaseNBT($pos, $motion, 0, 0);
+            $entity = Entity::createEntity("Arrow", $this->getLevel(), $nbt, null, false);
+            $entity->spawnToAll();
+            $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
+            return;
+        }
+
+        if ($drop->getId() == 351 && $drop->getDamage() == 15) {
+            $side = $this->getLevel()->getBlock($this->getSide($damage));
+            if ($side instanceof Crops || $side instanceof Sapling) {
+                $side->onActivate($drop);
+                $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
+            } else {
+                $item->setCount($item->setCount() + 1);
+                $inventory->setItem($slot, $item);
+                $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK_FAIL, 1000);
+            }
+            return;
+        }
 
         if ($drop->getId() == 325) {
             $side = $block->getSide($damage);

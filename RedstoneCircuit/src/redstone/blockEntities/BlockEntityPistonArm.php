@@ -43,9 +43,7 @@ class BlockEntityPistonArm extends Spawnable {
 
     public function onUpdate() : bool {
         if ($this->c > 0) {
-            echo 2;
             if ($this->c == 2) {
-                echo 3;
                 $pk = new LevelSoundEventPacket();
                 $pk->sound = 84;
                 $pk->position = $this;

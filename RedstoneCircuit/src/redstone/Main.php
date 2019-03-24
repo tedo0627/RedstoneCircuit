@@ -30,8 +30,8 @@ use redstone\blocks\BlockButtonWooden;
 use redstone\blocks\BlockCommand;
 use redstone\blocks\BlockCommandChain;
 use redstone\blocks\BlockCommandRepeating;
-use redstone\blocks\BlockDayLightDetector;
-use redstone\blocks\BlockDayLightDetectorInverted;
+use redstone\blocks\BlockDaylightDetector;
+use redstone\blocks\BlockDaylightDetectorInverted;
 use redstone\blocks\BlockDispenser;
 use redstone\blocks\BlockDropper;
 use redstone\blocks\BlockFenceGate;
@@ -130,8 +130,8 @@ class Main extends PluginBase {
         BlockFactory::registerBlock(new BlockWeightedPressurePlateLight(), true);
         BlockFactory::registerBlock(new BlockWeightedPressurePlateHeavy(), true);
 
-        BlockFactory::registerBlock(new BlockDayLightDetector(), true);
-        BlockFactory::registerBlock(new BlockDayLightDetectorInverted(), true);
+        BlockFactory::registerBlock(new BlockDaylightDetector(), true);
+        BlockFactory::registerBlock(new BlockDaylightDetectorInverted(), true);
 
         BlockFactory::registerBlock(new BlockObserver(), true);
 

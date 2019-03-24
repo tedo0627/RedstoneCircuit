@@ -24,12 +24,7 @@ class ScheduledBlockUpdateLoader {
     public function __construct() {
         $main = Main::getInstance();
 
-        $main->saveDefaultConfig();
-        $main->reloadConfig();
-
-        $config = new Config($main->getDataFolder() . "config.yml", Config::YAML);
-
-        $this->isActivate = $config->get("isSaveScheduledBlockUpdate");
+        $this->isActivate = $main->getCustomConfig()->isSaveScheduledBlockUpdate();
         if (!$this->isActivate) {
             return;
         }

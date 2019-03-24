@@ -11,6 +11,8 @@ use pocketmine\network\mcpe\protocol\CommandBlockUpdatePacket;
 use pocketmine\network\mcpe\protocol\PlayerActionPacket;
 
 
+use redstone\Main;
+
 use redstone\blockEntities\BlockEntityCommandBlock;
 
 use redstone\blocks\BlockNote;
@@ -28,6 +30,11 @@ class EventListener implements Listener {
             }
         } elseif ($packet instanceof CommandBlockUpdatePacket) {
             $player = $event->getPlayer();
+            if (!Main::getInstance()->getCustomConfig()->isCommandBlockEnabled()) {
+                $player->sendMessage("Command block was not allowed.");
+                return;
+            }
+
             if (!$player->isOp() || !$player->isCreative()) {
                 return;
             }

@@ -66,6 +66,7 @@ use redstone\blocks\BlockWoodenDoor;
 use redstone\listeners\EventListener;
 use redstone\listeners\ScheduledBlockUpdateListener;
 
+use redstone\utils\CustomConfig;
 use redstone\utils\ScheduledBlockUpdateLoader;
 
 class Main extends PluginBase {
@@ -76,10 +77,14 @@ class Main extends PluginBase {
         return Main::$instance;
     }
 
+    private $config;
+
     private $scheduledBlockUpdateLoader;
 
     public function onEnable() {
         Main::$instance = $this;
+
+        $this->config = new CustomConfig();
 
         $this->scheduledBlockUpdateLoader = new ScheduledBlockUpdateLoader();
 
@@ -99,6 +104,10 @@ class Main extends PluginBase {
         foreach($this->getServer()->getLevels() as $level){
             $this->scheduledBlockUpdateLoader->saveLevel($level);
         }
+    }
+
+    public function getCustomConfig() : CustomConfig {
+        return $this->config;
     }
 
     public function getScheduledBlockUpdateLoader() : ScheduledBlockUpdateLoader {

@@ -242,6 +242,21 @@ class BlockEntityDispenser extends Spawnable implements InventoryHolder, Contain
             }
         }
 
+        if ($drop->getid() == 383) {
+            $nbt = Entity::createBaseNBT($this->getSide($damage)->add(0.5, 0, 0.5), null, lcg_value() * 360, 0);
+
+            if($drop->hasCustomName()){
+                $nbt->setString("CustomName", $drop->getCustomName());
+            }
+
+            $entity = Entity::createEntity($drop->getDamage(), $this->getLevel(), $nbt);
+
+            if($entity instanceof Entity){
+                $entity->spawnToAll();
+                return;
+            }
+        }
+
         $this->level->dropItem($pos, $drop, $motion->multiply(0.3));
         $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
     }

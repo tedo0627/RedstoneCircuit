@@ -212,9 +212,9 @@ class BlockEntityDispenser extends Spawnable implements InventoryHolder, Contain
                 $side->onActivate($drop);
                 $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
             } else {
-                $item->setCount($item->setCount() + 1);
+                $item->setCount($item->getCount() + 1);
                 $inventory->setItem($slot, $item);
-                $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK_FAIL, 1000);
+                $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK_FAIL, 1200);
             }
             return;
         }

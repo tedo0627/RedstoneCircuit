@@ -6,12 +6,13 @@ use pocketmine\plugin\PluginBase;
 
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
+use pocketmine\block\BlockIdentifier as BID;
 
-use pocketmine\item\Item;
+use pocketmine\item\{Item, ItemIds};
 use pocketmine\item\ItemBlock;
 use pocketmine\item\ItemFactory;
 
-use pocketmine\tile\Tile;
+use pocketmine\tile\{Tile, TileFactory};
 
 
 use redstone\blockEntities\BlockEntityChest;
@@ -115,99 +116,94 @@ class Main extends PluginBase {
     }
 
     private function initBlocks() : void {
-        BlockFactory::registerBlock(new BlockRedstoneWire(), true);
+		BlockFactory::register(new BlockRedstoneWire(new BID(Block::REDSTONE_WIRE, ItemIds::REDSTONE), "Redstone Wire"), true);
 
-        BlockFactory::registerBlock(new BlockRedstoneTorch(), true);
-        BlockFactory::registerBlock(new BlockRedstoneTorchUnlit(), true);
+		BlockFactory::register(new BlockRedstoneTorch(new BID(Block::REDSTONE_TORCH), "Redstone Torch"), true);
+		BlockFactory::register(new BlockRedstoneTorchUnlit(new BID(Block::UNLIT_REDSTONE_TORCH), "Unlit Redstone Torch"), true);
 
-        BlockFactory::registerBlock(new BlockRedstoneRepeaterPowered(), true);
-        BlockFactory::registerBlock(new BlockRedstoneRepeaterUnpowered(), true);
+		BlockFactory::register(new BlockRedstoneRepeaterPowered(new BID(Block::POWERED_REPEATER), "Powered Repeater"), true);
+		BlockFactory::register(new BlockRedstoneRepeaterUnpowered(new BID(Block::UNPOWERED_REPEATER, ItemIds::REPEATER), "Unpowered Repeater"), true);
 
-        BlockFactory::registerBlock(new BlockRedstoneComparatorPowered(), true);
-        BlockFactory::registerBlock(new BlockRedstoneComparatorUnpowered(), true);
+		BlockFactory::register(new BlockRedstoneComparatorPowered(new BID(Block::POWERED_COMPARATOR), "Powered Comparator"), true);
+		BlockFactory::register(new BlockRedstoneComparatorUnpowered(new BID(Block::UNPOWERED_COMPARATOR, ItemIds::COMPARATOR), "Unpowered Comparator"), true);
 
 
-        BlockFactory::registerBlock(new BlockRedstone(), true);
+		BlockFactory::register(new BlockRedstone(new BID(Block::REDSTONE_BLOCK), "Redstone Block"), true);
 
-        BlockFactory::registerBlock(new BlockLever(), true);
+		BlockFactory::register(new BlockLever(new BID(Block::LEVER), "Lever"), true);
 
-        BlockFactory::registerBlock(new BlockButtonStone(), true);
-        BlockFactory::registerBlock(new BlockButtonWooden(), true);
+		BlockFactory::register(new BlockButtonStone(new BID(Block::STONE_BUTTON), "Stone Button"), true);
+		BlockFactory::register(new BlockButtonWooden(new BID(Block::WOODEN_BUTTON), "Wooden Button"), true);
 
-        BlockFactory::registerBlock(new BlockPressurePlateStone(), true);
-        BlockFactory::registerBlock(new BlockPressurePlateWooden(), true);
-        BlockFactory::registerBlock(new BlockWeightedPressurePlateLight(), true);
-        BlockFactory::registerBlock(new BlockWeightedPressurePlateHeavy(), true);
+		BlockFactory::register(new BlockPressurePlateStone(new BID(Block::STONE_PRESSURE_PLATE), "Stone Pressure Plate"), true);
+		BlockFactory::register(new BlockPressurePlateWooden(new BID(Block::WOODEN_PRESSURE_PLATE), "Wooden Pressure Plate"), true);
+		BlockFactory::register(new BlockWeightedPressurePlateHeavy(new BID(Block::HEAVY_WEIGHTED_PRESSURE_PLATE), "Heavy Weighted Pressure Plate"), true);
+		BlockFactory::register(new BlockWeightedPressurePlateLight(new BID(Block::LIGHT_WEIGHTED_PRESSURE_PLATE), "Light Weighted Pressure Plate"), true);
 
-        BlockFactory::registerBlock(new BlockDaylightDetector(), true);
-        BlockFactory::registerBlock(new BlockDaylightDetectorInverted(), true);
-
-        BlockFactory::registerBlock(new BlockObserver(), true);
-
-        BlockFactory::registerBlock(new BlockTrappedChest(), true);
+		BlockFactory::register(new BlockDayLightDetector(new BID(Block::DAYLIGHT_SENSOR), "Daylight Sensor"), true);
+        BlockFactory::register(new BlockDayLightDetectorInverted(ne BID(Block::DAYLIGHT_DETECTOR_INVERTED), "DayLightDetectorInverted"), true);
+        BlockFactory::register(new BlockObserver(new BID(Block::OBSERVER), "Observer"), true);
+        BlockFactory::register(new BlockTrappedChest(new BID(Block::TRAPPED_CHEST), "Trapped Chest"), true);
         
-        BlockFactory::registerBlock(new BlockTripwireHook(), true);
-        BlockFactory::registerBlock(new BlockTripwire(), true);
+        BlockFactory::registerBlock(new BlockTripwireHook(new BID(Block::TRIPWIRE_HOOK), "Tripwire Hook"), true);
+        BlockFactory::registerBlock(new BlockTripwire(new BID(Block::TRIPWIRE), "Tripwire"), true);
 
+		BlockFactory::register(new BlockRedstoneLamp(new BID(Block::REDSTONE_LAMP), "Redstone Lamp"), true);
+		BlockFactory::register(new BlockRedstoneLampLit(new BID(Block::LIT_REDSTONE_LAMP), "Lit Redstone Lamp"), true);
 
-        BlockFactory::registerBlock(new BlockRedstoneLamp(), true);
-        BlockFactory::registerBlock(new BlockRedstoneLampLit(), true);
+		BlockFactory::register(new BlockNote(new BID(Block::NOTEBLOCK), "Note Block"), true);
 
-        BlockFactory::registerBlock(new BlockNote(), true);
+		BlockFactory::register(new BlockDropper(new BID(Block::DROPPER), "Dropper"), true);
+		BlockFactory::register(new BlockDispenser(new BID(Block::DISPENSER), "Dispenser"), true);
+		
+		//BlockFactory::registerBlock(new BlockPiston(), true);
 
-        BlockFactory::registerBlock(new BlockDropper(), true);
-        BlockFactory::registerBlock(new BlockDispenser(), true);
+		BlockFactory::register(new BlockCommand(new BID(Block::COMMAND_BLOCK), "Command Block"), true);
+		BlockFactory::register(new BlockCommandRepeating(new BID(Block::REPEATING_COMMAND_BLOCK), "Command Block Repeating"), true);
+		BlockFactory::register(new BlockCommandChain(new BID(Block::CHAIN_COMMAND_BLOCK), "Command Block Chain"), true);
 
-        BlockFactory::registerBlock(new BlockHopper(), true);
+		BlockFactory::register(new BlockTNT(new BID(Block::TNT), "TNT"), true);
 
-        //BlockFactory::registerBlock(new BlockPiston(), true);
+		BlockFactory::register(new BlockWoodenDoor(new BID(Block::OAK_DOOR_BLOCK, 0, ItemIds::OAK_DOOR), "Oak Door"), true);
+		BlockFactory::register(new BlockWoodenDoor(new BID(Block::SPRUCE_DOOR_BLOCK, 0, ItemIds::SPRUCE_DOOR), "Spruce Door"), true);
+		BlockFactory::register(new BlockWoodenDoor(new BID(Block::BIRCH_DOOR_BLOCK, 0, ItemIds::BIRCH_DOOR), "Wooden Door"), true);
+		BlockFactory::register(new BlockWoodenDoor(new BID(Block::JUNGLE_DOOR_BLOCK, 0, ItemIds::JUNGLE_DOOR), "Jungle Door"), true);
+		BlockFactory::register(new BlockWoodenDoor(new BID(Block::ACACIA_DOOR_BLOCK, 0, ItemIds::ACACIA_DOOR), "Acacia Door"), true);
+		BlockFactory::register(new BlockWoodenDoor(new BID(Block::DARK_OAK_DOOR_BLOCK, 0, ItemIds::DARK_OAK_DOOR), "Dark Oak Door"), true);
 
-        BlockFactory::registerBlock(new BlockCommand(), true);
-        BlockFactory::registerBlock(new BlockCommandRepeating(), true);
-        BlockFactory::registerBlock(new BlockCommandChain(), true);
+		BlockFactory::register(new BlockIronDoor(new BID(Block::IRON_DOOR_BLOCK, 0, ItemIds::IRON_DOOR), "Iron Door"), true);
 
-        BlockFactory::registerBlock(new BlockTNT(), true);
-
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::OAK_DOOR_BLOCK, 0, "Oak Door", Item::OAK_DOOR), true);
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::SPRUCE_DOOR_BLOCK, 0, "Spruce Door", Item::SPRUCE_DOOR), true);
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::BIRCH_DOOR_BLOCK, 0, "Birch Door", Item::BIRCH_DOOR), true);
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::JUNGLE_DOOR_BLOCK, 0, "Jungle Door", Item::JUNGLE_DOOR), true);
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::ACACIA_DOOR_BLOCK, 0, "Acacia Door", Item::ACACIA_DOOR), true);
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::DARK_OAK_DOOR_BLOCK, 0, "Dark Oak Door", Item::DARK_OAK_DOOR), true);
-
-        BlockFactory::registerBlock(new BlockIronDoor(), true);
-
-        BlockFactory::registerBlock(new BlockTrapdoor(), true);
-        BlockFactory::registerBlock(new BlockIronTrapdoor(), true);
-        
-        BlockFactory::registerBlock(new BlockFenceGate(Block::OAK_FENCE_GATE, 0, "Oak Fence Gate"), true);
-        BlockFactory::registerBlock(new BlockFenceGate(Block::SPRUCE_FENCE_GATE, 0, "Spruce Fence Gate"), true);
-        BlockFactory::registerBlock(new BlockFenceGate(Block::BIRCH_FENCE_GATE, 0, "Birch Fence Gate"), true);
-        BlockFactory::registerBlock(new BlockFenceGate(Block::JUNGLE_FENCE_GATE, 0, "Jungle Fence Gate"), true);
-        BlockFactory::registerBlock(new BlockFenceGate(Block::DARK_OAK_FENCE_GATE, 0, "Dark Oak Fence Gate"), true);
-        BlockFactory::registerBlock(new BlockFenceGate(Block::ACACIA_FENCE_GATE, 0, "Acacia Fence Gate"), true);
+		BlockFactory::register(new BlockTrapdoor(new BID(Block::TRAPDOOR), "Trapdoor"), true);
+		BlockFactory::register(new BlockIronTrapdoor(new BID(Block::IRON_TRAPDOOR), "Iron Trapdoor"), true);
+		
+		BlockFactory::register(new BlockFenceGate(new BID(Block::OAK_FENCE_GATE, 0), "Oak Fence Gate"), true);
+		BlockFactory::register(new BlockFenceGate(new BID(Block::SPRUCE_FENCE_GATE, 0), "Spruce Fence Gate"), true);
+		BlockFactory::register(new BlockFenceGate(new BID(Block::BIRCH_FENCE_GATE, 0), "Birch Fence Gate"), true);
+		BlockFactory::register(new BlockFenceGate(new BID(Block::JUNGLE_FENCE_GATE, 0), "Jungle Fence Gate"), true);
+		BlockFactory::register(new BlockFenceGate(new BID(Block::DARK_OAK_FENCE_GATE, 0), "Dark Oak Fence Gate"), true);
+		BlockFactory::register(new BlockFenceGate(new BID(Block::ACACIA_FENCE_GATE, 0), "Acacia Fence Gate"), true);
     }
 
     private function initBlockEntities() : void {
-        Tile::registerTile(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
-        Tile::registerTile(BlockEntityCommandBlock::class, ["CommandBlock", "minecraft:command_block"]);
-        Tile::registerTile(BlockEntityDaylightDetector::class, ["DaylightDetector", "minecraft:daylight_detector"]);
-        Tile::registerTile(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
-        Tile::registerTile(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
-        Tile::registerTile(BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
-        Tile::registerTile(BlockEntityNoteBlock::class, ["NoteBlock", "minecraft:note_block"]);
-        Tile::registerTile(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
-        //Tile::registerTile(BlockEntityPistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
-        Tile::registerTile(BlockEntityRedstoneComparator::class, ["Comparator", "minecraft:comparator"]);
+        TileFactory::register(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
+        TileFactory::register(BlockEntityCommandBlock::class, ["CommandBlock", "minecraft:command_block"]);
+        TileFactory::register(BlockEntityDaylightDetector::class, ["DaylightDetector", "minecraft:daylight_detector"]);
+        TileFactory::register(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
+        TileFactory::register(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
+        TileFactory::register(BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
+        TileFactory::register(BlockEntityNoteBlock::class, ["NoteBlock", "minecraft:note_block"]);
+        TileFactory::register(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
+        //TileFactory::register(BlockEntityPistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
+        TileFactory::register(BlockEntityRedstoneComparator::class, ["Comparator", "minecraft:comparator"]);
     }
 
     private function initItems() : void {
-        ItemFactory::registerItem(new ItemBlock(Block::UNPOWERED_REPEATER, 0, Item::REPEATER), true);
-        ItemFactory::registerItem(new ItemBlock(Block::UNPOWERED_COMPARATOR, 0, Item::COMPARATOR), true);
-        ItemFactory::registerItem(new ItemBlock(Block::COMMAND_BLOCK, 0, Item::COMMAND_BLOCK), true);
-        ItemFactory::registerItem(new ItemBlock(Block::DROPPER, 0, Item::DROPPER), true);
-        ItemFactory::registerItem(new ItemBlock(Block::DISPENSER, 0, Item::DISPENSER), true);
-        ItemFactory::registerItem(new ItemBlock(Block::OBSERVER, 0, Item::OBSERVER), true);
+		ItemFactory::register(new ItemBlock(Block::UNPOWERED_REPEATER, 0, Item::REPEATER), true);
+		ItemFactory::register(new ItemBlock(Block::UNPOWERED_COMPARATOR, 0, Item::COMPARATOR), true);
+		ItemFactory::register(new ItemBlock(Block::COMMAND_BLOCK, 0, Item::COMMAND_BLOCK), true);
+		ItemFactory::register(new ItemBlock(Block::DROPPER, 0, Item::DROPPER), true);
+		ItemFactory::register(new ItemBlock(Block::DISPENSER, 0, Item::DISPENSER), true);
+        ItemFactory::register(new ItemBlock(Block::OBSERVER, 0, Item::OBSERVER), true);
         //ItemFactory::registerItem(new ItemBlock(Block::PISTON, 0, Item::PISTON), true);
     }
 

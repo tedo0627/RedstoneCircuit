@@ -15,7 +15,7 @@ class BlockRedstoneComparatorPowered extends BlockRedstoneComparatorUnpowered {
     }
 
     public function onScheduledUpdate() : void {
-        $comparator = $this->getBlockENtity();
+        $comparator = $this->getBlockEntity();
         $power = $comparator->recalculateOutputPower();
         $comparator->setOutputSignal($power);
 

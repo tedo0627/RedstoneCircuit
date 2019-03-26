@@ -18,11 +18,11 @@ class CustomConfig {
         $this->config = new Config($main->getDataFolder() . "config.yml", Config::YAML);
     }
 
-    public function isSaveScheduledBlockUpdate() {
+    public function isSaveScheduledBlockUpdate() : bool {
         return $this->config->get("isSaveScheduledBlockUpdate", true);
     }
 
-    public function isCommandBlockEnabled() {
+    public function isCommandBlockEnabled() : bool {
         return $this->config->get("enable-command-block", true);
     }
 }

@@ -34,6 +34,14 @@ class BlockHopper extends Solid implements IRedstone {
         return 0;
     }
 
+    public function isTransparent() : bool{
+        return true;
+    }
+
+    public function getLightFilter() : int{
+        return 0;
+    }
+
     public function getToolType() : int {
         return BlockToolType::TYPE_PICKAXE;
     }

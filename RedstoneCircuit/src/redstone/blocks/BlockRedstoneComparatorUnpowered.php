@@ -14,7 +14,6 @@ use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 
 use pocketmine\tile\Tile;
-use pocketmine\tile\Container;
 
 
 use redstone\blockEntities\BlockEntityRedstoneComparator;
@@ -44,6 +43,7 @@ class BlockRedstoneComparatorUnpowered extends BlockRedstoneDiode {
         ];
         $this->setDamage($faces[$player instanceof Player ? $player->getDirection() : 0]);
         $this->level->setBlock($this, $this);
+        Tile::createTile("BlockEntityRedstoneComparator", $this->getLevel(), BlockEntityRedstoneComparator::createNBT($this));
         $this->updateAroundDiodeRedstone($this);
         return true;
     }
@@ -62,10 +62,9 @@ class BlockRedstoneComparatorUnpowered extends BlockRedstoneDiode {
     }
 
     public function onScheduledUpdate() : void {
-        $this->recalculateoutputPower();
-        if (!$this->isSidePowered($this->asVector3(), $this->getInputFace())) {
-            return;
-        }
+        $comparator = $this->getBlockENtity();
+        $power = $comparator->recalculateOutputPower();
+        $comparator->setOutputSignal($power);
 
         if ($this->getOutputPower() <= 0) {
             return;
@@ -98,46 +97,12 @@ class BlockRedstoneComparatorUnpowered extends BlockRedstoneDiode {
         return $this->getBlockEntity()->getOutputSignal();
     }
 
-    protected function recalculateoutputPower() : void {
-        $power = $this->getRedstonePower($this->asVector3()->getSide($this->getInputFace()), $this->getInputFace());
-
-        /* TODO
-        $tile = $this->level->getTile($this->asVector3()->getSide($this->getInputFace()));
-        if ($tile instanceof Container) {
-            $inventory = $tile->getInventory();
-        }
-        */
-
-        $sidePower = 0;
-        $face = Facing::rotate($this->getInputFace(), Facing::AXIS_Y, false);
-        $block = $this->getSide($face);
-        if ($block instanceof BlockRedstoneDiode || $block instanceof BlockRedstoneWire) {
-            $sidePower = max($sidePower, $block->getWeakPower($face));
-        }
-
-        $face = Facing::opposite($face);
-        $block = $this->getSide($face);
-        if ($block instanceof BlockRedstoneDiode || $block instanceof BlockRedstoneWire) {
-            $sidePower = max($sidePower, $block->getWeakPower($face));
-        }
-
-        $p = 0;
-        if ($this->isComparisonMode()) {
-            if ($power >= $sidePower) {
-                $p = $power;
-            }
-        } else {
-            if ($power - $sidePower > 0) {
-                $p = $power - $sidePower;
-            }
-        }
-        
-        $this->getBlockEntity()->setOutputSignal($p);
-    }
-
     public function onRedstoneUpdate() : void {
-        if ($this->isSidePowered($this->asVector3(), $this->getInputFace())) {
-            $this->level->scheduleDelayedBlockUpdate($this, 2);
+        $comparator = $this->getBlockEntity();
+        if ($comparator->getOutputSignal() == $comparator->recalculateOutputPower()) {
+            return;
         }
+
+        $this->getLevel()->scheduleDelayedBlockUpdate($this, 2);
     }
 }

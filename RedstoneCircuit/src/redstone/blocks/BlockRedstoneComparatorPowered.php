@@ -15,7 +15,10 @@ class BlockRedstoneComparatorPowered extends BlockRedstoneComparatorUnpowered {
     }
 
     public function onScheduledUpdate() : void {
-        $this->recalculateoutputPower();
+        $comparator = $this->getBlockENtity();
+        $power = $comparator->recalculateOutputPower();
+        $comparator->setOutputSignal($power);
+
         if ($this->getOutputPower() <= 0) {
             $this->getLevel()->setBlock($this, new BlockRedstoneComparatorUnpowered($this->getDamage()));
         }
@@ -35,9 +38,5 @@ class BlockRedstoneComparatorPowered extends BlockRedstoneComparatorUnpowered {
 
     public function isPowerSource() : bool {
         return true;
-    }
-
-    public function onRedstoneUpdate() : void {
-        $this->level->scheduleDelayedBlockUpdate($this, 2);
     }
 }

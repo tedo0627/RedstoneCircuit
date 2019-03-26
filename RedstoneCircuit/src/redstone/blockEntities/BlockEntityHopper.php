@@ -2,6 +2,8 @@
 
 namespace redstone\blockEntities;
 
+use pocketmine\Server;
+
 use pocketmine\entity\object\ItemEntity;
 
 use pocketmine\inventory\InventoryHolder;
@@ -10,6 +12,7 @@ use pocketmine\nbt\tag\CompoundTag;
 
 use pocketmine\tile\Container;
 use pocketmine\tile\ContainerTrait;
+use pocketmine\tile\Furnace;
 use pocketmine\tile\Nameable;
 use pocketmine\tile\NameableTrait;
 use pocketmine\tile\Spawnable;
@@ -101,16 +104,30 @@ class BlockEntityHopper extends Spawnable implements InventoryHolder, Container,
             $entity->kill();
         }
 
-        $this->transferCooldown--;
-        if ($this->transferCooldown > 0) {
+        $time = Server::getInstance()->getTick();
+        if ($time % 8 != 0) {
             return true;
         }
 
-        $change = false;
+        if ($this->transferCooldown == $time) {
+            return true;
+        }
+        $this->transferCooldown = $time;
+
+        $side = $this->getSide(Facing::DOWN);
+        $tile = $this->getLevel()->getTile($side);
+        if ($tile instanceof BlockEntityHopper) {
+            $tile->onUpdate();
+        }
 
         $side = $this->getSide($block->getFace());
         $tile = $this->getLevel()->getTile($side);
         if ($tile != null && $tile instanceof InventoryHolder) {
+            if ($tile instanceof BlockEntityHopper) {
+                if (count($this->getInventory()->getContents()) > 0 && count($tile->getInventory()->getContents()) == 0) {
+                    $tile->onUpdate();
+                }
+            }
             $hopper = $this->getInventory();
             $inventory = $tile->getInventory();
             for ($i = 0; $i < $hopper->getSize(); ++$i) {
@@ -121,14 +138,38 @@ class BlockEntityHopper extends Spawnable implements InventoryHolder, Container,
 
                 $cloneItem = clone $item;
                 $cloneItem->setCount(1);
-                if (!$inventory->canAddItem($cloneItem)) {
-                    continue;
+                if ($tile instanceof Furnace) {
+                    $slot = 0;
+                    if ($block->getFace() != Facing::DOWN) {
+                        $slot = 1;
+                    }
+                    $it = $inventory->getItem($slot);
+                    if ($it->getId() != 0) {
+                        if (!$cloneItem->equals($it)) {
+                            continue;
+                        }
+
+                        if ($it->getCount() >= 64) {
+                            continue;
+                        }
+                        $it->setCount($it->getCount() + 1);
+                    } else {
+                        $it = $cloneItem;
+                    }
+
+                    $inventory->setItem($slot, $it);
+                    $item->setCount($item->getCount() - 1);
+                    $hopper->setItem($i, $item);
+                    break;
+                } else {
+                    if (!$inventory->canAddItem($cloneItem)) {
+                        continue;
+                    }
                 }
 
                 $inventory->addItem($cloneItem);
                 $item->setCount($item->getCount() - 1);
                 $hopper->setItem($i, $item);
-                $change = true;
                 break;
             }
         }
@@ -138,6 +179,24 @@ class BlockEntityHopper extends Spawnable implements InventoryHolder, Container,
         if ($tile != null && $tile instanceof InventoryHolder) {
             $hopper = $this->getInventory();
             $inventory = $tile->getInventory();
+            if ($tile instanceof Furnace) {
+                $item = $inventory->getResult();
+                if ($item->getId() == 0) {
+                    return true;
+                }
+
+                $cloneItem = clone $item;
+                $cloneItem->setCount(1);
+                if (!$hopper->canAddItem($cloneItem)) {
+                    return true;
+                }
+
+                $hopper->addItem($cloneItem);
+                $item->setCount($item->getCount() - 1);
+                $inventory->setResult($item);
+                return true;
+            }
+
             for ($i = 0; $i < $inventory->getSize(); ++$i) {
                 $item = $inventory->getItem($i);
                 if ($item->getId() == 0) {
@@ -153,13 +212,8 @@ class BlockEntityHopper extends Spawnable implements InventoryHolder, Container,
                 $hopper->addItem($cloneItem);
                 $item->setCount($item->getCount() - 1);
                 $inventory->setItem($i, $item);
-                $change = true;
                 break;
             }
-        }
-
-        if ($change) {
-            $this->transferCooldown = 8;
         }
         return true;
     }

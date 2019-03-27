@@ -34,6 +34,8 @@ use pocketmine\tile\Spawnable;
 use pocketmine\utils\Random;
 
 
+use redstone\Main;
+
 use redstone\inventories\DispenserInventory;
 
 class BlockEntityDispenser extends Spawnable implements InventoryHolder, Container, Nameable {
@@ -206,19 +208,6 @@ class BlockEntityDispenser extends Spawnable implements InventoryHolder, Contain
             return;
         }
 
-        if ($drop->getId() == 351 && $drop->getDamage() == 15) {
-            $side = $this->getLevel()->getBlock($this->getSide($damage));
-            if ($side instanceof Crops || $side instanceof Sapling) {
-                $side->onActivate($drop);
-                $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
-            } else {
-                $item->setCount($item->getCount() + 1);
-                $inventory->setItem($slot, $item);
-                $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK_FAIL, 1200);
-            }
-            return;
-        }
-
         if ($drop->getId() == 325) {
             $side = $block->getSide($damage);
             $sideId = $side->getId();
@@ -242,6 +231,19 @@ class BlockEntityDispenser extends Spawnable implements InventoryHolder, Contain
             }
         }
 
+        if ($drop->getId() == 351 && $drop->getDamage() == 15) {
+            $side = $this->getLevel()->getBlock($this->getSide($damage));
+            if ($side instanceof Crops || $side instanceof Sapling) {
+                $side->onActivate($drop);
+                $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK, 1000);
+            } else {
+                $item->setCount($item->getCount() + 1);
+                $inventory->setItem($slot, $item);
+                $this->level->broadcastLevelEvent($this->add(0.5, 0.5, 0.5), LevelEventPacket::EVENT_SOUND_CLICK_FAIL, 1200);
+            }
+            return;
+        }
+
         if ($drop->getid() == 383) {
             $nbt = Entity::createBaseNBT($this->getSide($damage)->add(0.5, 0, 0.5), null, lcg_value() * 360, 0);
 
@@ -252,6 +254,14 @@ class BlockEntityDispenser extends Spawnable implements InventoryHolder, Contain
             $entity = Entity::createEntity($drop->getDamage(), $this->getLevel(), $nbt);
 
             if($entity instanceof Entity){
+                $entity->spawnToAll();
+                return;
+            }
+        }
+
+        if ($drop->getId() == 401) {
+            $entity = Entity::createEntity("FireworksRocket", $this->getLevel(), Entity::createBaseNBT($pos, null, 0, 270), null, $drop);
+            if($entity instanceof Entity) {
                 $entity->spawnToAll();
                 return;
             }

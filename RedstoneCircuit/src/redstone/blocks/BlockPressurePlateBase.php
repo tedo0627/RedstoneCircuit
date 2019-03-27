@@ -76,10 +76,6 @@ abstract class BlockPressurePlateBase extends Transparent implements IRedstone {
 
     public function onScheduledUpdate() : void {
         $damage = $this->computeDamage();
-        if ($damage > 0) {
-            return;
-        }
-
         if ($this->getDamage() != $damage) {
             if ($damage == 0) {
                 $this->level->broadcastLevelSoundEvent($this->add(0.5, 0.5, 0.5), LevelSoundEventPacket::SOUND_POWER_OFF, $this->getOffSoundExtraData());
@@ -88,6 +84,10 @@ abstract class BlockPressurePlateBase extends Transparent implements IRedstone {
             $this->level->setBlock($this, $this);
             $this->updateAroundRedstone($this);
             $this->updateAroundRedstone($this->asVector3()->getSide(Facing::DOWN));
+        }
+
+        if ($damage > 0) {
+            $this->level->scheduleDelayedBlockUpdate($this, $this->getDelay());
         }
     }
 

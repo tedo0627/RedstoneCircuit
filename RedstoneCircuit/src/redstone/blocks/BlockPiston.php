@@ -30,7 +30,6 @@ class BlockPiston extends Solid implements IRedstone {
     public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
         $damage = 0;
         if($player !== null) {
-            $faces = [4, 2, 5, 3];
             $faces = [5, 3, 4, 2];
             $damage = $faces[$player->getDirection()];
             if ($player->getPitch() > 45) {
@@ -42,8 +41,10 @@ class BlockPiston extends Solid implements IRedstone {
 
         $this->setDamage($damage);
         $this->level->setBlock($this, $this, true, true);
-        
-        Tile::createTile("BlockEntityPistonArm", $this->getLevel(), BlockEntityPistonArm::createNBT($this));
+
+        $nbt = BlockEntityPistonArm::createNBT($this);
+        $nbt->setByte("Sticky", $this->isSticky() ? 1 : 0);
+        Tile::createTile("BlockEntityPistonArm", $this->getLevel(), $nbt);
 
         return true;
     }
@@ -54,9 +55,19 @@ class BlockPiston extends Solid implements IRedstone {
         if($tile instanceof BlockEntityPistonArm){
             $arm = $tile;
         }else{
-            $arm = Tile::createTile("BlockEntityPistonArm", $this->getLevel(), BlockEntityPistonArm::createNBT($this));
+            $nbt = BlockEntityPistonArm::createNBT($this);
+            $nbt->setByte("Sticky", $this->isSticky() ? 1 : 0);
+            $arm = Tile::createTile("BlockEntityPistonArm", $this->getLevel(), $nbt);
         }
         return $arm;
+    }
+
+    public function isSticky() : bool {
+        return false;
+    }
+
+    public function getFace() : int {
+        return Facing::opposite($this->getDamage());
     }
     
     public function getStrongPower(int $face) : int {
@@ -72,13 +83,6 @@ class BlockPiston extends Solid implements IRedstone {
     }
 
     public function onRedstoneUpdate() : void {
-        $block = $this->getSide(Facing::opposite($this->getDamage()));
-        if ($block->getId() == 0) {
-            $this->level->setBlock($block, Block::get(34, $this->getDamage()));
-            $arm = $this->getBlockEntity();
-            $arm->c = 4;
-        } else {
-            $this->level->setBlock($block, Block::get(0));
-        }
+        $this->getBlockEntity()->extend($this->isBlockPowered($this->asVector3()));
     }
 }

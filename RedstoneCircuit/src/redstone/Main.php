@@ -197,7 +197,7 @@ class Main extends PluginBase {
         Tile::registerTile(BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
         Tile::registerTile(BlockEntityNoteBlock::class, ["NoteBlock", "minecraft:note_block"]);
         Tile::registerTile(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
-        //Tile::registerTile(BlockEntityPistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
+        Tile::registerTile(BlockEntityPistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
         Tile::registerTile(BlockEntityRedstoneComparator::class, ["Comparator", "minecraft:comparator"]);
     }
 
@@ -208,7 +208,7 @@ class Main extends PluginBase {
         ItemFactory::registerItem(new ItemBlock(Block::DROPPER, 0, Item::DROPPER), true);
         ItemFactory::registerItem(new ItemBlock(Block::DISPENSER, 0, Item::DISPENSER), true);
         ItemFactory::registerItem(new ItemBlock(Block::OBSERVER, 0, Item::OBSERVER), true);
-        //ItemFactory::registerItem(new ItemBlock(Block::PISTON, 0, Item::PISTON), true);
+        ItemFactory::registerItem(new ItemBlock(Block::PISTON, 0, Item::PISTON), true);
     }
 
     private function initCreativeItem() : void {

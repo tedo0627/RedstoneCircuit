@@ -2,6 +2,8 @@
 
 namespace redstone\blocks;
 
+use redstone\utils\Facing;
+
 class BlockWeightedPressurePlateLight extends BlockPressurePlateBase {
 
     protected $id = self::LIGHT_WEIGHTED_PRESSURE_PLATE;
@@ -11,7 +13,7 @@ class BlockWeightedPressurePlateLight extends BlockPressurePlateBase {
     }
 
     public function computeDamage() : int {
-        $count = count($this->level->getNearbyEntities($this->bb()));
+        $count = count($this->getLevel()->getNearbyEntities($this->bb()));
         if ($count > 15) {
             $count = 15;
         }

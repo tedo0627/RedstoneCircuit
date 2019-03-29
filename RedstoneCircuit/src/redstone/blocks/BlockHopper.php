@@ -29,6 +29,10 @@ class BlockHopper extends Solid implements IRedstone {
     public function __construct(int $meta = 0){
         $this->meta = $meta;
     }
+
+    public function getName() : string {
+        return "Hopper";
+    }
     
     public function getVariantBitmask() : int {
         return 0;

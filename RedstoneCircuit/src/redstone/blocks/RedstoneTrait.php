@@ -64,11 +64,15 @@ trait RedstoneTrait {
         return RedstoneUtils::isNormalBlock($block) ? $this->getStrongPowered($pos) : RedstoneUtils::getWeakPower($block, $face);
     }
 
-    public function isBlockPowered(Vector3 $pos) : bool {
+    public function isBlockPowered(Vector3 $pos, ?int $face = null) : bool {
         $direction = Facing::ALL;
         for ($i = 0; $i < count($direction); ++$i) {
-            $face = $direction[$i];
-            if ($this->getRedstonePower($pos->getSide($face), $face) > 0) {
+            $f = $direction[$i];
+            if ($face != null && $face == $f) {
+                continue;
+            }
+
+            if ($this->getRedstonePower($pos->getSide($f), $f) > 0) {
                 return true;
             }
         }

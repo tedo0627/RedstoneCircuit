@@ -9,7 +9,7 @@ use pocketmine\tile\Tile;
 class BlockEntityObserver extends Tile {
 
     private $runtimeId;
-    
+
     protected function readSaveData(CompoundTag $nbt) : void {
         if ($nbt->hasTag("runtimeId")) {
             $this->runtimeId = $nbt->getInt("runtimeId");

@@ -32,7 +32,7 @@ class BlockObserver extends Solid implements IRedstone {
     public function getName() : string {
         return "Observer";
     }
-    
+
     public function getHardness() : float {
         return 3.5;
     }
@@ -44,7 +44,7 @@ class BlockObserver extends Solid implements IRedstone {
     public function getToolHarvestLevel() : int{
         return TieredTool::TIER_WOODEN;
     }
-    
+
     public function getVariantBitmask() : int {
         return 0;
     }
@@ -71,7 +71,13 @@ class BlockObserver extends Solid implements IRedstone {
         Tile::createTile("BlockEntityObserver", $this->getLevel(), $nbt);
         return true;
     }
-    
+
+    public function onBreak(Item $item, Player $player = null) : bool {
+        $this->getLevel()->setBlock($this, BlockFactory::get(Block::AIR));
+        $this->updateAroundDiodeRedstone($this);
+        return true;
+    }
+
     public function onScheduledUpdate() : void {
         $this->setDamage($this->getDamage() ^ 0x08);
         $this->getLevel()->setBlock($this, $this);
@@ -91,7 +97,7 @@ class BlockObserver extends Solid implements IRedstone {
         $observer->setSideRuntimeId($runtimeId);
         $this->level->scheduleDelayedBlockUpdate($this, 2);
 	}
-    
+
     public function getBlockEntity() : BlockEntityObserver {
         $tile = $this->getLevel()->getTile($this);
         $observer = null;

@@ -22,9 +22,17 @@ class BlockPiston extends Solid implements IRedstone {
     use RedstoneTrait;
 
     protected $id = self::PISTON;
-    
+
     public function __construct(int $meta = 0){
         $this->meta = $meta;
+    }
+
+    public function getName() : string {
+        return "Piston";
+    }
+
+    public function getVariantBitmask() : int {
+        return 0;
     }
 
     public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool {
@@ -48,7 +56,7 @@ class BlockPiston extends Solid implements IRedstone {
 
         return true;
     }
-    
+
     public function getBlockEntity() : BlockEntityPistonArm {
         $tile = $this->getLevel()->getTile($this);
         $arm = null;
@@ -67,9 +75,13 @@ class BlockPiston extends Solid implements IRedstone {
     }
 
     public function getFace() : int {
-        return Facing::opposite($this->getDamage());
+        $damage = $this->getDamage();
+        if ($damage == Facing::UP || $damage == Facing::DOWN) {
+            return $damage;
+        }
+        return Facing::opposite($damage);
     }
-    
+
     public function getStrongPower(int $face) : int {
         return 0;
     }
@@ -83,6 +95,21 @@ class BlockPiston extends Solid implements IRedstone {
     }
 
     public function onRedstoneUpdate() : void {
-        $this->getBlockEntity()->extend($this->isBlockPowered($this->asVector3()));
+        $power = $this->isBlockPowered($this->asVector3(), $this->getFace());
+        if (!$power) {
+            $direction = Facing::HORIZONTAL;
+            for ($i = 0; $i < count($direction); ++$i) {
+                $face = $direction[$i];
+                if ($face == $this->getFace()) {
+                    continue;
+                }
+
+                $block = $this->getSide($face);
+                if ($block instanceof BlockRedstoneWire && $block->getDamage() > 0) {
+                    $power = true;
+                }
+            }
+        }
+        $this->getBlockEntity()->extend($power);
     }
 }

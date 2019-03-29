@@ -222,7 +222,5 @@ class Main extends PluginBase {
 
     private function initCreativeItem() : void {
         Item::initCreativeItems();
-        Item::addCreativeItem(Item::get(Item::PISTON));
-        Item::addCreativeItem(Item::get(Item::STICKY_PISTON));
     }
 }

@@ -1,4 +1,10 @@
 ---
 # Save the state of redstone machines, water, and other activity.
 isSaveScheduledBlockUpdate: true
+
+# Enable CommandBlocks
+enable-command-block: true
+
+# Change the maximum number of blocks that the piston can push.
+max-piston-push-blocks: 12
 ...

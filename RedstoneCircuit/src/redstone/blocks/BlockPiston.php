@@ -54,6 +54,8 @@ class BlockPiston extends Solid implements IRedstone {
         $nbt->setByte("Sticky", $this->isSticky() ? 1 : 0);
         Tile::createTile("BlockEntityPistonArm", $this->getLevel(), $nbt);
 
+        $this->onRedstoneUpdate();
+
         return true;
     }
 

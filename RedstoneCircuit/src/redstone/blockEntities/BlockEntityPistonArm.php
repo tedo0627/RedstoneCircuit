@@ -129,6 +129,9 @@ class BlockEntityPistonArm extends Spawnable {
                             $this->getLevel()->setBlock($block, Block::get(0));
                             $this->updateAroundRedstone($block->asVector3());
                             $this->getLevel()->getBlock($pos)->setData($piston, $block, $tile);
+                            if ($tile != null) {
+                                $this->getLevel()->removeTile($tile);
+                            }
 
                             $this->attachedBlocks[] = new IntTag("", $pos->getX());
                             $this->attachedBlocks[] = new IntTag("", $pos->getY());
@@ -216,6 +219,9 @@ class BlockEntityPistonArm extends Spawnable {
                                     $this->getLevel()->setBlock($block, Block::get(0));
                                     $this->updateAroundRedstone($block->asVector3());
                                     $this->getLevel()->getBlock($pos)->setData($piston, $block, $tile);
+                                    if ($tile != null) {
+                                        $this->getLevel()->removeTile($tile);
+                                    }
 
                                     $this->attachedBlocks[] = new IntTag("", $pos->getX());
                                     $this->attachedBlocks[] = new IntTag("", $pos->getY());

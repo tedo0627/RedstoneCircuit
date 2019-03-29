@@ -25,4 +25,8 @@ class CustomConfig {
     public function isCommandBlockEnabled() : bool {
         return $this->config->get("enable-command-block", true);
     }
+
+    public function getMaxPistonPushBlocks() : int {
+        return $this->config->get("max-piston-push-blocks", 12);
+    }
 }

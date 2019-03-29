@@ -5,6 +5,7 @@ namespace redstone\blocks;
 use pocketmine\Player;
 
 use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockToolType;
 use pocketmine\block\Solid;
 

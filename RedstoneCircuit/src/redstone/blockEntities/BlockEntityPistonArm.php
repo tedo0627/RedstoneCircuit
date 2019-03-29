@@ -26,6 +26,8 @@ use pocketmine\network\mcpe\protocol\BlockEntityDataPacket;
 use pocketmine\tile\Spawnable;
 
 
+use redstone\Main;
+
 use redstone\blocks\BlockMoving;
 use redstone\blocks\BlockPistonarmcollision;
 use redstone\blocks\IRedstone;
@@ -176,6 +178,10 @@ class BlockEntityPistonArm extends Spawnable {
                         $block = $this->getLevel()->getBlock($pos);
                         if ($block instanceof BlockMoving) {
                             $block->setMovedBlock();
+                            $block = $this->getLevel()->getBlock($pos);
+                            if ($block instanceof IRedstone) {
+                                $block->onRedstoneUpdate();
+                            }
                             $this->updateAroundRedstone($block->asVector3());
                         }
                     }
@@ -257,6 +263,10 @@ class BlockEntityPistonArm extends Spawnable {
                         $block = $this->getLevel()->getBlock($pos);
                         if ($block instanceof BlockMoving) {
                             $block->setMovedBlock();
+                            $block = $this->getLevel()->getBlock($pos);
+                            if ($block instanceof IRedstone) {
+                                $block->onRedstoneUpdate();
+                            }
                             $this->updateAroundRedstone($block->asVector3());
                         }
                     }
@@ -316,6 +326,9 @@ class BlockEntityPistonArm extends Spawnable {
     private function recalculatePushBlocks() : array {
         $breaks = [];
         $blocks = [];
+
+        $max = Main::getInstance()->getCustomConfig()->getMaxPistonPushBlocks();
+
         $block = $this->getBlock();
         $face = $block->getFace();
         $queue = $this->createQueue();
@@ -350,7 +363,7 @@ class BlockEntityPistonArm extends Spawnable {
             }
             $blocks[] = $block;
 
-            if (count($blocks) > 12) {
+            if (count($blocks) > $max) {
                 return [];
             }
 
@@ -380,6 +393,9 @@ class BlockEntityPistonArm extends Spawnable {
     private function recalculatePullBlocks() : array {
         $breaks = [];
         $blocks = [];
+
+        $max = Main::getInstance()->getCustomConfig()->getMaxPistonPushBlocks();
+
         $block = $this->getBlock();
         $face = $block->getFace();
         $queue = $this->createQueue();
@@ -414,7 +430,7 @@ class BlockEntityPistonArm extends Spawnable {
             }
             $blocks[] = $block;
 
-            if (count($blocks) > 12) {
+            if (count($blocks) > $max) {
                 return [];
             }
 

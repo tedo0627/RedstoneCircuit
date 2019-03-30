@@ -29,7 +29,11 @@ class BlockPistonarmcollision extends Transparent {
  
     public function onBreak(Item $item, Player $player = null) : bool {
         $this->getLevel()->setBlock($this, BlockFactory::get(Block::AIR));
-        $block = $this->getSide($this->getDamage());
+        $face = $this->getDamage();
+        if ($face == Facing::UP || $face == Facing::DOWN) {
+            $face = Facing::opposite($face);
+        }
+        $block = $this->getSide($face);
         if ($block instanceof BlockPiston) {
             $this->getLevel()->useBreakOn($block);
         }
@@ -37,7 +41,11 @@ class BlockPistonarmcollision extends Transparent {
     }
 
     public function onNearbyBlockChange() : void {
-        $block = $this->getSide($this->getDamage());
+        $face = $this->getDamage();
+        if ($face == Facing::UP || $face == Facing::DOWN) {
+            $face = Facing::opposite($face);
+        }
+        $block = $this->getSide($face);
         if (!($block instanceof BlockPiston)) {
             $this->getLevel()->useBreakOn($this);
         }

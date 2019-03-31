@@ -7,6 +7,7 @@ use redstone\utils\Facing;
 class BlockRedstoneTorchUnlit extends BlockRedstoneTorch {
     
     protected $id = self::UNLIT_REDSTONE_TORCH;
+    protected $itemId = self::REDSTONE_TORCH;
 
     public function __construct(int $meta = 0){
         $this->meta = $meta;

@@ -10,12 +10,13 @@ use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 
 
+use redstone\blocks\BlockPiston;
 use redstone\blocks\IRedstone;
 
 class RedstoneUtils {
 
     public static function isNormalBlock(Block $block) : bool {
-        return !$block->isTransparent() && $block->isSolid() && !RedstoneUtils::isPowerSource($block);
+        return !$block->isTransparent() && $block->isSolid() && !RedstoneUtils::isPowerSource($block) && !($block instanceof BlockPiston);
     }
 
     public static function getStrongPower(Block $block, int $face) : int {

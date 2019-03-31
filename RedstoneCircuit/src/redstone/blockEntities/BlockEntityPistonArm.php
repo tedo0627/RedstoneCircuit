@@ -72,10 +72,13 @@ class BlockEntityPistonArm extends Spawnable {
             $tag = $nbt->getListTag("BreakBlocks");
             $this->breakBlocks = $tag->getValue();
         }
-
         if ($nbt->hasTag("AttchedBlocks")) {
             $tag = $nbt->getListTag("AttchedBlocks");
             $this->attachedBlocks = $tag->getValue();
+        }
+
+        if ($nbt->hasTag("Extend")) {
+            $this->extend = $nbt->getByte("Extend") == 1 ? true : false;
         }
 
         $this->scheduleUpdate();
@@ -92,6 +95,8 @@ class BlockEntityPistonArm extends Spawnable {
 
         $nbt->setTag(new ListTag("BreakBlocks", $this->breakBlocks, NBT::TAG_Int));
         $nbt->setTag(new ListTag("AttchedBlocks", $this->attachedBlocks, NBT::TAG_Int));
+
+        $nbt->setByte("Extend", $this->extend ? 1 : 0);
     }
 
     public function getName() : string{
@@ -192,6 +197,35 @@ class BlockEntityPistonArm extends Spawnable {
                     $this->breakBlocks = [];
                 }
             }
+
+            if ($this->newState == 3) {
+                $this->lastProgress = 0;
+                $this->progress = 0;
+
+                for ($i = 0; $i < count($this->attachedBlocks); $i += 3) {
+                    $x = $this->attachedBlocks[$i]->getValue();
+                    $y = $this->attachedBlocks[$i + 1]->getValue();
+                    $z = $this->attachedBlocks[$i + 2]->getValue();
+                    $pos = new Vector3($x, $y, $z);
+
+                    $block = $this->getLevel()->getBlock($pos);
+                    if ($block instanceof BlockMoving) {
+                        $block->setMovedBlock();
+                        $block = $this->getLevel()->getBlock($pos);
+                        if ($block instanceof IRedstone) {
+                            $block->onRedstoneUpdate();
+                        }
+                        $this->updateAroundRedstone($block->asVector3());
+                    }
+                }
+                $this->attachedBlocks = [];
+                $this->breakBlocks = [];
+
+                $this->state = 0;
+                $this->newState = 0;
+
+                $this->onChanged();
+            }
         } else {
             if ($this->state == 2) {
                 $piston = $this->getBlock();
@@ -237,6 +271,35 @@ class BlockEntityPistonArm extends Spawnable {
 
                 $this->onChanged();
                 return true;
+            }
+
+            if ($this->newState == 1) {
+                $this->lastProgress = 1;
+                $this->progress = 1;
+
+                for ($i = 0; $i < count($this->attachedBlocks); $i += 3) {
+                    $x = $this->attachedBlocks[$i]->getValue();
+                    $y = $this->attachedBlocks[$i + 1]->getValue();
+                    $z = $this->attachedBlocks[$i + 2]->getValue();
+                    $pos = new Vector3($x, $y, $z);
+
+                    $block = $this->getLevel()->getBlock($pos);
+                    if ($block instanceof BlockMoving) {
+                        $block->setMovedBlock();
+                        $block = $this->getLevel()->getBlock($pos);
+                        if ($block instanceof IRedstone) {
+                            $block->onRedstoneUpdate();
+                        }
+                        $this->updateAroundRedstone($block->asVector3());
+                    }
+                }
+                $this->attachedBlocks = [];
+                $this->breakBlocks = [];
+
+                $this->state = 2;
+                $this->newState = 2;
+
+                $this->onChanged();
             }
 
             if ($this->state == 3) {
@@ -307,6 +370,10 @@ class BlockEntityPistonArm extends Spawnable {
 
     public function extend(bool $extend) : void {
         $this->extend = $extend;
+    }
+
+    public function isExtends() : bool {
+        return $this->extend;
     }
 
     public function getProgress() : int {
@@ -502,7 +569,7 @@ class BlockEntityPistonArm extends Spawnable {
         $id = $block->getId();
         if ($id == Block::PISTON || $id == Block::STICKY_PISTON) {
             $piston = $block->getBlockEntity();
-            if ($piston->getState() == 0) {
+            if ($piston->getState() == 0 && !$piston->isExtends()) {
                 return true;
             }
             return false;

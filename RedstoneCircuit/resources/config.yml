@@ -1,9 +1,35 @@
 ---
 # Save the state of redstone machines, water, and other activity.
-isSaveScheduledBlockUpdate: true
+is-save-block-update: true
 
-# Enable CommandBlocks
+# Block options.
+enable-redstone-wire: true
+enable-redstone-repeater: true
+enable-redstone-comparator: true
+enable-redstone-torch: true
+
+enable-redstone-block: true
+enable-lever: true
+enable-button: true
+enable-pressure-plate: true
+enable-daylight-detector: true
+enable-observer: true
+enable-trapped-chest: true
+enable-tripwire: true
+
+enable-redstone-lamp: true
+enable-note-block: true
+enable-dropper: true
+enable-dispenser: true
+enable-hopper: true
+enable-piston: true
 enable-command-block: true
+enable-tnt: true
+enable-door: true
+enable-trap-door: true
+enable-fence-gate: true
+
+enable-slime-block: true
 
 # Change the maximum number of blocks that the piston can push.
 max-piston-push-blocks: 12

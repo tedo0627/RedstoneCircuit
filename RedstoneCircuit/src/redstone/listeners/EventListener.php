@@ -23,6 +23,9 @@ class EventListener implements Listener {
         $packet = $event->getPacket();
         if ($packet instanceof PlayerActionPacket) {
             if ($packet->action == PlayerActionPacket::ACTION_START_BREAK) {
+                if (!Main::getInstance()->getCustomConfig()->isEnableNoteBlock()) {
+                    return;
+                }
                 $block = $event->getPlayer()->getLevel()->getBlock(new Vector3($packet->x, $packet->y, $packet->z));
                 if ($block instanceof BlockNote) {
                     $block->playSound();
@@ -30,7 +33,7 @@ class EventListener implements Listener {
             }
         } elseif ($packet instanceof CommandBlockUpdatePacket) {
             $player = $event->getPlayer();
-            if (!Main::getInstance()->getCustomConfig()->isCommandBlockEnabled()) {
+            if (!Main::getInstance()->getCustomConfig()->isEnableCommandBlock()) {
                 $player->sendMessage("Command block was not allowed.");
                 return;
             }

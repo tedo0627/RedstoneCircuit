@@ -128,96 +128,164 @@ class Main extends PluginBase {
     }
 
     private function initBlocks() : void {
-        BlockFactory::registerBlock(new BlockRedstoneWire(), true);
+        if ($this->getCustomConfig()->isEnableRedstoneWire()) {
+            BlockFactory::registerBlock(new BlockRedstoneWire(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockRedstoneTorch(), true);
-        BlockFactory::registerBlock(new BlockRedstoneTorchUnlit(), true);
+        if ($this->getCustomConfig()->isEnableRedstoneRepeater()) {
+            BlockFactory::registerBlock(new BlockRedstoneRepeaterPowered(), true);
+            BlockFactory::registerBlock(new BlockRedstoneRepeaterUnpowered(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockRedstoneRepeaterPowered(), true);
-        BlockFactory::registerBlock(new BlockRedstoneRepeaterUnpowered(), true);
+        if ($this->getCustomConfig()->isEnableRedstoneComparator()) {
+            BlockFactory::registerBlock(new BlockRedstoneComparatorPowered(), true);
+            BlockFactory::registerBlock(new BlockRedstoneComparatorUnpowered(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockRedstoneComparatorPowered(), true);
-        BlockFactory::registerBlock(new BlockRedstoneComparatorUnpowered(), true);
-
-
-        BlockFactory::registerBlock(new BlockRedstone(), true);
-
-        BlockFactory::registerBlock(new BlockLever(), true);
-
-        BlockFactory::registerBlock(new BlockButtonStone(), true);
-        BlockFactory::registerBlock(new BlockButtonWooden(), true);
-
-        BlockFactory::registerBlock(new BlockPressurePlateStone(), true);
-        BlockFactory::registerBlock(new BlockPressurePlateWooden(), true);
-        BlockFactory::registerBlock(new BlockWeightedPressurePlateLight(), true);
-        BlockFactory::registerBlock(new BlockWeightedPressurePlateHeavy(), true);
-
-        BlockFactory::registerBlock(new BlockDaylightDetector(), true);
-        BlockFactory::registerBlock(new BlockDaylightDetectorInverted(), true);
-
-        BlockFactory::registerBlock(new BlockObserver(), true);
-
-        BlockFactory::registerBlock(new BlockTrappedChest(), true);
-        
-        BlockFactory::registerBlock(new BlockTripwireHook(), true);
-        BlockFactory::registerBlock(new BlockTripwire(), true);
+        if ($this->getCustomConfig()->isEnableRedstoneTorch()) {
+            BlockFactory::registerBlock(new BlockRedstoneTorch(), true);
+            BlockFactory::registerBlock(new BlockRedstoneTorchUnlit(), true);
+        }
 
 
-        BlockFactory::registerBlock(new BlockRedstoneLamp(), true);
-        BlockFactory::registerBlock(new BlockRedstoneLampLit(), true);
+        if ($this->getCustomConfig()->isEnableRedstoneBlock()) {
+            BlockFactory::registerBlock(new BlockRedstone(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockNote(), true);
+        if ($this->getCustomConfig()->isEnableLever()) {
+            BlockFactory::registerBlock(new BlockLever(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockDropper(), true);
-        BlockFactory::registerBlock(new BlockDispenser(), true);
+        if ($this->getCustomConfig()->isEnableButton()) {
+            BlockFactory::registerBlock(new BlockButtonStone(), true);
+            BlockFactory::registerBlock(new BlockButtonWooden(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockHopper(), true);
+        if ($this->getCustomConfig()->isEnablePressurePlate()) {
+            BlockFactory::registerBlock(new BlockPressurePlateStone(), true);
+            BlockFactory::registerBlock(new BlockPressurePlateWooden(), true);
+            BlockFactory::registerBlock(new BlockWeightedPressurePlateLight(), true);
+            BlockFactory::registerBlock(new BlockWeightedPressurePlateHeavy(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockPiston(), true);
-        BlockFactory::registerBlock(new BlockPistonarmcollision(), true);
-        BlockFactory::registerBlock(new BlockPistonSticky(), true);
-        BlockFactory::registerBlock(new BlockMoving(), true);
+        if ($this->getCustomConfig()->isEnableDaylightDetector()) {
+            BlockFactory::registerBlock(new BlockDaylightDetector(), true);
+            BlockFactory::registerBlock(new BlockDaylightDetectorInverted(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockCommand(), true);
-        BlockFactory::registerBlock(new BlockCommandRepeating(), true);
-        BlockFactory::registerBlock(new BlockCommandChain(), true);
+        if ($this->getCustomConfig()->isEnableObserver()) {
+            BlockFactory::registerBlock(new BlockObserver(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockTNT(), true);
+        if ($this->getCustomConfig()->isEnableTrappedChest()) {
+            BlockFactory::registerBlock(new BlockTrappedChest(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::OAK_DOOR_BLOCK, 0, "Oak Door", Item::OAK_DOOR), true);
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::SPRUCE_DOOR_BLOCK, 0, "Spruce Door", Item::SPRUCE_DOOR), true);
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::BIRCH_DOOR_BLOCK, 0, "Birch Door", Item::BIRCH_DOOR), true);
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::JUNGLE_DOOR_BLOCK, 0, "Jungle Door", Item::JUNGLE_DOOR), true);
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::ACACIA_DOOR_BLOCK, 0, "Acacia Door", Item::ACACIA_DOOR), true);
-        BlockFactory::registerBlock(new BlockWoodenDoor(Block::DARK_OAK_DOOR_BLOCK, 0, "Dark Oak Door", Item::DARK_OAK_DOOR), true);
+        if ($this->getCustomConfig()->isEnableTripwire()) {
+            BlockFactory::registerBlock(new BlockTripwireHook(), true);
+            BlockFactory::registerBlock(new BlockTripwire(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockIronDoor(), true);
+        if ($this->getCustomConfig()->isEnableRedstoneLamp()) {
+            BlockFactory::registerBlock(new BlockRedstoneLamp(), true);
+            BlockFactory::registerBlock(new BlockRedstoneLampLit(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockTrapdoor(), true);
-        BlockFactory::registerBlock(new BlockIronTrapdoor(), true);
-        
-        BlockFactory::registerBlock(new BlockFenceGate(Block::OAK_FENCE_GATE, 0, "Oak Fence Gate"), true);
-        BlockFactory::registerBlock(new BlockFenceGate(Block::SPRUCE_FENCE_GATE, 0, "Spruce Fence Gate"), true);
-        BlockFactory::registerBlock(new BlockFenceGate(Block::BIRCH_FENCE_GATE, 0, "Birch Fence Gate"), true);
-        BlockFactory::registerBlock(new BlockFenceGate(Block::JUNGLE_FENCE_GATE, 0, "Jungle Fence Gate"), true);
-        BlockFactory::registerBlock(new BlockFenceGate(Block::DARK_OAK_FENCE_GATE, 0, "Dark Oak Fence Gate"), true);
-        BlockFactory::registerBlock(new BlockFenceGate(Block::ACACIA_FENCE_GATE, 0, "Acacia Fence Gate"), true);
+        if ($this->getCustomConfig()->isEnableNoteBlock()) {
+            BlockFactory::registerBlock(new BlockNote(), true);
+        }
 
-        BlockFactory::registerBlock(new BlockSlime(), true);
+        if ($this->getCustomConfig()->isEnableDropper()) {
+            BlockFactory::registerBlock(new BlockDropper(), true);
+        }
+
+        if ($this->getCustomConfig()->isEnableDispenser()) {
+            BlockFactory::registerBlock(new BlockDispenser(), true);
+        }
+
+        if ($this->getCustomConfig()->isEnableHopper()) {
+            BlockFactory::registerBlock(new BlockHopper(), true);
+        }
+
+        if ($this->getCustomConfig()->isEnablePiston()) {
+            BlockFactory::registerBlock(new BlockPiston(), true);
+            BlockFactory::registerBlock(new BlockPistonarmcollision(), true);
+            BlockFactory::registerBlock(new BlockPistonSticky(), true);
+            BlockFactory::registerBlock(new BlockMoving(), true);
+        }
+
+        if ($this->getCustomConfig()->isEnableCommandBlock()) {
+            BlockFactory::registerBlock(new BlockCommand(), true);
+            BlockFactory::registerBlock(new BlockCommandRepeating(), true);
+            BlockFactory::registerBlock(new BlockCommandChain(), true);
+        }
+
+        if ($this->getCustomConfig()->isEnableTnt()) {
+            BlockFactory::registerBlock(new BlockTNT(), true);
+        }
+
+        if ($this->getCustomConfig()->isEnableDoor()) {
+            BlockFactory::registerBlock(new BlockWoodenDoor(Block::OAK_DOOR_BLOCK, 0, "Oak Door", Item::OAK_DOOR), true);
+            BlockFactory::registerBlock(new BlockWoodenDoor(Block::SPRUCE_DOOR_BLOCK, 0, "Spruce Door", Item::SPRUCE_DOOR), true);
+            BlockFactory::registerBlock(new BlockWoodenDoor(Block::BIRCH_DOOR_BLOCK, 0, "Birch Door", Item::BIRCH_DOOR), true);
+            BlockFactory::registerBlock(new BlockWoodenDoor(Block::JUNGLE_DOOR_BLOCK, 0, "Jungle Door", Item::JUNGLE_DOOR), true);
+            BlockFactory::registerBlock(new BlockWoodenDoor(Block::ACACIA_DOOR_BLOCK, 0, "Acacia Door", Item::ACACIA_DOOR), true);
+            BlockFactory::registerBlock(new BlockWoodenDoor(Block::DARK_OAK_DOOR_BLOCK, 0, "Dark Oak Door", Item::DARK_OAK_DOOR), true);
+            BlockFactory::registerBlock(new BlockIronDoor(), true);
+        }
+
+        if ($this->getCustomConfig()->isEnableTrapDoor()) {
+            BlockFactory::registerBlock(new BlockTrapdoor(), true);
+            BlockFactory::registerBlock(new BlockIronTrapdoor(), true);
+        }
+
+        if ($this->getCustomConfig()->isEnableFenceGate()) {
+            BlockFactory::registerBlock(new BlockFenceGate(Block::OAK_FENCE_GATE, 0, "Oak Fence Gate"), true);
+            BlockFactory::registerBlock(new BlockFenceGate(Block::SPRUCE_FENCE_GATE, 0, "Spruce Fence Gate"), true);
+            BlockFactory::registerBlock(new BlockFenceGate(Block::BIRCH_FENCE_GATE, 0, "Birch Fence Gate"), true);
+            BlockFactory::registerBlock(new BlockFenceGate(Block::JUNGLE_FENCE_GATE, 0, "Jungle Fence Gate"), true);
+            BlockFactory::registerBlock(new BlockFenceGate(Block::DARK_OAK_FENCE_GATE, 0, "Dark Oak Fence Gate"), true);
+            BlockFactory::registerBlock(new BlockFenceGate(Block::ACACIA_FENCE_GATE, 0, "Acacia Fence Gate"), true);
+        }
+
+
+        if ($this->getCustomConfig()->isEnableSlimeBlock()) {
+            BlockFactory::registerBlock(new BlockSlime(), true);
+        }
     }
 
     private function initBlockEntities() : void {
-        Tile::registerTile(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
-        Tile::registerTile(BlockEntityCommandBlock::class, ["CommandBlock", "minecraft:command_block"]);
-        Tile::registerTile(BlockEntityDaylightDetector::class, ["DaylightDetector", "minecraft:daylight_detector"]);
-        Tile::registerTile(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
-        Tile::registerTile(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
-        Tile::registerTile(BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
-        Tile::registerTile(BlockEntityMovingBlock::class, ["Movingblock", "minecraft:movingblock"]);
-        Tile::registerTile(BlockEntityNoteBlock::class, ["NoteBlock", "minecraft:note_block"]);
-        Tile::registerTile(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
-        Tile::registerTile(BlockEntityPistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
-        Tile::registerTile(BlockEntityRedstoneComparator::class, ["Comparator", "minecraft:comparator"]);
+        if ($this->getCustomConfig()->isEnableTrappedChest()) {
+            Tile::registerTile(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
+        }
+        if ($this->getCustomConfig()->isEnableCommandBlock()) {
+            Tile::registerTile(BlockEntityCommandBlock::class, ["CommandBlock", "minecraft:command_block"]);
+        }
+        if ($this->getCustomConfig()->isEnableDaylightDetector()) {
+            Tile::registerTile(BlockEntityDaylightDetector::class, ["DaylightDetector", "minecraft:daylight_detector"]);
+        }
+        if ($this->getCustomConfig()->isEnableDropper()) {
+            Tile::registerTile(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
+        }
+        if ($this->getCustomConfig()->isEnableDispenser()) {
+            Tile::registerTile(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
+        }
+        if ($this->getCustomConfig()->isEnableHopper()) {
+            Tile::registerTile(BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
+        }
+        if ($this->getCustomConfig()->isEnableNoteBlock()) {
+            Tile::registerTile(BlockEntityNoteBlock::class, ["NoteBlock", "minecraft:note_block"]);
+        }
+        if ($this->getCustomConfig()->isEnableObserver()) {
+            Tile::registerTile(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
+        }
+        if ($this->getCustomConfig()->isEnablePiston()) {
+            Tile::registerTile(BlockEntityMovingBlock::class, ["Movingblock", "minecraft:movingblock"]);
+            Tile::registerTile(BlockEntityPistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
+        }
+        if ($this->getCustomConfig()->isEnableRedstoneComparator()) {
+            Tile::registerTile(BlockEntityRedstoneComparator::class, ["Comparator", "minecraft:comparator"]);
+        }
     }
 
     private function initCreativeItem() : void {

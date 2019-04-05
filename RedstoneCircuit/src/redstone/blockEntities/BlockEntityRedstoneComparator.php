@@ -136,7 +136,7 @@ class BlockEntityRedstoneComparator extends Tile {
 
         if (RedstoneUtils::isNormalBlock($sideBlock)) {
             $sideBlock = $sideBlock->getSide($block->getInputFace());
-            $power = $this->recalculateBlockPower($sideBlock);
+            $power = $this->recalculateUtilityPower($sideBlock);
         }
 
         return $power;

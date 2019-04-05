@@ -51,6 +51,7 @@ class BlockEntityDaylightDetector extends Tile {
 
     private function getTimePower(int $time) : int {
         $power = 0;
+        $time = $time % 24000;
         if ($time >= 23960) {
             $power = 7;
         } else if ($time >= 23780) {

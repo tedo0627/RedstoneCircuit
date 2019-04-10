@@ -42,6 +42,10 @@ class BlockEntityDaylightDetector extends Tile {
         $power = $this->getTimePower($time);
         $power -= (15 - $this->getLevel()->getSkyLightReduction() - $this->getLevel()->getRealBlockSkyLightAt($this->getX(), $this->getY(), $this->getZ()));
 
+        if ($power < 0) {
+            $power = 0;
+        }
+
         if ($this->getBlock() instanceof BlockDaylightDetectorInverted) {
             $power = 15 - $power;
         }

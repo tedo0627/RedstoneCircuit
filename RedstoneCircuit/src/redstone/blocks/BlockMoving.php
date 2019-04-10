@@ -34,6 +34,11 @@ class BlockMoving extends Transparent {
         return true;
     }
     
+    public function getDrops(Item $item) : array {
+        $tile = $this->getBlockEntity();
+        return [$tile->getDrops($item)];
+    }
+
     public function getBlockEntity() : BlockEntityMovingBlock {
         $tile = $this->getLevel()->getTile($this);
         $moving = null;

@@ -190,7 +190,7 @@ class BlockEntityPistonArm extends Spawnable {
                             if ($block instanceof IRedstone) {
                                 $block->onRedstoneUpdate();
                             }
-                            $this->updateAroundRedstone($block->asVector3());
+                            $this->updateAroundRedstone($pos);
                         }
                     }
                     $this->attachedBlocks = [];
@@ -336,7 +336,7 @@ class BlockEntityPistonArm extends Spawnable {
                             if ($block instanceof IRedstone) {
                                 $block->onRedstoneUpdate();
                             }
-                            $this->updateAroundRedstone($block->asVector3());
+                            $this->updateAroundRedstone($pos);
                         }
                     }
                     $this->attachedBlocks = [];
@@ -431,6 +431,14 @@ class BlockEntityPistonArm extends Spawnable {
                 continue;
             }
 
+            if ($face == Facing::UP && $pos->y >= 255) {
+                return [];
+            }
+
+            if ($face == Facing::DOWN && $pos->y <= 0) {
+                return [];
+            }
+
             if (array_search($block, $blocks) !== false) {
                 continue;
             }
@@ -456,9 +464,14 @@ class BlockEntityPistonArm extends Spawnable {
 
         $blocks = array_merge($blocks, $breaks);
         usort($blocks, function($a, $b) {
-            $ad = ($this->x - $a->x) * ($this->x - $a->x) + ($this->y - $a->y) * ($this->y - $a->y) + ($this->z - $a->z) * ($this->z - $a->z);
-            $bd = ($this->x - $b->x) * ($this->x - $b->x) + ($this->y - $b->y) * ($this->y - $b->y) + ($this->z - $b->z) * ($this->z - $b->z);
-            return $bd - $ad;
+            $v = new Vector3();
+            $v = $v->getSide($this->getBlock()->getFace());
+            if ($v->x > 0) return $b->x - $a->x;
+            if ($v->x < 0) return $a->x - $b->x;
+            if ($v->y > 0) return $b->y - $a->y;
+            if ($v->y < 0) return $a->y - $b->y;
+            if ($v->z > 0) return $b->z - $a->z;
+            if ($v->z < 0) return $a->z - $b->z;
         });
         return $blocks;
     }
@@ -523,9 +536,14 @@ class BlockEntityPistonArm extends Spawnable {
 
         $blocks = array_merge($blocks, $breaks);
         usort($blocks, function($a, $b) {
-            $ad = ($this->x - $a->x) * ($this->x - $a->x) + ($this->y - $a->y) * ($this->y - $a->y) + ($this->z - $a->z) * ($this->z - $a->z);
-            $bd = ($this->x - $b->x) * ($this->x - $b->x) + ($this->y - $b->y) * ($this->y - $b->y) + ($this->z - $b->z) * ($this->z - $b->z);
-            return $ad - $bd;
+            $v = new Vector3();
+            $v = $v->getSide(Facing::opposite($this->getBlock()->getFace()));
+            if ($v->x > 0) return $b->x - $a->x;
+            if ($v->x < 0) return $a->x - $b->x;
+            if ($v->y > 0) return $b->y - $a->y;
+            if ($v->y < 0) return $a->y - $b->y;
+            if ($v->z > 0) return $b->z - $a->z;
+            if ($v->z < 0) return $a->z - $b->z;
         });
         return $blocks;
     }

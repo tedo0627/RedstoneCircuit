@@ -4,10 +4,13 @@ namespace redstone\blockEntities;
 
 use pocketmine\block\Block;
 
+use pocketmine\item\Item;
+
 use pocketmine\math\Vector3;
 
 use pocketmine\nbt\tag\CompoundTag;
 
+use pocketmine\tile\Chest;
 use pocketmine\tile\Spawnable;
 use pocketmine\tile\Tile;
 
@@ -29,14 +32,14 @@ class BlockEntityMovingBlock extends Spawnable {
             $this->piston->x = $nbt->getInt("pistonPosX");
         }
         if ($nbt->hasTag("pistonPosY")) {
-            $this->piston->x = $nbt->getInt("pistonPosY");
+            $this->piston->y = $nbt->getInt("pistonPosY");
         }
         if ($nbt->hasTag("pistonPosZ")) {
-            $this->piston->x = $nbt->getInt("pistonPosZ");
+            $this->piston->z = $nbt->getInt("pistonPosZ");
         }
         
         if ($nbt->hasTag("movingBlock")) {
-            $this->movingBlock = $nbt->getTag("movingBlock");
+            $this->movingBlock = clone $nbt->getTag("movingBlock");
         } else {
             $tag = new CompoundTag("movingBlock");
             $tag->setShort("val", 0);
@@ -44,7 +47,7 @@ class BlockEntityMovingBlock extends Spawnable {
             $this->movingBlock = $tag;
         }
         if ($nbt->hasTag("movingBlockExtra")) {
-            $this->movingBlockExtra = $nbt->getTag("movingBlockExtra");
+            $this->movingBlockExtra = clone $nbt->getTag("movingBlockExtra");
         } else {
             $tag = new CompoundTag("movingBlockExtra");
             $tag->setShort("val", 0);
@@ -61,8 +64,12 @@ class BlockEntityMovingBlock extends Spawnable {
         $nbt->setInt("pistonPosY", $this->piston->y);
         $nbt->setInt("pistonPosZ", $this->piston->z);
 
-        $nbt->setTag($this->movingBlock);
-        $nbt->setTag($this->movingBlockExtra);
+        $nbt->setTag(clone $this->movingBlock);
+        $nbt->setTag(clone $this->movingBlockExtra);
+
+        if ($this->movingEntity != null) {
+            $nbt->setTag(clone $this->movingEntity);
+        }
     }
 
     public function getName() : string{
@@ -74,11 +81,11 @@ class BlockEntityMovingBlock extends Spawnable {
         $nbt->setInt("pistonPosY", $this->piston->y);
         $nbt->setInt("pistonPosZ", $this->piston->z);
 
-        $nbt->setTag($this->movingBlock);
-        $nbt->setTag($this->movingBlockExtra);
+        $nbt->setTag(clone $this->movingBlock);
+        $nbt->setTag(clone $this->movingBlockExtra);
 
         if ($this->movingEntity != null) {
-            $nbt->setTag($this->movingEntity);
+            $nbt->setTag(clone $this->movingEntity);
         }
     }
 
@@ -106,15 +113,47 @@ class BlockEntityMovingBlock extends Spawnable {
 
     public function setBlock() : void {
         $level = $this->getLevel();
-        if ($this->movingEntity != null) {
-            $tag = $this->movingEntity;
-            Tile::createTile($tag->getString("id"), $level, $tag);
-        }
-
         $tag = $this->movingBlock;
         $name = $tag->getString("name");
         $damage = $tag->getShort("val");
         $block = Main::getInstance()->getGlobalBlockPalette()->getBlock($name, $damage);
         $level->setBlock($this, $block);
+
+        if ($this->movingEntity != null) {
+            $tag = $this->movingEntity;
+            $tile = Tile::createTile($tag->getString("id"), $level, $tag);
+
+            if ($tile instanceof Chest) {
+                $tile->unpair();
+                for($side = 2; $side <= 5; ++$side){
+                    if(($damage === 4 or $damage === 5) and ($side === 4 or $side === 5)){
+                        continue;
+                    }elseif(($damage === 3 or $damage === 2) and ($side === 2 or $side === 3)){
+                        continue;
+                    }
+
+                    $c = $level->getBlock($this)->getSide($side);
+                    if($c->getId() != 54 || $c->getDamage() != $damage){
+                        continue;
+                    }
+
+                    $chest = $level->getTile($c);
+                    if($chest instanceof Chest and !$chest->isPaired()){
+                        $chest->pairWith($tile);
+                        $tile->pairWith($chest);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public function getDrops(Item $item) : Item {
+        $tag = $this->movingBlock;
+        $name = $tag->getString("name");
+        $damage = $tag->getShort("val");
+        $block = Main::getInstance()->getGlobalBlockPalette()->getBlock($name, $damage);
+
+        return $block->getDrops($item);
     }
 }

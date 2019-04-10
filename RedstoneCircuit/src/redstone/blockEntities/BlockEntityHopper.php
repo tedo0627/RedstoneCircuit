@@ -95,13 +95,17 @@ class BlockEntityHopper extends Spawnable implements InventoryHolder, Container,
                 continue;
             }
 
+            if ($entity->isClosed()) {
+                continue;
+            }
+
             $item = $entity->getItem();
             if (!$this->getInventory()->canAddItem($item)) {
                 continue;
             }
 
             $this->getInventory()->addItem($item);
-            $entity->kill();
+            $entity->close();
         }
 
         $time = Server::getInstance()->getTick();

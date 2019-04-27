@@ -10,16 +10,9 @@ class GlobalBlockPalette {
     private $idTable = [];
 
     public function __construct() {
-		$runtimeIdMap = json_decode(file_get_contents(\pocketmine\RESOURCE_PATH . "runtimeid_table.json"), true);
-		$legacyIdMap = json_decode(file_get_contents(\pocketmine\RESOURCE_PATH . "legacy_id_map.json"), true);
-		foreach($runtimeIdMap as $k => $obj){
-            $name = $obj["name"];
-			if(!isset($legacyIdMap[$name])){
-				continue;
-			}
+        $legacyIdMap = json_decode(file_get_contents(\pocketmine\RESOURCE_PATH . "vanilla/block_id_map.json"), true);
+        foreach($legacyIdMap as $name => $id){
             $id = $legacyIdMap[$name];
-            $damage = $obj["data"];
-
             $this->nameTable[$name] = $id;
             $this->idTable[$id] = $name;
         }

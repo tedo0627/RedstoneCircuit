@@ -38,6 +38,8 @@ use redstone\blocks\BlockCommand;
 use redstone\blocks\BlockCommandChain;
 use redstone\blocks\BlockCommandRepeating;
 
+use redstone\selector\CommandSelector;
+
 use redstone\inventories\CommandInventory;
 
 class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Container, Nameable, CommandSender {
@@ -170,9 +172,34 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
 
         $target->timings->startTiming();
 
+        for ($i = 0; $i < count($args); ++$i) {
+            $str = $args[$i];
+            if (strlen($str) == 0) {
+                continue;
+            }
+
+            if (substr($str, 0, 1) != "@") {
+                continue;
+            }
+
+            $selector = new CommandSelector();
+            $entities = $selector->getEntities($this, $str);
+            if (count($entities) == 0) {
+                continue;
+            }
+
+            $args[$i] = $entities;
+        }
+
+        $commands = $this->getSelectorCommand($sentCommandLabel, $args);
         $conditions = false;
-        try{
-            $conditions = $target->execute($this, $sentCommandLabel, $args);
+        try {
+            foreach ($commands as $command) {
+                $bool = $target->execute($this, $sentCommandLabel, $command);
+                if ($bool) {
+                    $conditions = true;
+                }
+            }
         }catch(InvalidCommandSyntaxException $e){
             $this->sendMessage($this->getServer()->getLanguage()->translateString("commands.generic.usage", [$target->getUsage()]));
         }finally{
@@ -192,6 +219,30 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
 
         $tile->dispatch();
         return;
+    }
+
+    private function getSelectorCommand(string $label, array $args) : array {
+        $array = [];
+        $check = false;
+        for ($i = 0; $i < count($args); ++$i) {
+            $arg = $args[$i];
+            if (is_string($arg)) {
+                continue;
+            }
+
+            foreach ($arg as $entity) {
+                $copy = $args;
+                $copy[$i] = $entity instanceof Player ? $entity->getName() : strval($entity->getId());
+                $array = array_merge($array, $this->getSelectorCommand($label, $copy));
+                $check = true;
+            }
+        }
+
+        if (!$check) {
+            $array[] = $args;
+        }
+
+        return $array;
     }
 
     public function isNormal() : bool {
@@ -280,7 +331,12 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
         $this->powered = $power;
     }
 
-    //interface CommandSender
+    // interface method
+    
+    private $attachments = [];
+
+    private $permissions = [];
+    
 
     public function sendMessage($message) {
         if($message instanceof TextContainer){
@@ -302,12 +358,6 @@ class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Cont
     public function setScreenLineHeight(int $height = null) {
 
     }
-
-    //interface Permissible
-
-    private $attachments = [];
-
-    private $permissions = [];
 
     public function isOp() : bool{
         return true;

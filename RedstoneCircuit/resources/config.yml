@@ -1,6 +1,6 @@
 ---
 # Save the state of redstone machines, water, and other activity.
-is-save-block-update: true
+is-save-block-update: false
 
 # Block options.
 enable-redstone-wire: true

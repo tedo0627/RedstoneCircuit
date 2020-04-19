@@ -89,10 +89,6 @@ class CustomConfig {
         return $this->config->get("enable-dispenser", true);
     }
 
-    public function isEnableHopper() : bool {
-        return $this->config->get("enable-hopper", true);
-    }
-
     public function isEnablePiston() : bool {
         return $this->config->get("enable-piston", true);
     }

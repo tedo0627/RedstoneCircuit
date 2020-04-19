@@ -19,7 +19,6 @@ use redstone\blockEntities\BlockEntityCommandBlock;
 use redstone\blockEntities\BlockEntityDaylightDetector;
 use redstone\blockEntities\BlockEntityDispenser;
 use redstone\blockEntities\BlockEntityDropper;
-use redstone\blockEntities\BlockEntityHopper;
 use redstone\blockEntities\BlockEntityMovingBlock;
 use redstone\blockEntities\BlockEntityNoteBlock;
 use redstone\blockEntities\BlockEntityObserver;
@@ -36,7 +35,6 @@ use redstone\blocks\BlockDaylightDetectorInverted;
 use redstone\blocks\BlockDispenser;
 use redstone\blocks\BlockDropper;
 use redstone\blocks\BlockFenceGate;
-use redstone\blocks\BlockHopper;
 use redstone\blocks\BlockIronDoor;
 use redstone\blocks\BlockIronTrapdoor;
 use redstone\blocks\BlockLever;
@@ -269,9 +267,6 @@ class Main extends PluginBase {
         }
         if ($this->getCustomConfig()->isEnableDispenser()) {
             Tile::registerTile(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
-        }
-        if ($this->getCustomConfig()->isEnableHopper()) {
-            Tile::registerTile(BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
         }
         if ($this->getCustomConfig()->isEnableNoteBlock()) {
             Tile::registerTile(BlockEntityNoteBlock::class, ["NoteBlock", "minecraft:note_block"]);

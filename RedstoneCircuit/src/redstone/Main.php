@@ -201,10 +201,6 @@ class Main extends PluginBase {
             BlockFactory::registerBlock(new BlockDispenser(), true);
         }
 
-        if ($this->getCustomConfig()->isEnableHopper()) {
-            BlockFactory::registerBlock(new BlockHopper(), true);
-        }
-
         if ($this->getCustomConfig()->isEnablePiston()) {
             BlockFactory::registerBlock(new BlockPiston(), true);
             BlockFactory::registerBlock(new BlockPistonarmcollision(), true);

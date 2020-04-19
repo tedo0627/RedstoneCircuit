@@ -21,7 +21,6 @@ enable-redstone-lamp: true
 enable-note-block: true
 enable-dropper: true
 enable-dispenser: true
-enable-hopper: true
 enable-piston: true
 enable-command-block: true
 enable-tnt: true

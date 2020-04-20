@@ -14,7 +14,6 @@ enable-button: true
 enable-pressure-plate: true
 enable-daylight-detector: true
 enable-observer: true
-enable-trapped-chest: true
 enable-tripwire: true
 
 enable-redstone-lamp: true

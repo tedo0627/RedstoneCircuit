@@ -63,15 +63,10 @@ class CustomConfig {
     public function isEnableObserver() : bool {
         return $this->config->get("enable-observer", true);
     }
-
-    public function isEnableTrappedChest() : bool {
-        return $this->config->get("enable-trapped-chest", true);
-    }
-
+    
     public function isEnableTripwire() : bool {
         return $this->config->get("enable-tripwire", true);
     }
-
 
     public function isEnableRedstoneLamp() : bool {
         return $this->config->get("enable-redstone-lamp", true);

@@ -14,7 +14,6 @@ use pocketmine\item\ItemFactory;
 use pocketmine\tile\Tile;
 
 
-use redstone\blockEntities\BlockEntityChest;
 use redstone\blockEntities\BlockEntityCommandBlock;
 use redstone\blockEntities\BlockEntityDaylightDetector;
 use redstone\blockEntities\BlockEntityDispenser;
@@ -59,7 +58,6 @@ use redstone\blocks\BlockRedstoneWire;
 use redstone\blocks\BlockSlime;
 use redstone\blocks\BlockTNT;
 use redstone\blocks\BlockTrapdoor;
-use redstone\blocks\BlockTrappedChest;
 use redstone\blocks\BlockTripwire;
 use redstone\blocks\BlockTripwireHook;
 use redstone\blocks\BlockWeightedPressurePlateLight;
@@ -175,10 +173,6 @@ class Main extends PluginBase {
             BlockFactory::registerBlock(new BlockObserver(), true);
         }
 
-        if ($this->getCustomConfig()->isEnableTrappedChest()) {
-            BlockFactory::registerBlock(new BlockTrappedChest(), true);
-        }
-
         if ($this->getCustomConfig()->isEnableTripwire()) {
             BlockFactory::registerBlock(new BlockTripwireHook(), true);
             BlockFactory::registerBlock(new BlockTripwire(), true);
@@ -249,9 +243,6 @@ class Main extends PluginBase {
     }
 
     private function initBlockEntities() : void {
-        if ($this->getCustomConfig()->isEnableTrappedChest()) {
-            Tile::registerTile(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
-        }
         if ($this->getCustomConfig()->isEnableCommandBlock()) {
             Tile::registerTile(BlockEntityCommandBlock::class, ["CommandBlock", "minecraft:command_block"]);
         }

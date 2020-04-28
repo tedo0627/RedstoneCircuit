@@ -14,9 +14,6 @@ use pocketmine\item\TieredTool;
 
 use pocketmine\math\Vector3;
 
-
-use redstone\utils\RedstoneUtils;
-
 class BlockRedstone extends Solid implements IRedstone {
     use RedstoneTrait;
 

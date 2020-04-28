@@ -1,6 +1,6 @@
 name: RedstoneCircuit
 main: redstone\Main
 version: 2.0.0
-api: [3.6.0]
+api: 3.6.0
 author: tedo0627
 load: STARTUP

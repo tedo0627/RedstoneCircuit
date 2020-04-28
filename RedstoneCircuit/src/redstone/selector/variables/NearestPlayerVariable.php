@@ -3,11 +3,11 @@
 namespace redstone\selector\variables;
 
 use pocketmine\command\CommandSender;
-
 use pocketmine\level\Position;
-
-
 use redstone\selector\arguments\LimitArgument;
+
+use function count;
+use function uasort;
 
 class NearestPlayerVariable implements IVariable {
 
@@ -25,7 +25,7 @@ class NearestPlayerVariable implements IVariable {
             return [];
         }
 
-        uasort($players, function($a, $b) {
+        uasort($players, function($a, $b) use ($sender) {
             return $sender->distanceSquared($a) - $sender->distanceSquared($b);
         });
 

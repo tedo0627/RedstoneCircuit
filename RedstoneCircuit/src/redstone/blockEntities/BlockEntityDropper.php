@@ -16,11 +16,12 @@ use pocketmine\tile\Container;
 use pocketmine\tile\ContainerTrait;
 use pocketmine\tile\Nameable;
 use pocketmine\tile\NameableTrait;
-use pocketmine\tile\Tile;
 use pocketmine\tile\Spawnable;
 
-
 use redstone\inventories\DropperInventory;
+
+use function count;
+use function mt_rand;
 
 class BlockEntityDropper extends Spawnable implements InventoryHolder, Container, Nameable {
     use NameableTrait {

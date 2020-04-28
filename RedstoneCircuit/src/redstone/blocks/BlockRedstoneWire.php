@@ -11,13 +11,14 @@ use pocketmine\block\Slab;
 use pocketmine\block\Stair;
 
 use pocketmine\item\Item;
-use pocketmine\item\ItemIds;
 
 use pocketmine\math\Vector3;
 
-
 use redstone\utils\Facing;
 use redstone\utils\RedstoneUtils;
+
+use function count;
+use function max;
 
 class BlockRedstoneWire extends Flowable implements IRedstone {
     use RedstoneTrait;

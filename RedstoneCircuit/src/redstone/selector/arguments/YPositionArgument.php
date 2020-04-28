@@ -2,9 +2,9 @@
 
 namespace redstone\selector\arguments;
 
-use pocketmine\Player;
-
 use pocketmine\command\CommandSender;
+
+use function floatval;
 
 class YPositionArgument extends BaseArgument {
     

@@ -14,7 +14,6 @@ use pocketmine\math\Vector3;
 
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 
-
 use redstone\utils\Facing;
 
 class BlockTripwireHook extends TripwireHook implements IRedstone {

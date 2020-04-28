@@ -13,10 +13,9 @@ use pocketmine\item\Item;
 use pocketmine\tile\Tile;
 use pocketmine\tile\Chest;
 
-use pocketmine\math\Vector3;
-
-
 use redstone\utils\Facing;
+
+use function count;
 
 class BlockTrappedChest extends TrappedChest implements IRedstone {
     use RedstoneTrait;

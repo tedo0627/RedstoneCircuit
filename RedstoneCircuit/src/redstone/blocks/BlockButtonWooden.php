@@ -8,7 +8,6 @@ use pocketmine\entity\Entity;
 use pocketmine\entity\projectile\Arrow;
 
 use pocketmine\math\AxisAlignedBB;
-use pocketmine\math\Facing;
 
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 

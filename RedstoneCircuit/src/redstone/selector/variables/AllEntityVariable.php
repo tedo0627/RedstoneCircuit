@@ -3,12 +3,9 @@
 namespace redstone\selector\variables;
 
 use pocketmine\Server;
-
-use pocketmine\entity\Entity;
-
 use pocketmine\command\CommandSender;
 
-use pocketmine\level\Position;
+use function array_merge;
 
 class AllEntityVariable implements IVariable {
 

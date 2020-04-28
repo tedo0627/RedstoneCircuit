@@ -4,6 +4,11 @@ namespace redstone\selector\arguments;
 
 use pocketmine\command\CommandSender;
 
+use function count;
+use function explode;
+use function preg_replace;
+use function substr;
+
 abstract class BaseArgument implements IArgument {
 
     public abstract function getArgument() : string;

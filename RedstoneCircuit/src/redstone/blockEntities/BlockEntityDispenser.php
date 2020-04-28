@@ -4,6 +4,7 @@ namespace redstone\blockEntities;
 
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
+use pocketmine\block\Crops;
 use pocketmine\block\Sapling;
 
 use pocketmine\entity\Entity;
@@ -13,7 +14,6 @@ use pocketmine\inventory\InventoryHolder;
 
 use pocketmine\item\Item;
 use pocketmine\item\Armor;
-use pocketmine\item\Crops;
 use pocketmine\item\ProjectileItem;
 
 use pocketmine\math\Vector3;
@@ -28,15 +28,14 @@ use pocketmine\tile\Container;
 use pocketmine\tile\ContainerTrait;
 use pocketmine\tile\Nameable;
 use pocketmine\tile\NameableTrait;
-use pocketmine\tile\Tile;
 use pocketmine\tile\Spawnable;
 
 use pocketmine\utils\Random;
 
-
-use redstone\Main;
-
 use redstone\inventories\DispenserInventory;
+
+use function count;
+use function mt_rand;
 
 class BlockEntityDispenser extends Spawnable implements InventoryHolder, Container, Nameable {
     use NameableTrait {

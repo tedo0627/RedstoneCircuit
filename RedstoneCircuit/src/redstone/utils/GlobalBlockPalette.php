@@ -3,6 +3,9 @@
 namespace redstone\utils;
 
 use pocketmine\block\Block;
+use const pocketmine\RESOURCE_PATH;
+use function file_get_contents;
+use function json_decode;
 
 class GlobalBlockPalette {
 
@@ -10,7 +13,7 @@ class GlobalBlockPalette {
     private $idTable = [];
 
     public function __construct() {
-        $legacyIdMap = json_decode(file_get_contents(\pocketmine\RESOURCE_PATH . "vanilla/block_id_map.json"), true);
+        $legacyIdMap = json_decode(file_get_contents(RESOURCE_PATH . "vanilla/block_id_map.json"), true);
         foreach($legacyIdMap as $name => $id){
             $id = $legacyIdMap[$name];
             $this->nameTable[$name] = $id;

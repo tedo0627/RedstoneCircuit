@@ -3,7 +3,6 @@
 namespace redstone\selector\variables;
 
 use pocketmine\entity\Entity;
-
 use pocketmine\command\CommandSender;
 
 class SenderVariable implements IVariable {

@@ -7,7 +7,6 @@ use pocketmine\Player;
 use pocketmine\item\Item;
 
 use pocketmine\block\Block;
-use pocketmine\block\BlockFactory;
 
 use pocketmine\math\Vector3;
 

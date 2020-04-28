@@ -4,6 +4,11 @@ namespace redstone\selector\arguments;
 
 use pocketmine\command\CommandSender;
 
+use function array_reverse;
+use function count;
+use function ctype_digit;
+use function intval;
+
 class LimitArgument extends BaseArgument {
     
     public function getArgument() : string {

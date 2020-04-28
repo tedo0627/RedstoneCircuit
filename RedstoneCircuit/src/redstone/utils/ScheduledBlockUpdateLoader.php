@@ -3,17 +3,17 @@
 namespace redstone\utils;
 
 use pocketmine\Server;
-
 use pocketmine\level\Level;
-
 use pocketmine\math\Vector3;
-
 use pocketmine\utils\Config;
 
-
 use redstone\Main;
-
 use redstone\listeners\ScheduledBlockUpdateListener;
+
+use ReflectionClass;
+use function count;
+use function explode;
+use function get_class;
 
 class ScheduledBlockUpdateLoader {
 
@@ -56,7 +56,7 @@ class ScheduledBlockUpdateLoader {
         $levelDatas = [];
         $tick = Server::getInstance()->getTick();
 
-        $reflection = new \ReflectionClass(get_class($level));
+        $reflection = new ReflectionClass(get_class($level));
         $property = $reflection->getProperty('scheduledBlockUpdateQueue');
         $property->setAccessible(true);
         $queue = $property->getValue($level);

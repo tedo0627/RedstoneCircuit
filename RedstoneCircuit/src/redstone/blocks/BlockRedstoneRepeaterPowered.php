@@ -2,17 +2,6 @@
 
 namespace redstone\blocks;
 
-use pocketmine\Player;
-
-use pocketmine\block\Block;
-
-use pocketmine\item\Item;
-
-use pocketmine\math\Vector3;
-
-
-use redstone\utils\Facing;
-
 class BlockRedstoneRepeaterPowered extends BlockRedstoneRepeaterUnpowered {
 
     protected $id = self::POWERED_REPEATER;

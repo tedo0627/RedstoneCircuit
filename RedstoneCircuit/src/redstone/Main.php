@@ -8,11 +8,8 @@ use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
 
 use pocketmine\item\Item;
-use pocketmine\item\ItemBlock;
-use pocketmine\item\ItemFactory;
 
 use pocketmine\tile\Tile;
-
 
 use redstone\blockEntities\BlockEntityChest;
 use redstone\blockEntities\BlockEntityCommandBlock;
@@ -69,7 +66,6 @@ use redstone\blocks\BlockWeightedPressurePlateHeavy;
 use redstone\blocks\BlockWoodenDoor;
 
 use redstone\listeners\EventListener;
-use redstone\listeners\ScheduledBlockUpdateListener;
 
 use redstone\utils\CustomConfig;
 use redstone\utils\GlobalBlockPalette;

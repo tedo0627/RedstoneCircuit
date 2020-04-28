@@ -6,6 +6,12 @@ use pocketmine\Player;
 
 use pocketmine\command\CommandSender;
 
+use function count;
+use function ctype_digit;
+use function explode;
+use function floatval;
+use function intval;
+
 class LevelArgument extends BaseArgument {
     
     public function getArgument() : string {

@@ -12,7 +12,6 @@ use pocketmine\item\Item;
 
 use pocketmine\math\Vector3;
 
-
 use redstone\utils\Facing;
 
 class BlockRedstoneTorch extends Torch implements IRedstone {

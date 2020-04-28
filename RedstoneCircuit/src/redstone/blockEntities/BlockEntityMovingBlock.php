@@ -14,7 +14,6 @@ use pocketmine\tile\Chest;
 use pocketmine\tile\Spawnable;
 use pocketmine\tile\Tile;
 
-
 use redstone\Main;
 
 class BlockEntityMovingBlock extends Spawnable {

@@ -6,7 +6,6 @@ use pocketmine\nbt\tag\CompoundTag;
 
 use pocketmine\tile\Tile;
 
-
 use redstone\blocks\BlockDaylightDetector;
 use redstone\blocks\BlockDaylightDetectorInverted;
 
@@ -54,7 +53,6 @@ class BlockEntityDaylightDetector extends Tile {
     }
 
     private function getTimePower(int $time) : int {
-        $power = 0;
         $time = $time % 24000;
         if ($time >= 23960) {
             $power = 7;

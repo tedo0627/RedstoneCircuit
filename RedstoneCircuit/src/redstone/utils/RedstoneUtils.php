@@ -3,13 +3,6 @@
 namespace redstone\utils;
 
 use pocketmine\block\Block;
-
-use pocketmine\level\Level;
-
-use pocketmine\math\Facing;
-use pocketmine\math\Vector3;
-
-
 use redstone\blocks\BlockPiston;
 use redstone\blocks\IRedstone;
 

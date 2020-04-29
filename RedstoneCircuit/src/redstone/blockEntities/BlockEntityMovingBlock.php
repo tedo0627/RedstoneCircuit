@@ -147,13 +147,4 @@ class BlockEntityMovingBlock extends Spawnable {
             }
         }
     }
-
-    public function getDrops(Item $item) : Item {
-        $tag = $this->movingBlock;
-        $name = $tag->getString("name");
-        $damage = $tag->getShort("val");
-        $block = Main::getInstance()->getGlobalBlockPalette()->getBlock($name, $damage);
-
-        return $block->getDrops($item);
-    }
 }

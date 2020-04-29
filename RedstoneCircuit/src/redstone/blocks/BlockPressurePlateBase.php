@@ -17,7 +17,6 @@ use pocketmine\math\AxisAlignedBB;
 
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 
-
 use redstone\utils\Facing;
 
 abstract class BlockPressurePlateBase extends Transparent implements IRedstone {

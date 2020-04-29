@@ -12,7 +12,6 @@ use pocketmine\item\TieredTool;
 
 use pocketmine\level\sound\DoorSound;
 
-
 use redstone\utils\Facing;
 
 class BlockIronDoor extends IronDoor implements IRedstone {

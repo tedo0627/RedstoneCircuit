@@ -3,10 +3,9 @@
 namespace redstone\selector\variables;
 
 use pocketmine\Server;
-
-use pocketmine\entity\Entity;
-
 use pocketmine\command\CommandSender;
+
+use function shuffle;
 
 class RandomPlayerVariable implements IVariable {
 

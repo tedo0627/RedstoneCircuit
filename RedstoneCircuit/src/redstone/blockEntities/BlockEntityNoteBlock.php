@@ -6,7 +6,6 @@ use pocketmine\nbt\tag\CompoundTag;
 
 use pocketmine\tile\Tile;
 
-
 use redstone\utils\Facing;
 
 class BlockEntityNoteBlock extends Tile {

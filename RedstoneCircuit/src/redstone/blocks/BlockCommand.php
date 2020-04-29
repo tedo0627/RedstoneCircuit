@@ -15,7 +15,6 @@ use pocketmine\network\mcpe\protocol\types\ContainerIds;
 
 use pocketmine\tile\Tile;
 
-
 use redstone\blockEntities\BlockEntityCommandBlock;
 
 class BlockCommand extends Solid implements IRedstone {

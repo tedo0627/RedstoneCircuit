@@ -2,10 +2,6 @@
 
 namespace redstone\blocks;
 
-use pocketmine\Server;
-
-use redstone\utils\Facing;
-
 class BlockRedstoneComparatorPowered extends BlockRedstoneComparatorUnpowered {
 
     protected $id = self::POWERED_COMPARATOR;

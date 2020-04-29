@@ -4,7 +4,6 @@ namespace redstone\selector;
 
 use pocketmine\command\CommandSender;
 
-
 use redstone\selector\arguments\DistanceArgument;
 use redstone\selector\arguments\EntityTypeArgument;
 use redstone\selector\arguments\GamemodeArgument;
@@ -28,6 +27,12 @@ use redstone\selector\variables\IVariable;
 use redstone\selector\variables\NearestPlayerVariable;
 use redstone\selector\variables\RandomPlayerVariable;
 use redstone\selector\variables\SenderVariable;
+
+use function array_key_exists;
+use function count;
+use function explode;
+use function preg_replace;
+use function substr;
 
 class CommandSelector {
 

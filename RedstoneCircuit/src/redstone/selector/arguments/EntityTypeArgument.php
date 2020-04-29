@@ -2,9 +2,13 @@
 
 namespace redstone\selector\arguments;
 
+use pocketmine\entity\EntityIds;
 use pocketmine\Player;
 
 use pocketmine\command\CommandSender;
+
+use function ctype_digit;
+use function intval;
 
 class EntityTypeArgument extends BaseArgument {
     
@@ -24,7 +28,7 @@ class EntityTypeArgument extends BaseArgument {
         foreach ($entities as $entity) {
             $id = $entity::NETWORK_ID;
             if ($entity instanceof Player) {
-                $id = 63;
+                $id = EntityIds::PLAYER;
             }
 
             if ($id == $type && !$exclud) {

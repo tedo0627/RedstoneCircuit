@@ -10,7 +10,6 @@ use pocketmine\tile\Container;
 use pocketmine\tile\ItemFrame;
 use pocketmine\tile\Tile;
 
-
 use redstone\blocks\BlockRedstoneComparatorPowered;
 use redstone\blocks\BlockRedstoneComparatorUnpowered;
 use redstone\blocks\BlockRedstoneDiode;
@@ -96,7 +95,7 @@ class BlockEntityRedstoneComparator extends Tile {
 
     public function recalculateOutputPower() : int {
         $block = $this->getBlock();
-        $power = $block->getRedstonePower($this->getSide($block->getInputFace()), $block->getInputFace());
+        $power = $block->getRedstonePower($this->getSide($block->getInputFace()), $block->getInputFace());// HACK: Method 'getRedstonePower' not found in \pocketmine\block\Block
         $power = max($power, $this->recalculateSideUtilityPower());
 
         $sidePower = 0;

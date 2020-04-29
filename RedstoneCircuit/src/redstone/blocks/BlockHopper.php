@@ -15,7 +15,6 @@ use pocketmine\math\Vector3;
 
 use pocketmine\tile\Tile;
 
-
 use redstone\blockEntities\BlockEntityHopper;
 
 use redstone\utils\Facing;

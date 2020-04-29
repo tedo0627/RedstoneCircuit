@@ -5,26 +5,17 @@ namespace redstone\blockEntities;
 use pocketmine\block\Block;
 use pocketmine\block\Flowable;
 
-use pocketmine\inventory\InventoryHolder;
-
-use pocketmine\item\Item;
-
-use pocketmine\level\Level;
-
 use pocketmine\math\Vector3;
 
 use pocketmine\nbt\NBT;
-use pocketmine\nbt\NetworkLittleEndianNBTStream;
 
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\IntTag;
 
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
-use pocketmine\network\mcpe\protocol\BlockEntityDataPacket;
 
 use pocketmine\tile\Spawnable;
-
 
 use redstone\Main;
 
@@ -33,6 +24,8 @@ use redstone\blocks\BlockPistonarmcollision;
 use redstone\blocks\IRedstone;
 
 use redstone\utils\Facing;
+
+use function count;
 
 class BlockEntityPistonArm extends Spawnable {
 

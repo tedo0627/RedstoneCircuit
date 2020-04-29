@@ -2,13 +2,9 @@
 
 namespace redstone\blocks;
 
-use pocketmine\block\BlockFactory;
 use pocketmine\block\WoodenDoor;
 
 use pocketmine\level\sound\DoorSound;
-
-use pocketmine\math\Vector3;
-
 
 use redstone\utils\Facing;
 

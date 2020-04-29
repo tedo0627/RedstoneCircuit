@@ -2,8 +2,6 @@
 
 namespace redstone\blocks;
 
-use redstone\utils\Facing;
-
 class BlockRedstoneTorchUnlit extends BlockRedstoneTorch {
     
     protected $id = self::UNLIT_REDSTONE_TORCH;
@@ -28,23 +26,14 @@ class BlockRedstoneTorchUnlit extends BlockRedstoneTorch {
         }
     }
 
-    /**
-     * @param int $face
-     */
     public function getStrongPower(int $face) : int {
         return 0;
     }
 
-    /**
-     * @param int $face
-     */
     public function getWeakPower(int $face) : int {
         return 0;
     }
 
-    /** 
-     * @return bool
-     */
     public function isPowerSource() : bool {
         return false;
     }

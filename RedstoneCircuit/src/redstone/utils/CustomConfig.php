@@ -4,7 +4,6 @@ namespace redstone\utils;
 
 use pocketmine\utils\Config;
 
-
 use redstone\Main;
 
 class CustomConfig {

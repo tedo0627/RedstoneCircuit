@@ -16,14 +16,12 @@ use pocketmine\math\Vector3;
 
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 
-
 use redstone\utils\Facing;
-use redstone\utils\RedstoneUtils;
 
 abstract class BlockButtonBase extends Transparent implements IRedstone {
     use RedstoneTrait;
 
-    public function __construct(int $meta = 0){
+    public function __construct(int $meta = 0) {
         $this->meta = $meta;
     }
     

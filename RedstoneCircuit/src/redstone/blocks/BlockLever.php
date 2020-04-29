@@ -14,7 +14,6 @@ use pocketmine\network\mcpe\protocol\LevelEventPacket;
 
 use pocketmine\math\Vector3;
 
-
 use redstone\utils\Facing;
 
 class BlockLever extends Transparent implements IRedstone {

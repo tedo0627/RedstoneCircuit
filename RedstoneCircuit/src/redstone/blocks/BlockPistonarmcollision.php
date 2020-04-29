@@ -10,9 +10,6 @@ use pocketmine\block\Transparent;
 
 use pocketmine\item\Item;
 
-
-use redstone\blocks\BlockPiston;
-
 use redstone\utils\Facing;
 
 class BlockPistonarmcollision extends Transparent {

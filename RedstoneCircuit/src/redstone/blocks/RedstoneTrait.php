@@ -2,13 +2,14 @@
 
 namespace redstone\blocks;
 
-use pocketmine\level\Level;
-
 use pocketmine\math\Vector3;
-
 
 use redstone\utils\Facing;
 use redstone\utils\RedstoneUtils;
+
+use function array_search;
+use function count;
+use function max;
 
 trait RedstoneTrait {
 

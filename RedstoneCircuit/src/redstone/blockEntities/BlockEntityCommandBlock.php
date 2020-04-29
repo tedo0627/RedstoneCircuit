@@ -42,6 +42,16 @@ use redstone\selector\CommandSelector;
 
 use redstone\inventories\CommandInventory;
 
+use function array_merge;
+use function count;
+use function is_string;
+use function preg_match_all;
+use function spl_object_hash;
+use function stripslashes;
+use function strlen;
+use function strval;
+use function substr;
+
 class BlockEntityCommandBlock extends Spawnable implements InventoryHolder, Container, Nameable, CommandSender {
     use NameableTrait {
         addAdditionalSpawnData as addNameSpawnData;

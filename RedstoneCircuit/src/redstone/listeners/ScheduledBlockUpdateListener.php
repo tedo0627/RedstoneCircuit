@@ -7,7 +7,6 @@ use pocketmine\event\Listener;
 use pocketmine\event\level\LevelLoadEvent;
 use pocketmine\event\level\LevelSaveEvent;
 
-
 use redstone\Main;
 
 class ScheduledBlockUpdateListener implements Listener {

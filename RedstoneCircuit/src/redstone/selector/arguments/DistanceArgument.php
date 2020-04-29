@@ -6,6 +6,11 @@ use pocketmine\command\CommandSender;
 
 use pocketmine\level\Position;
 
+use function count;
+use function ctype_digit;
+use function explode;
+use function floatval;
+
 class DistanceArgument extends BaseArgument {
     
     public function getArgument() : string {

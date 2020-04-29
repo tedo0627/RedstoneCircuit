@@ -2,9 +2,12 @@
 
 namespace redstone\selector\arguments;
 
-use pocketmine\Player;
-
 use pocketmine\command\CommandSender;
+
+use function count;
+use function ctype_digit;
+use function explode;
+use function floatval;
 
 class XRotationArgument extends BaseArgument {
     

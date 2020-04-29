@@ -26,6 +26,8 @@ use redstone\inventories\HopperInventory;
 
 use redstone\utils\Facing;
 
+use function count;
+
 class BlockEntityHopper extends Spawnable implements InventoryHolder, Container, Nameable {
     use NameableTrait {
         addAdditionalSpawnData as addNameSpawnData;

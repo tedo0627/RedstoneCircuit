@@ -12,7 +12,6 @@ use pocketmine\block\Flowable;
 
 use pocketmine\math\Vector3;
 
-
 use redstone\utils\Facing;
 
 abstract class BlockRedstoneDiode extends Flowable implements IRedstone {

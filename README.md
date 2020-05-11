@@ -1,9 +1,9 @@
-# RedstoneCircuit_PMMP-Plugin by tedo0627, edited by AGTHARN
+# RedstoneCircuit_PMMP-Plugin (Teaspoon)
 This plugin makes the redstone circuit will work.
-
 This plugin used nukkit source.
+This plugin was made by tedo0627 and edited by AGTHARN.
 
-This plugin was edited to fix the some of the issues.
+This plugin was edited to be compatible with the Teaspoon plugin.
 
 ## Download
 [Click Here](https://github.com/AGTHARN/RedstoneCircuit_PMMP-Plugin/releases/tag/2.0.2)

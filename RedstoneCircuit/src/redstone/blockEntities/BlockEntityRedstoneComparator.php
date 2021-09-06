@@ -18,11 +18,12 @@ use redstone\blocks\BlockRedstoneWire;
 use redstone\utils\Facing;
 use redstone\utils\RedstoneUtils;
 
-class BlockEntityRedstoneComparator extends Tile {
-
+class BlockEntityRedstoneComparator extends Tile
+{
     protected $outputSignal = 0;
 
-    protected function readSaveData(CompoundTag $nbt) : void {
+    protected function readSaveData(CompoundTag $nbt): void
+    {
         if ($nbt->hasTag("outputSignal")) {
             $this->outputSignal = $nbt->getInt("outputSignal");
         }
@@ -30,11 +31,13 @@ class BlockEntityRedstoneComparator extends Tile {
         $this->scheduleUpdate();
     }
 
-    protected function writeSaveData(CompoundTag $nbt) : void {
+    protected function writeSaveData(CompoundTag $nbt): void
+    {
         $nbt->setInt("outputSignal", $this->outputSignal);
     }
 
-    public function onUpdate() : bool {
+    public function onUpdate(): bool
+    {
         if ($this->isClosed()) {
             return false;
         }
@@ -49,23 +52,29 @@ class BlockEntityRedstoneComparator extends Tile {
         $block = $this->getBlock();
         if ($block->getId() == Block::UNPOWERED_COMPARATOR && $power > 0) {
             $this->getLevel()->setBlock($this, new BlockRedstoneComparatorPowered($block->getDamage()));
-        } else if ($block->getId() == Block::POWERED_COMPARATOR && $power == 0) {
+        } elseif ($block->getId() == Block::POWERED_COMPARATOR && $power == 0) {
             $this->getLevel()->setBlock($this, new BlockRedstoneComparatorUnpowered($block->getDamage()));
         }
         $this->getBlock()->updateAroundDiodeRedstone($this);
         return true;
     }
 
-    public function getOutputSignal() : int {
+    public function getOutputSignal(): int
+    {
         return $this->outputSignal;
     }
 
-    public function setOutputSignal(int $signal) : void {
+    public function setOutputSignal(int $signal): void
+    {
         $this->outputSignal = $signal;
     }
 
-    protected function hasSideUtility() : bool {
+    protected function hasSideUtility(): bool
+    {
         $block = $this->getBlock();
+        if (!$block instanceof BlockRedstoneDiode) {
+            return false;
+        }
         $sideBlock = $block->getSide($block->getInputFace());
         $tile = $this->getLevel()->getTile($sideBlock);
         if ($tile instanceof Container) {
@@ -93,8 +102,12 @@ class BlockEntityRedstoneComparator extends Tile {
         return false;
     }
 
-    public function recalculateOutputPower() : int {
+    public function recalculateOutputPower(): int
+    {
         $block = $this->getBlock();
+        if (!$block instanceof BlockRedstoneDiode) {
+            return 0;
+        }
         $power = $block->getRedstonePower($this->getSide($block->getInputFace()), $block->getInputFace());// HACK: Method 'getRedstonePower' not found in \pocketmine\block\Block
         $power = max($power, $this->recalculateSideUtilityPower());
 
@@ -125,8 +138,12 @@ class BlockEntityRedstoneComparator extends Tile {
         return $p;
     }
 
-    protected function recalculateSideUtilityPower() : int {
+    protected function recalculateSideUtilityPower(): int
+    {
         $block = $this->getBlock();
+        if (!$block instanceof BlockRedstoneDiode) {
+            return 0;
+        }
         $sideBlock = $block->getSide($block->getInputFace());
         $power = $this->recalculateUtilityPower($sideBlock);
         if ($power > 0) {
@@ -141,7 +158,8 @@ class BlockEntityRedstoneComparator extends Tile {
         return $power;
     }
 
-    protected function recalculateUtilityPower(Block $block) : int {
+    protected function recalculateUtilityPower(Block $block): int
+    {
         $tile = $this->getLevel()->getTile($block);
         if ($tile instanceof Container) {
             $inventory = $tile->getInventory();

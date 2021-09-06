@@ -49,7 +49,7 @@ class BlockEntityRedstoneComparator extends Tile {
         $block = $this->getBlock();
         if ($block->getId() == Block::UNPOWERED_COMPARATOR && $power > 0) {
             $this->getLevel()->setBlock($this, new BlockRedstoneComparatorPowered($block->getDamage()));
-        } else if ($block->getId() == Block::POWERED_COMPARATOR && $power == 0) {
+        } elseif ($block->getId() == Block::POWERED_COMPARATOR && $power == 0) {
             $this->getLevel()->setBlock($this, new BlockRedstoneComparatorUnpowered($block->getDamage()));
         }
         $this->getBlock()->updateAroundDiodeRedstone($this);

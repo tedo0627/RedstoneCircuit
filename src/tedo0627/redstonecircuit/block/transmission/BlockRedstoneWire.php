@@ -21,9 +21,11 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent {
     public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null): bool {
         if (!FlowablePlaceHelper::check($this, Facing::DOWN)) return false;
 
-        $bool = parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
+        return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
+    }
+
+    public function onPostPlace(): void {
         $this->calculatePower();
-        return $bool;
     }
 
     public function onBreak(Item $item, ?Player $player = null): bool {

@@ -77,7 +77,7 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
         for ($face = 0; $face < 6; $face++) {
             $block = $this->getSide($face);
             if ($block instanceof BlockRedstoneWire) {
-                $power = max($power, $block->getWeakPower($face) - 1);
+                $power = max($power, $block->getOutputSignalStrength() - 1);
                 continue;
             }
 
@@ -102,7 +102,7 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
                         $sideBlock = $block->getSide($sideFace);
                         if (!$sideBlock instanceof BlockRedstoneWire) continue;
 
-                        $power = max($power, $sideBlock->getWeakPower($sideFace) - 1);
+                        $power = max($power, $sideBlock->getOutputSignalStrength() - 1);
                     }
                     continue;
                 }
@@ -110,7 +110,7 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
                 $sideBlock = $block->getSide(Facing::DOWN);
                 if (!$sideBlock instanceof BlockRedstoneWire) continue;
 
-                $power = max($power, $sideBlock->getWeakPower(Facing::DOWN) - 1);
+                $power = max($power, $sideBlock->getOutputSignalStrength() - 1);
             }
         }
 

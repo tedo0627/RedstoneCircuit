@@ -9,8 +9,8 @@ use pocketmine\block\utils\SlabType;
 
 class FlowablePlaceHelper {
 
-    public static function check(Block $sideBlock, int $side): bool {
-        $sideBlock = $sideBlock->getSide($side);
+    public static function check(Block $block, int $side): bool {
+        $sideBlock = $block->getSide($side);
         if (!$sideBlock instanceof Block) return false;
         if ($sideBlock instanceof Stair) return $sideBlock->isUpsideDown();
         if ($sideBlock instanceof Slab) return $sideBlock->getSlabType() !== SlabType::BOTTOM();

@@ -21,4 +21,25 @@ class BlockPowerHelper {
     public static function isPowerSource(Block $block): bool {
         return $block instanceof IRedstoneComponent ? $block->isPowerSource() : false;
     }
+
+    public static function isPowered(Block $block): bool {
+        for ($face = 0; $face < 6; $face++) {
+            if (self::getPower($block->getSide($face), $face) > 0) return true;
+        }
+
+        return false;
+    }
+
+    public static function getPower(Block $block, int $face): int {
+        return self::isNormalBlock($block) ? self::getAroundStrongPower($block) : self::getWeakPower($block, $face);
+    }
+
+    public static function getAroundStrongPower(Block $block): int {
+        $power = 0;
+        for ($face = 0; $face < 6; $face++) {
+            $power = max($power, BlockPowerHelper::getStrongPower($block->getSide($face), $face));
+            if ($power >= 15) return $power;
+        }
+        return $power;
+    }
 }

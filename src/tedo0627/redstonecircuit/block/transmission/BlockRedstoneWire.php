@@ -12,15 +12,15 @@ use pocketmine\world\BlockTransaction;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\BlockUpdateHelper;
 use tedo0627\redstonecircuit\block\FlowablePlaceHelper;
+use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
 
-class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent {
+class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILinkRedstoneWire {
     use RedstoneComponentTrait;
 
     public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null): bool {
         if (!FlowablePlaceHelper::check($this, Facing::DOWN)) return false;
-
         return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
     }
 
@@ -38,12 +38,34 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent {
         if (FlowablePlaceHelper::check($this, Facing::DOWN)) {
             $this->calculatePower();
         } else {
-            $this->getPosition()->world->useBreakOn($this->getPosition());
+            $this->getPosition()->getWorld()->useBreakOn($this->getPosition());
         }
     }
 
     public function getWeakPower(int $face): int {
-        return $this->signalStrength;
+        if ($face == Facing::UP) return $this->getOutputSignalStrength();
+        if ($face == Facing::DOWN) return 0;
+
+        $right = Facing::rotateY($face, true);
+        $left = Facing::rotateY($face, false);
+
+        return $this->isConnected($right) || $this->isConnected($left) ? 0 : $this->getOutputSignalStrength();
+    }
+
+    private function isConnected(int $face): bool {
+        $block = $this->getSide($face);
+        if ($block instanceof ILinkRedstoneWire && $block->isConnect($face)) return true;
+
+        if (BlockPowerHelper::isNormalBlock($block)) {
+            $sideBlock = $block->getSide(Facing::UP);
+            return $sideBlock instanceof RedstoneWire;
+        }
+
+        if ($block->isTransparent()) {
+            $sideBlock = $block->getSide(Facing::DOWN);
+            return $sideBlock instanceof RedstoneWire;
+        }
+        return false;
     }
 
     public function onRedstoneUpdate(): void {
@@ -92,10 +114,14 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent {
             }
         }
 
-        if ($this->getWeakPower(0) == $power) return;
+        if ($this->getOutputSignalStrength() == $power) return;
 
         $this->setOutputSignalStrength($power);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         BlockUpdateHelper::updateAroundStrongRedstone($this);
+    }
+
+    public function isConnect(int $face): bool {
+        return true;
     }
 }

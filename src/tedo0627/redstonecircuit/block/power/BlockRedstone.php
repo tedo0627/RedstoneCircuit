@@ -2,23 +2,19 @@
 
 namespace tedo0627\redstonecircuit\block\power;
 
-use pocketmine\block\Block;
 use pocketmine\block\Redstone;
 use pocketmine\item\Item;
-use pocketmine\math\Vector3;
 use pocketmine\player\Player;
-use pocketmine\world\BlockTransaction;
 use tedo0627\redstonecircuit\block\BlockUpdateHelper;
+use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
 
-class BlockRedstone extends Redstone implements IRedstoneComponent {
+class BlockRedstone extends Redstone implements IRedstoneComponent, ILinkRedstoneWire {
     use RedstoneComponentTrait;
 
-    public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null): bool {
-        $bool = parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
+    public function onPostPlace(): void {
         BlockUpdateHelper::updateAroundRedstone($this);
-        return $bool;
     }
 
     public function onBreak(Item $item, ?Player $player = null): bool {
@@ -32,6 +28,10 @@ class BlockRedstone extends Redstone implements IRedstoneComponent {
     }
 
     public function isPowerSource(): bool {
+        return true;
+    }
+
+    public function isConnect(int $face): bool {
         return true;
     }
 }

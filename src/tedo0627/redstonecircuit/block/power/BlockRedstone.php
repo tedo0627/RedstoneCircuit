@@ -8,9 +8,11 @@ use pocketmine\player\Player;
 use tedo0627\redstonecircuit\block\BlockUpdateHelper;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
+use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
 
 class BlockRedstone extends Redstone implements IRedstoneComponent, ILinkRedstoneWire {
+    use LinkRedstoneWireTrait;
     use RedstoneComponentTrait;
 
     public function onPostPlace(): void {
@@ -28,10 +30,6 @@ class BlockRedstone extends Redstone implements IRedstoneComponent, ILinkRedston
     }
 
     public function isPowerSource(): bool {
-        return true;
-    }
-
-    public function isConnect(int $face): bool {
         return true;
     }
 }

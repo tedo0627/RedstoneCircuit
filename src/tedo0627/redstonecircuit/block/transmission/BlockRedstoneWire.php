@@ -45,6 +45,7 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
     public function getWeakPower(int $face): int {
         if ($face == Facing::UP) return $this->getOutputSignalStrength();
         if ($face == Facing::DOWN) return 0;
+        if ($this->isConnected(Facing::opposite($face))) return $this->getOutputSignalStrength();
 
         $right = Facing::rotateY($face, true);
         $left = Facing::rotateY($face, false);

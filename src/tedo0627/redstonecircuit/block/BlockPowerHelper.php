@@ -24,7 +24,7 @@ class BlockPowerHelper {
 
     public static function isPowered(Block $block): bool {
         for ($face = 0; $face < 6; $face++) {
-            if (self::getPower($block->getSide($face), $face) > 0) return true;
+            if (self::isSidePowered($block, $face)) return true;
         }
 
         return false;
@@ -32,6 +32,10 @@ class BlockPowerHelper {
 
     public static function getPower(Block $block, int $face): int {
         return self::isNormalBlock($block) ? self::getAroundStrongPower($block) : self::getWeakPower($block, $face);
+    }
+
+    public static function isSidePowered(Block $block, int $face): bool {
+        return self::getPower($block->getSide($face), $face) > 0;
     }
 
     public static function getAroundStrongPower(Block $block): int {

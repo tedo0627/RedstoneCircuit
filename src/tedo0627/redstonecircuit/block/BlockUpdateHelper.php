@@ -38,4 +38,17 @@ class BlockUpdateHelper {
             }
         }
     }
+
+    public static function updateDiodeRedstone(Block $center, int $face): void {
+        $block = $center->getSide($face);
+        if ($block instanceof IRedstoneComponent) $block->onRedstoneUpdate();
+
+        $opposite = Facing::opposite($face);
+        for ($face1 = 0; $face1 < 6; $face1++) {
+            if ($face1 == $opposite) continue;
+
+            $sideBlock = $block->getSide($face1);
+            if ($sideBlock instanceof IRedstoneComponent) $sideBlock->onRedstoneUpdate();
+        }
+    }
 }

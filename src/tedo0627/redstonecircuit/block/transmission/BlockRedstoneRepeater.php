@@ -14,8 +14,9 @@ use tedo0627\redstonecircuit\block\BlockUpdateHelper;
 use tedo0627\redstonecircuit\block\FlowablePlaceHelper;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
+use tedo0627\redstonecircuit\block\IRedstoneDiode;
 
-class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneComponent, ILinkRedstoneWire {
+class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneComponent, ILinkRedstoneWire, IRedstoneDiode {
 
     public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null): bool {
         if (!FlowablePlaceHelper::check($this, Facing::DOWN)) return false;
@@ -38,11 +39,11 @@ class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneCompone
     public function isLocked(): bool {
         $face = Facing::rotateY($this->getFacing(), true);
         $block = $this->getSide($face);
-        if ($block instanceof BlockRedstoneRepeater && BlockPowerHelper::getStrongPower($block, $face)) return true;
+        if ($block instanceof IRedstoneDiode && BlockPowerHelper::getStrongPower($block, $face)) return true;
 
         $face = Facing::opposite($face);
         $block = $this->getSide($face);
-        return $block instanceof BlockRedstoneRepeater && BlockPowerHelper::getStrongPower($block, $face);
+        return $block instanceof IRedstoneDiode && BlockPowerHelper::getStrongPower($block, $face);
     }
 
     public function getStrongPower(int $face): int {

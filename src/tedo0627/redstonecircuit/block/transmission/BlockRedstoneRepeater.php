@@ -25,6 +25,12 @@ class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneCompone
         return true;
     }
 
+    public function onBreak(Item $item, ?Player $player = null): bool {
+        parent::onBreak($item, $player);
+        BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
+        return true;
+    }
+
     public function onNearbyBlockChange(): void {
         if (FlowablePlaceHelper::check($this, Facing::DOWN)) {
             BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));

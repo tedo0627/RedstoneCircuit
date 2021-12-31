@@ -68,7 +68,9 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
             }
         }
 
-        return parent::onBreak($item, $player);
+        parent::onBreak($item, $player);
+        BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
+        return true;
     }
 
     public function onNearbyBlockChange(): void {

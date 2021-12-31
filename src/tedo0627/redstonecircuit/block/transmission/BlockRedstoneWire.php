@@ -43,6 +43,10 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
         }
     }
 
+    public function getStrongPower(int $face): int {
+        return $this->getWeakPower($face);
+    }
+
     public function getWeakPower(int $face): int {
         if ($face == Facing::UP) return $this->getOutputSignalStrength();
         if ($face == Facing::DOWN) return 0;

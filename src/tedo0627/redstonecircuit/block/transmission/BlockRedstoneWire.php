@@ -36,7 +36,8 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
 
     public function onNearbyBlockChange(): void {
         if (FlowablePlaceHelper::check($this, Facing::DOWN)) {
-            $this->calculatePower();
+            if ($this->calculatePower()) return;
+            BlockUpdateHelper::updateAroundStrongRedstone($this);
         } else {
             $this->getPosition()->getWorld()->useBreakOn($this->getPosition());
         }
@@ -73,7 +74,7 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
         $this->calculatePower();
     }
 
-    private function calculatePower(): void {
+    private function calculatePower(): bool {
         $power = 0;
         for ($face = 0; $face < 6; $face++) {
             $block = $this->getSide($face);
@@ -115,11 +116,12 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
             }
         }
 
-        if ($this->getOutputSignalStrength() == $power) return;
+        if ($this->getOutputSignalStrength() == $power) return false;
 
         $this->setOutputSignalStrength($power);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         BlockUpdateHelper::updateAroundStrongRedstone($this);
+        return true;
     }
 
     public function isConnect(int $face): bool {

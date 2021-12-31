@@ -45,7 +45,7 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
 
     public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null): bool {
         parent::onInteract($item, $face, $clickVector, $player);
-        BlockUpdateHelper::updateDiodeRedstone($this, $this->getFacing());
+        BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
         return true;
     }
 
@@ -104,7 +104,7 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
         if ($this->getOutputSignalStrength() > 0 && $power === 0) $this->setPowered(false);
         $this->setOutputSignalStrength($power);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
-        BlockUpdateHelper::updateDiodeRedstone($this, $this->getFacing());
+        BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
     }
 
     private function recalculateUtilityPower(int $step = 1): int {

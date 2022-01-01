@@ -96,8 +96,12 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
                 for ($sideFace = 0; $sideFace < 6; $sideFace++) {
                     if ($sideFace == Facing::opposite($face)) continue;
 
-                    $power = max($power, BlockPowerHelper::getStrongPower($block->getSide($sideFace), $sideFace));
+                    $sideBlock = $block->getSide($sideFace);
+                    if (!BlockPowerHelper::isPowerSource($sideBlock)) continue;
+
+                    $power = max($power, BlockPowerHelper::getStrongPower($sideBlock, $sideFace));
                 }
+                continue;
             }
 
             if ($face == Facing::DOWN) continue;

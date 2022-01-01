@@ -17,24 +17,24 @@ class BlockRedstoneTorch extends RedstoneTorch implements IRedstoneComponent, IL
 
     public function onPostPlace(): void {
         $this->onRedstoneUpdate();
-        BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
+        BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::UP);
     }
 
     public function onBreak(Item $item, ?Player $player = null): bool {
         parent::onBreak($item, $player);
-        BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
+        BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::UP);
         return true;
     }
 
     public function onNearbyBlockChange(): void {
         parent::onNearbyBlockChange();
-        BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
+        BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::UP);
     }
 
     public function onScheduledUpdate(): void {
         $this->setLit(!$this->isLit());
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
-        BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
+        BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::UP);
     }
 
     public function getStrongPower(int $face): int {
@@ -42,7 +42,9 @@ class BlockRedstoneTorch extends RedstoneTorch implements IRedstoneComponent, IL
     }
 
     public function getWeakPower(int $face): int {
-        return $this->isLit() && $face !== $this->getFacing() ? 15 : 0;
+        if  (!$this->isLit()) return 0;
+        if ($face === Facing::DOWN) return $this->getFacing() !== Facing::DOWN ? 15 : 0;
+        return $face !== $this->getFacing() ? 15 : 0;
     }
 
     public function isPowerSource(): bool {

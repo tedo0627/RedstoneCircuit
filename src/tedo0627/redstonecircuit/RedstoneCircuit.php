@@ -13,7 +13,11 @@ use tedo0627\redstonecircuit\block\power\BlockLever;
 use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
 use tedo0627\redstonecircuit\block\power\BlockStoneButton;
+use tedo0627\redstonecircuit\block\power\BlockStonePressurePlate;
+use tedo0627\redstonecircuit\block\power\BlockWeightedPressurePlateHeavy;
+use tedo0627\redstonecircuit\block\power\BlockWeightedPressurePlateLight;
 use tedo0627\redstonecircuit\block\power\BlockWoodenButton;
+use tedo0627\redstonecircuit\block\power\BlockWoodenPressurePlate;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneComparator;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
@@ -30,12 +34,16 @@ class RedstoneCircuit extends PluginBase {
         $this->registerBlock(Ids::REDSTONE_BLOCK, fn($bid, $name, $info) => new BlockRedstone($bid, $name, $info));
         $this->registerBlock(Ids::REDSTONE_TORCH, fn($bid, $name, $info) => new BlockRedstoneTorch($bid, $name, $info));
         $this->registerBlock(Ids::STONE_BUTTON, fn($bid, $name, $info) => new BlockStoneButton($bid, $name, $info));
+        $this->registerBlock(Ids::STONE_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockStonePressurePlate($bid, $name, $info));
+        $this->registerBlock(Ids::HEAVY_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateHeavy($bid, $name, $info));
+        $this->registerBlock(Ids::LIGHT_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateLight($bid, $name, $info));
         $this->registerBlock(Ids::WOODEN_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
         $this->registerBlock(Ids::ACACIA_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
         $this->registerBlock(Ids::BIRCH_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
         $this->registerBlock(Ids::DARK_OAK_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
         $this->registerBlock(Ids::JUNGLE_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
         $this->registerBlock(Ids::SPRUCE_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
+        $this->registerBlock(Ids::WOODEN_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWoodenPressurePlate($bid, $name, $info));
 
         // transmission
         $this->registerBlock(Ids::UNPOWERED_COMPARATOR, fn($bid, $name, $info) => new BlockRedstoneComparator($bid, $name, $info));

@@ -8,7 +8,9 @@ use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
 use pocketmine\plugin\PluginBase;
+use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockRedstoneLamp;
+use tedo0627\redstonecircuit\block\mechanism\BlockWoodenDoor;
 use tedo0627\redstonecircuit\block\power\BlockLever;
 use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
@@ -27,7 +29,14 @@ class RedstoneCircuit extends PluginBase {
 
     public function onLoad(): void {
         // mechanism
+        $this->registerBlock(Ids::IRON_DOOR_BLOCK, fn($bid, $name, $info) => new BlockIronDoor($bid, $name, $info));
         $this->registerBlock(Ids::REDSTONE_LAMP, fn($bid, $name, $info) => new BlockRedstoneLamp($bid, $name, $info));
+        foreach ([
+             Ids::OAK_DOOR_BLOCK, Ids::SPRUCE_DOOR_BLOCK, Ids::BIRCH_DOOR_BLOCK,
+             Ids::JUNGLE_DOOR_BLOCK, Ids::ACACIA_DOOR_BLOCK, Ids::DARK_OAK_DOOR_BLOCK
+        ] as $id) {
+            $this->registerBlock($id, fn($bid, $name, $info) => new BlockWoodenDoor($bid, $name, $info));
+        }
 
         // power
         $this->registerBlock(Ids::LEVER, fn($bid, $name, $info) => new BlockLever($bid, $name, $info));
@@ -37,12 +46,12 @@ class RedstoneCircuit extends PluginBase {
         $this->registerBlock(Ids::STONE_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockStonePressurePlate($bid, $name, $info));
         $this->registerBlock(Ids::HEAVY_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateHeavy($bid, $name, $info));
         $this->registerBlock(Ids::LIGHT_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateLight($bid, $name, $info));
-        $this->registerBlock(Ids::WOODEN_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
-        $this->registerBlock(Ids::ACACIA_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
-        $this->registerBlock(Ids::BIRCH_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
-        $this->registerBlock(Ids::DARK_OAK_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
-        $this->registerBlock(Ids::JUNGLE_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
-        $this->registerBlock(Ids::SPRUCE_BUTTON, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
+        foreach ([
+            Ids::WOODEN_BUTTON, Ids::ACACIA_BUTTON, Ids::BIRCH_BUTTON,
+            Ids::DARK_OAK_BUTTON, Ids::JUNGLE_BUTTON, Ids::SPRUCE_BUTTON
+        ] as $id) {
+            $this->registerBlock($id, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
+        }
         $this->registerBlock(Ids::WOODEN_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWoodenPressurePlate($bid, $name, $info));
 
         // transmission

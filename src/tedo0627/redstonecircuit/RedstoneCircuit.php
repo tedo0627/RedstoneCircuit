@@ -9,8 +9,10 @@ use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
 use pocketmine\plugin\PluginBase;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
+use tedo0627\redstonecircuit\block\mechanism\BlockIronTrapdoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockRedstoneLamp;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenDoor;
+use tedo0627\redstonecircuit\block\mechanism\BlockWoodenTrapdoor;
 use tedo0627\redstonecircuit\block\power\BlockLever;
 use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
@@ -30,12 +32,19 @@ class RedstoneCircuit extends PluginBase {
     public function onLoad(): void {
         // mechanism
         $this->registerBlock(Ids::IRON_DOOR_BLOCK, fn($bid, $name, $info) => new BlockIronDoor($bid, $name, $info));
+        $this->registerBlock(Ids::IRON_TRAPDOOR, fn($bid, $name, $info) => new BlockIronTrapdoor($bid, $name, $info));
         $this->registerBlock(Ids::REDSTONE_LAMP, fn($bid, $name, $info) => new BlockRedstoneLamp($bid, $name, $info));
         foreach ([
-             Ids::OAK_DOOR_BLOCK, Ids::SPRUCE_DOOR_BLOCK, Ids::BIRCH_DOOR_BLOCK,
-             Ids::JUNGLE_DOOR_BLOCK, Ids::ACACIA_DOOR_BLOCK, Ids::DARK_OAK_DOOR_BLOCK
+            Ids::OAK_DOOR_BLOCK, Ids::SPRUCE_DOOR_BLOCK, Ids::BIRCH_DOOR_BLOCK,
+            Ids::JUNGLE_DOOR_BLOCK, Ids::ACACIA_DOOR_BLOCK, Ids::DARK_OAK_DOOR_BLOCK
         ] as $id) {
             $this->registerBlock($id, fn($bid, $name, $info) => new BlockWoodenDoor($bid, $name, $info));
+        }
+        foreach ([
+            Ids::WOODEN_TRAPDOOR, Ids::ACACIA_TRAPDOOR, Ids::BIRCH_TRAPDOOR,
+            Ids::DARK_OAK_TRAPDOOR, Ids::JUNGLE_TRAPDOOR, Ids::SPRUCE_TRAPDOOR
+        ] as $id) {
+            $this->registerBlock($id, fn($bid, $name, $info) => new BlockWoodenTrapdoor($bid, $name, $info));
         }
 
         // power

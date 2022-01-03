@@ -3,13 +3,17 @@
 namespace tedo0627\redstonecircuit;
 
 use pocketmine\block\BlockFactory;
+use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockLegacyIds as Ids;
+use pocketmine\block\tile\TileFactory;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
 use pocketmine\plugin\PluginBase;
+use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronTrapdoor;
+use tedo0627\redstonecircuit\block\mechanism\BlockNote;
 use tedo0627\redstonecircuit\block\mechanism\BlockRedstoneLamp;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenTrapdoor;
@@ -33,19 +37,16 @@ class RedstoneCircuit extends PluginBase {
         // mechanism
         $this->registerBlock(Ids::IRON_DOOR_BLOCK, fn($bid, $name, $info) => new BlockIronDoor($bid, $name, $info));
         $this->registerBlock(Ids::IRON_TRAPDOOR, fn($bid, $name, $info) => new BlockIronTrapdoor($bid, $name, $info));
+        $this->registerBlock(Ids::NOTEBLOCK, fn($bid, $name, $info) => new BlockNote($bid, $name, $info), BlockEntityNote::class);
         $this->registerBlock(Ids::REDSTONE_LAMP, fn($bid, $name, $info) => new BlockRedstoneLamp($bid, $name, $info));
-        foreach ([
+        $this->registerBlocks([
             Ids::OAK_DOOR_BLOCK, Ids::SPRUCE_DOOR_BLOCK, Ids::BIRCH_DOOR_BLOCK,
             Ids::JUNGLE_DOOR_BLOCK, Ids::ACACIA_DOOR_BLOCK, Ids::DARK_OAK_DOOR_BLOCK
-        ] as $id) {
-            $this->registerBlock($id, fn($bid, $name, $info) => new BlockWoodenDoor($bid, $name, $info));
-        }
-        foreach ([
+        ], fn($bid, $name, $info) => new BlockWoodenDoor($bid, $name, $info));
+        $this->registerBlocks([
             Ids::WOODEN_TRAPDOOR, Ids::ACACIA_TRAPDOOR, Ids::BIRCH_TRAPDOOR,
             Ids::DARK_OAK_TRAPDOOR, Ids::JUNGLE_TRAPDOOR, Ids::SPRUCE_TRAPDOOR
-        ] as $id) {
-            $this->registerBlock($id, fn($bid, $name, $info) => new BlockWoodenTrapdoor($bid, $name, $info));
-        }
+        ], fn($bid, $name, $info) => new BlockWoodenTrapdoor($bid, $name, $info));
 
         // power
         $this->registerBlock(Ids::LEVER, fn($bid, $name, $info) => new BlockLever($bid, $name, $info));
@@ -55,12 +56,10 @@ class RedstoneCircuit extends PluginBase {
         $this->registerBlock(Ids::STONE_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockStonePressurePlate($bid, $name, $info));
         $this->registerBlock(Ids::HEAVY_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateHeavy($bid, $name, $info));
         $this->registerBlock(Ids::LIGHT_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateLight($bid, $name, $info));
-        foreach ([
+        $this->registerBlocks([
             Ids::WOODEN_BUTTON, Ids::ACACIA_BUTTON, Ids::BIRCH_BUTTON,
             Ids::DARK_OAK_BUTTON, Ids::JUNGLE_BUTTON, Ids::SPRUCE_BUTTON
-        ] as $id) {
-            $this->registerBlock($id, fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
-        }
+        ], fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
         $this->registerBlock(Ids::WOODEN_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWoodenPressurePlate($bid, $name, $info));
 
         // transmission
@@ -69,12 +68,27 @@ class RedstoneCircuit extends PluginBase {
         $this->registerBlock(Ids::REDSTONE_WIRE, fn($bid, $name, $info) => new BlockRedstoneWire($bid, $name, $info));
 
         ItemFactory::getInstance()->register(new ItemRedstone(new ItemIdentifier(ItemIds::REDSTONE, 0), "Redstone"), true);
+
+        TileFactory::getInstance()->register(BlockEntityNote::class, ["Music", "minecraft:noteblock"]);
     }
 
-    private function registerBlock(int $id, $callback): void {
+    private function registerBlock(int $id, callable $callback, ?string $class = null): void {
         $factory = BlockFactory::getInstance();
         $oldBlock = $factory->get($id, 0);
-        $block = $callback($oldBlock->getIdInfo(), $oldBlock->getName(), $oldBlock->getBreakInfo());
+        $bid = $oldBlock->getIdInfo();
+        if ($class !== null) {
+            $bid = new BlockIdentifier($bid->getBlockId(), $bid->getVariant(), $bid->getItemId(), $class);
+        }
+        $block = $callback($bid, $oldBlock->getName(), $oldBlock->getBreakInfo());
         $factory->register($block, true);
+    }
+
+    private function registerBlocks(array $ids, callable $callback): void {
+        $factory = BlockFactory::getInstance();
+        foreach ($ids as $id) {
+            $oldBlock = $factory->get($id, 0);
+            $block = $callback($oldBlock->getIdInfo(), $oldBlock->getName(), $oldBlock->getBreakInfo());
+            $factory->register($block, true);
+        }
     }
 }

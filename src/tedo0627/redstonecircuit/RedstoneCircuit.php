@@ -11,11 +11,13 @@ use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
 use pocketmine\plugin\PluginBase;
 use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
+use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
 use tedo0627\redstonecircuit\block\mechanism\BlockFenceGate;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronTrapdoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockNote;
 use tedo0627\redstonecircuit\block\mechanism\BlockRedstoneLamp;
+use tedo0627\redstonecircuit\block\mechanism\BlockSkull;
 use tedo0627\redstonecircuit\block\mechanism\BlockTNT;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenTrapdoor;
@@ -45,6 +47,7 @@ class RedstoneCircuit extends PluginBase {
         $this->registerBlock(Ids::IRON_TRAPDOOR, fn($bid, $name, $info) => new BlockIronTrapdoor($bid, $name, $info));
         $this->registerBlock(Ids::NOTEBLOCK, fn($bid, $name, $info) => new BlockNote($bid, $name, $info), BlockEntityNote::class);
         $this->registerBlock(Ids::REDSTONE_LAMP, fn($bid, $name, $info) => new BlockRedstoneLamp($bid, $name, $info));
+        $this->registerBlock(Ids::SKULL_BLOCK, fn($bid, $name, $info) => new BlockSkull($bid, $name, $info), BlockEntitySkull::class);
         $this->registerBlock(Ids::TNT, fn($bid, $name, $info) => new BlockTNT($bid, $name, $info));
         $this->registerBlocks([
             Ids::OAK_DOOR_BLOCK, Ids::SPRUCE_DOOR_BLOCK, Ids::BIRCH_DOOR_BLOCK,
@@ -77,6 +80,7 @@ class RedstoneCircuit extends PluginBase {
         ItemFactory::getInstance()->register(new ItemRedstone(new ItemIdentifier(ItemIds::REDSTONE, 0), "Redstone"), true);
 
         TileFactory::getInstance()->register(BlockEntityNote::class, ["Music", "minecraft:noteblock"]);
+        TileFactory::getInstance()->register(BlockEntitySkull::class, ["Skull", "minecraft:skull"]);
     }
 
     private function registerBlock(int $id, callable $callback, ?string $class = null): void {

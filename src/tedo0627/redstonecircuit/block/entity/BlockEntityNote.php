@@ -23,7 +23,7 @@ class BlockEntityNote extends Note {
         return $this->powered;
     }
 
-    public function setPowered(bool $powered) {
+    public function setPowered(bool $powered): void {
         $this->powered = $powered;
     }
 }

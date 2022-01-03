@@ -11,6 +11,7 @@ use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
 use pocketmine\plugin\PluginBase;
 use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
+use tedo0627\redstonecircuit\block\mechanism\BlockFenceGate;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronTrapdoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockNote;
@@ -35,6 +36,10 @@ class RedstoneCircuit extends PluginBase {
 
     public function onLoad(): void {
         // mechanism
+        $this->registerBlocks([
+            Ids::OAK_FENCE_GATE, Ids::SPRUCE_FENCE_GATE, Ids::BIRCH_FENCE_GATE,
+            Ids::JUNGLE_FENCE_GATE, Ids::DARK_OAK_FENCE_GATE, Ids::ACACIA_FENCE_GATE
+        ], fn($bid, $name, $info) => new BlockFenceGate($bid, $name, $info));
         $this->registerBlock(Ids::IRON_DOOR_BLOCK, fn($bid, $name, $info) => new BlockIronDoor($bid, $name, $info));
         $this->registerBlock(Ids::IRON_TRAPDOOR, fn($bid, $name, $info) => new BlockIronTrapdoor($bid, $name, $info));
         $this->registerBlock(Ids::NOTEBLOCK, fn($bid, $name, $info) => new BlockNote($bid, $name, $info), BlockEntityNote::class);

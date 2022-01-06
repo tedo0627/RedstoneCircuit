@@ -197,6 +197,6 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
     }
 
     public function isConnect(int $face): bool {
-        return $face === $this->getFacing() || $face === Facing::opposite($this->getFacing());
+        return true;
     }
 }

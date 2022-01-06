@@ -12,6 +12,7 @@ use pocketmine\item\ItemIds;
 use pocketmine\plugin\PluginBase;
 use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
+use tedo0627\redstonecircuit\block\entity\BlockEntityChest;
 use tedo0627\redstonecircuit\block\mechanism\BlockFenceGate;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronTrapdoor;
@@ -26,6 +27,7 @@ use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
 use tedo0627\redstonecircuit\block\power\BlockStoneButton;
 use tedo0627\redstonecircuit\block\power\BlockStonePressurePlate;
+use tedo0627\redstonecircuit\block\power\BlockTrappedChest;
 use tedo0627\redstonecircuit\block\power\BlockWeightedPressurePlateHeavy;
 use tedo0627\redstonecircuit\block\power\BlockWeightedPressurePlateLight;
 use tedo0627\redstonecircuit\block\power\BlockWoodenButton;
@@ -64,6 +66,7 @@ class RedstoneCircuit extends PluginBase {
         $this->registerBlock(Ids::REDSTONE_TORCH, fn($bid, $name, $info) => new BlockRedstoneTorch($bid, $name, $info));
         $this->registerBlock(Ids::STONE_BUTTON, fn($bid, $name, $info) => new BlockStoneButton($bid, $name, $info));
         $this->registerBlock(Ids::STONE_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockStonePressurePlate($bid, $name, $info));
+        $this->registerBlock(Ids::TRAPPED_CHEST, fn($bid, $name, $info) => new BlockTrappedChest($bid, $name, $info), BlockEntityChest::class);
         $this->registerBlock(Ids::HEAVY_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateHeavy($bid, $name, $info));
         $this->registerBlock(Ids::LIGHT_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateLight($bid, $name, $info));
         $this->registerBlocks([
@@ -81,6 +84,7 @@ class RedstoneCircuit extends PluginBase {
 
         TileFactory::getInstance()->register(BlockEntityNote::class, ["Music", "minecraft:noteblock"]);
         TileFactory::getInstance()->register(BlockEntitySkull::class, ["Skull", "minecraft:skull"]);
+        TileFactory::getInstance()->register(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
     }
 
     private function registerBlock(int $id, callable $callback, ?string $class = null): void {

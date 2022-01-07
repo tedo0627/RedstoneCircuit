@@ -2,17 +2,22 @@
 
 namespace tedo0627\redstonecircuit;
 
+use pocketmine\block\BlockBreakInfo;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockLegacyIds as Ids;
+use pocketmine\block\BlockToolType;
 use pocketmine\block\tile\TileFactory;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
+use pocketmine\item\ToolTier;
 use pocketmine\plugin\PluginBase;
+use tedo0627\redstonecircuit\block\entity\BlockEntityDropper;
 use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
 use tedo0627\redstonecircuit\block\entity\BlockEntityChest;
+use tedo0627\redstonecircuit\block\mechanism\BlockDropper;
 use tedo0627\redstonecircuit\block\mechanism\BlockFenceGate;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronTrapdoor;
@@ -36,11 +41,17 @@ use tedo0627\redstonecircuit\block\transmission\BlockRedstoneComparator;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
 use tedo0627\redstonecircuit\item\ItemRedstone;
+use tedo0627\redstonecircuit\listener\InventoryListener;
 
 class RedstoneCircuit extends PluginBase {
 
     public function onLoad(): void {
+        $factory = BlockFactory::getInstance();
+
         // mechanism
+        $bid = new BlockIdentifier(Ids::DROPPER, 0, null, BlockEntityDropper::class);
+        $info = new BlockBreakInfo(3.5, BlockToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel());
+        $factory->register(new BlockDropper($bid, "Dropper", $info));
         $this->registerBlocks([
             Ids::OAK_FENCE_GATE, Ids::SPRUCE_FENCE_GATE, Ids::BIRCH_FENCE_GATE,
             Ids::JUNGLE_FENCE_GATE, Ids::DARK_OAK_FENCE_GATE, Ids::ACACIA_FENCE_GATE
@@ -85,6 +96,11 @@ class RedstoneCircuit extends PluginBase {
         TileFactory::getInstance()->register(BlockEntityNote::class, ["Music", "minecraft:noteblock"]);
         TileFactory::getInstance()->register(BlockEntitySkull::class, ["Skull", "minecraft:skull"]);
         TileFactory::getInstance()->register(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
+        TileFactory::getInstance()->register(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
+    }
+
+    public function onEnable(): void {
+        $this->getServer()->getPluginManager()->registerEvents(new InventoryListener(), $this);
     }
 
     private function registerBlock(int $id, callable $callback, ?string $class = null): void {

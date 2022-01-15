@@ -29,6 +29,7 @@ use tedo0627\redstonecircuit\block\mechanism\BlockSkull;
 use tedo0627\redstonecircuit\block\mechanism\BlockTNT;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenTrapdoor;
+use tedo0627\redstonecircuit\block\power\BlockJukeBox;
 use tedo0627\redstonecircuit\block\power\BlockLever;
 use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
@@ -76,6 +77,7 @@ class RedstoneCircuit extends PluginBase {
         ], fn($bid, $name, $info) => new BlockWoodenTrapdoor($bid, $name, $info));
 
         // power
+        $this->registerBlock(Ids::JUKEBOX, fn($bid, $name, $info) => new BlockJukeBox($bid, $name, $info));
         $this->registerBlock(Ids::LEVER, fn($bid, $name, $info) => new BlockLever($bid, $name, $info));
         $this->registerBlock(Ids::REDSTONE_BLOCK, fn($bid, $name, $info) => new BlockRedstone($bid, $name, $info));
         $this->registerBlock(Ids::REDSTONE_TORCH, fn($bid, $name, $info) => new BlockRedstoneTorch($bid, $name, $info));

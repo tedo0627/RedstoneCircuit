@@ -7,8 +7,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\inventory\Inventory;
 use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
-use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
-use tedo0627\redstonecircuit\block\inventory\DropperInventory;
+use tedo0627\redstonecircuit\block\inventory\IWindowType;
 
 class InventoryListener implements Listener {
 
@@ -16,12 +15,7 @@ class InventoryListener implements Listener {
 
     public function onInventoryOpen(InventoryOpenEvent $event) {
         $inventory = $event->getInventory();
-        if (!$inventory instanceof DropperInventory) {
-            $this->lastInventory = null;
-            return;
-        }
-
-        $this->lastInventory = $inventory;
+        $this->lastInventory = $inventory instanceof IWindowType ? $inventory : null;
     }
 
     public function onDataPacketSend(DataPacketSendEvent $event) {
@@ -32,16 +26,8 @@ class InventoryListener implements Listener {
 
             $inventory = $this->lastInventory;
             $this->lastInventory = null;
-            if (!$inventory instanceof DropperInventory) return;
-
-            $sessions = $event->getTargets();
-            for ($j = 0; $j < count($sessions); $j++) {
-                $session = $sessions[$j];
-                $player = $session->getPlayer();
-                if ($player === null) continue;
-
-                $packet->windowType = WindowTypes::DROPPER;
-            }
+            $type = $inventory instanceof IWindowType ? $inventory->getWindowType() : null;
+            if ($type !== null) $packet->windowType = $type;
         }
     }
 }

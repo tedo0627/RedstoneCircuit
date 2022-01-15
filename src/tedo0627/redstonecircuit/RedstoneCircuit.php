@@ -13,10 +13,12 @@ use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
 use pocketmine\item\ToolTier;
 use pocketmine\plugin\PluginBase;
+use tedo0627\redstonecircuit\block\entity\BlockEntityChest;
+use tedo0627\redstonecircuit\block\entity\BlockEntityDispenser;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDropper;
 use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
-use tedo0627\redstonecircuit\block\entity\BlockEntityChest;
+use tedo0627\redstonecircuit\block\mechanism\BlockDispenser;
 use tedo0627\redstonecircuit\block\mechanism\BlockDropper;
 use tedo0627\redstonecircuit\block\mechanism\BlockFenceGate;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
@@ -49,8 +51,10 @@ class RedstoneCircuit extends PluginBase {
         $factory = BlockFactory::getInstance();
 
         // mechanism
-        $bid = new BlockIdentifier(Ids::DROPPER, 0, null, BlockEntityDropper::class);
+        $bid = new BlockIdentifier(Ids::DISPENSER, 0, null, BlockEntityDispenser::class);
         $info = new BlockBreakInfo(3.5, BlockToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel());
+        $factory->register(new BlockDispenser($bid, "Dispenser", $info));
+        $bid = new BlockIdentifier(Ids::DROPPER, 0, null, BlockEntityDropper::class);
         $factory->register(new BlockDropper($bid, "Dropper", $info));
         $this->registerBlocks([
             Ids::OAK_FENCE_GATE, Ids::SPRUCE_FENCE_GATE, Ids::BIRCH_FENCE_GATE,
@@ -96,6 +100,7 @@ class RedstoneCircuit extends PluginBase {
         TileFactory::getInstance()->register(BlockEntityNote::class, ["Music", "minecraft:noteblock"]);
         TileFactory::getInstance()->register(BlockEntitySkull::class, ["Skull", "minecraft:skull"]);
         TileFactory::getInstance()->register(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
+        TileFactory::getInstance()->register(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
         TileFactory::getInstance()->register(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
     }
 

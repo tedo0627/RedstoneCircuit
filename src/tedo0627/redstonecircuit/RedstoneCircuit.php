@@ -17,6 +17,7 @@ use tedo0627\redstonecircuit\block\entity\BlockEntityChest;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDispenser;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDropper;
 use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
+use tedo0627\redstonecircuit\block\entity\BlockEntityObserver;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
 use tedo0627\redstonecircuit\block\mechanism\BlockDispenser;
 use tedo0627\redstonecircuit\block\mechanism\BlockDropper;
@@ -31,6 +32,7 @@ use tedo0627\redstonecircuit\block\mechanism\BlockWoodenDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenTrapdoor;
 use tedo0627\redstonecircuit\block\power\BlockJukeBox;
 use tedo0627\redstonecircuit\block\power\BlockLever;
+use tedo0627\redstonecircuit\block\power\BlockObserver;
 use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
 use tedo0627\redstonecircuit\block\power\BlockStoneButton;
@@ -79,6 +81,8 @@ class RedstoneCircuit extends PluginBase {
         // power
         $this->registerBlock(Ids::JUKEBOX, fn($bid, $name, $info) => new BlockJukeBox($bid, $name, $info));
         $this->registerBlock(Ids::LEVER, fn($bid, $name, $info) => new BlockLever($bid, $name, $info));
+        $bid = new BlockIdentifier(Ids::OBSERVER, 0, null, BlockEntityObserver::class);
+        $factory->register(new BlockObserver($bid, "Observer", $info));
         $this->registerBlock(Ids::REDSTONE_BLOCK, fn($bid, $name, $info) => new BlockRedstone($bid, $name, $info));
         $this->registerBlock(Ids::REDSTONE_TORCH, fn($bid, $name, $info) => new BlockRedstoneTorch($bid, $name, $info));
         $this->registerBlock(Ids::STONE_BUTTON, fn($bid, $name, $info) => new BlockStoneButton($bid, $name, $info));
@@ -104,6 +108,7 @@ class RedstoneCircuit extends PluginBase {
         TileFactory::getInstance()->register(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
         TileFactory::getInstance()->register(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
         TileFactory::getInstance()->register(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
+        TileFactory::getInstance()->register(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
     }
 
     public function onEnable(): void {

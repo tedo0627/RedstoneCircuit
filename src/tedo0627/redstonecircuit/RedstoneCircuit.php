@@ -8,6 +8,7 @@ use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\block\BlockToolType;
 use pocketmine\block\tile\TileFactory;
+use pocketmine\item\ItemBlock;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
@@ -38,6 +39,8 @@ use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
 use tedo0627\redstonecircuit\block\power\BlockStoneButton;
 use tedo0627\redstonecircuit\block\power\BlockStonePressurePlate;
 use tedo0627\redstonecircuit\block\power\BlockTrappedChest;
+use tedo0627\redstonecircuit\block\power\BlockTripwire;
+use tedo0627\redstonecircuit\block\power\BlockTripwireHook;
 use tedo0627\redstonecircuit\block\power\BlockWeightedPressurePlateHeavy;
 use tedo0627\redstonecircuit\block\power\BlockWeightedPressurePlateLight;
 use tedo0627\redstonecircuit\block\power\BlockWoodenButton;
@@ -88,6 +91,8 @@ class RedstoneCircuit extends PluginBase {
         $this->registerBlock(Ids::STONE_BUTTON, fn($bid, $name, $info) => new BlockStoneButton($bid, $name, $info));
         $this->registerBlock(Ids::STONE_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockStonePressurePlate($bid, $name, $info));
         $this->registerBlock(Ids::TRAPPED_CHEST, fn($bid, $name, $info) => new BlockTrappedChest($bid, $name, $info), BlockEntityChest::class);
+        $this->registerBlock(Ids::TRIPWIRE, fn($bid, $name, $info) => new BlockTripwire($bid, $name, $info));
+        $this->registerBlock(Ids::TRIPWIRE_HOOK, fn($bid, $name, $info) => new BlockTripwireHook($bid, $name, $info));
         $this->registerBlock(Ids::HEAVY_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateHeavy($bid, $name, $info));
         $this->registerBlock(Ids::LIGHT_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateLight($bid, $name, $info));
         $this->registerBlocks([
@@ -102,6 +107,7 @@ class RedstoneCircuit extends PluginBase {
         $this->registerBlock(Ids::REDSTONE_WIRE, fn($bid, $name, $info) => new BlockRedstoneWire($bid, $name, $info));
 
         ItemFactory::getInstance()->register(new ItemRedstone(new ItemIdentifier(ItemIds::REDSTONE, 0), "Redstone"), true);
+        ItemFactory::getInstance()->register(new ItemBlock(new ItemIdentifier(ItemIds::STRING, 0), $factory->get(Ids::TRIPWIRE, 0)), true);
 
         TileFactory::getInstance()->register(BlockEntityNote::class, ["Music", "minecraft:noteblock"]);
         TileFactory::getInstance()->register(BlockEntitySkull::class, ["Skull", "minecraft:skull"]);

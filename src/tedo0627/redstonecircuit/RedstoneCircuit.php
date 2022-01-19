@@ -48,7 +48,6 @@ use tedo0627\redstonecircuit\block\power\BlockWoodenPressurePlate;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneComparator;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
-use tedo0627\redstonecircuit\item\ItemRedstone;
 use tedo0627\redstonecircuit\listener\InventoryListener;
 
 class RedstoneCircuit extends PluginBase {
@@ -106,7 +105,7 @@ class RedstoneCircuit extends PluginBase {
         $this->registerBlock(Ids::UNPOWERED_REPEATER, fn($bid, $name, $info) => new BlockRedstoneRepeater($bid, $name, $info));
         $this->registerBlock(Ids::REDSTONE_WIRE, fn($bid, $name, $info) => new BlockRedstoneWire($bid, $name, $info));
 
-        ItemFactory::getInstance()->register(new ItemRedstone(new ItemIdentifier(ItemIds::REDSTONE, 0), "Redstone"), true);
+        ItemFactory::getInstance()->register(new ItemBlock(new ItemIdentifier(ItemIds::REDSTONE, 0), $factory->get(Ids::REDSTONE_WIRE, 0)), true);
         ItemFactory::getInstance()->register(new ItemBlock(new ItemIdentifier(ItemIds::STRING, 0), $factory->get(Ids::TRIPWIRE, 0)), true);
 
         TileFactory::getInstance()->register(BlockEntityNote::class, ["Music", "minecraft:noteblock"]);

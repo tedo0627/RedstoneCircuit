@@ -31,6 +31,7 @@ use tedo0627\redstonecircuit\block\mechanism\BlockSkull;
 use tedo0627\redstonecircuit\block\mechanism\BlockTNT;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenTrapdoor;
+use tedo0627\redstonecircuit\block\power\BlockDaylightSensor;
 use tedo0627\redstonecircuit\block\power\BlockJukeBox;
 use tedo0627\redstonecircuit\block\power\BlockLever;
 use tedo0627\redstonecircuit\block\power\BlockObserver;
@@ -81,6 +82,7 @@ class RedstoneCircuit extends PluginBase {
         ], fn($bid, $name, $info) => new BlockWoodenTrapdoor($bid, $name, $info));
 
         // power
+        $this->registerBlock(Ids::DAYLIGHT_SENSOR, fn($bid, $name, $info) => new BlockDaylightSensor($bid, $name, $info));
         $this->registerBlock(Ids::JUKEBOX, fn($bid, $name, $info) => new BlockJukeBox($bid, $name, $info));
         $this->registerBlock(Ids::LEVER, fn($bid, $name, $info) => new BlockLever($bid, $name, $info));
         $bid = new BlockIdentifier(Ids::OBSERVER, 0, null, BlockEntityObserver::class);

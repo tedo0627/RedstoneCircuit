@@ -5,6 +5,7 @@ namespace tedo0627\redstonecircuit;
 use pocketmine\block\BlockBreakInfo;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIdentifier;
+use pocketmine\block\BlockIdentifierFlattened;
 use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\block\BlockToolType;
 use pocketmine\block\tile\TileFactory;
@@ -15,11 +16,13 @@ use pocketmine\item\ItemIds;
 use pocketmine\item\ToolTier;
 use pocketmine\plugin\PluginBase;
 use tedo0627\redstonecircuit\block\entity\BlockEntityChest;
+use tedo0627\redstonecircuit\block\entity\BlockEntityCommand;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDispenser;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDropper;
 use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
 use tedo0627\redstonecircuit\block\entity\BlockEntityObserver;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
+use tedo0627\redstonecircuit\block\mechanism\BlockCommand;
 use tedo0627\redstonecircuit\block\mechanism\BlockDispenser;
 use tedo0627\redstonecircuit\block\mechanism\BlockDropper;
 use tedo0627\redstonecircuit\block\mechanism\BlockFenceGate;
@@ -49,6 +52,7 @@ use tedo0627\redstonecircuit\block\power\BlockWoodenPressurePlate;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneComparator;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
+use tedo0627\redstonecircuit\listener\CommandBlockListener;
 use tedo0627\redstonecircuit\listener\InventoryListener;
 
 class RedstoneCircuit extends PluginBase {
@@ -57,11 +61,13 @@ class RedstoneCircuit extends PluginBase {
         $factory = BlockFactory::getInstance();
 
         // mechanism
+        $bid = new BlockIdentifierFlattened(Ids::COMMAND_BLOCK, [Ids::REPEATING_COMMAND_BLOCK, Ids::CHAIN_COMMAND_BLOCK], 0, null, BlockEntityCommand::class);
+        $factory->register(new BlockCommand($bid, "Command Block", BlockBreakInfo::indestructible()), true);
         $bid = new BlockIdentifier(Ids::DISPENSER, 0, null, BlockEntityDispenser::class);
         $info = new BlockBreakInfo(3.5, BlockToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel());
-        $factory->register(new BlockDispenser($bid, "Dispenser", $info));
+        $factory->register(new BlockDispenser($bid, "Dispenser", $info), true);
         $bid = new BlockIdentifier(Ids::DROPPER, 0, null, BlockEntityDropper::class);
-        $factory->register(new BlockDropper($bid, "Dropper", $info));
+        $factory->register(new BlockDropper($bid, "Dropper", $info), true);
         $this->registerBlocks([
             Ids::OAK_FENCE_GATE, Ids::SPRUCE_FENCE_GATE, Ids::BIRCH_FENCE_GATE,
             Ids::JUNGLE_FENCE_GATE, Ids::DARK_OAK_FENCE_GATE, Ids::ACACIA_FENCE_GATE
@@ -116,9 +122,11 @@ class RedstoneCircuit extends PluginBase {
         TileFactory::getInstance()->register(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
         TileFactory::getInstance()->register(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
         TileFactory::getInstance()->register(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
+        TileFactory::getInstance()->register(BlockEntityCommand::class, ["Command", "minecraft:command"]);
     }
 
     public function onEnable(): void {
+        $this->getServer()->getPluginManager()->registerEvents(new CommandBlockListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new InventoryListener(), $this);
     }
 

@@ -13,12 +13,12 @@ class InventoryListener implements Listener {
 
     private ?Inventory $lastInventory = null;
 
-    public function onInventoryOpen(InventoryOpenEvent $event) {
+    public function onInventoryOpen(InventoryOpenEvent $event): void {
         $inventory = $event->getInventory();
         $this->lastInventory = $inventory instanceof IWindowType ? $inventory : null;
     }
 
-    public function onDataPacketSend(DataPacketSendEvent $event) {
+    public function onDataPacketSend(DataPacketSendEvent $event): void {
         $packets = $event->getPackets();
         for ($i = 0; $i < count($packets); $i++) {
             $packet = $packets[$i];

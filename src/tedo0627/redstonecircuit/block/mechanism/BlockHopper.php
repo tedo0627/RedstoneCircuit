@@ -3,7 +3,13 @@
 namespace tedo0627\redstonecircuit\block\mechanism;
 
 use pocketmine\block\Hopper;
+use pocketmine\block\Jukebox as BlockJukebox;
+use pocketmine\block\inventory\FurnaceInventory;
 use pocketmine\block\tile\Container;
+use pocketmine\block\tile\Furnace;
+use pocketmine\block\tile\Jukebox;
+use pocketmine\item\Bucket;
+use pocketmine\item\Record;
 use pocketmine\math\Facing;
 use pocketmine\Server;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
@@ -58,12 +64,20 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
         $hopper = $this->getPosition()->getWorld()->getTile($this->getPosition());
         if (!$hopper instanceof BlockEntityHopper) return false;
 
+        $target = $this->getPosition()->getWorld()->getTile($this->getSide($this->getFacing())->getPosition());
+        $juke = $target instanceof Jukebox;
+        if (!$target instanceof Container && !$juke) return false;
+
+        $furnace = $target instanceof Furnace && $this->getFacing() !== Facing::DOWN;
+
         $inventory = $hopper->getRealInventory();
         $slot = null;
         $item = null;
         for ($i = 0; $i < $inventory->getSize(); $i++) {
             $ejectItem = $inventory->getItem($i);
             if ($ejectItem->isNull()) continue;
+            if ($juke && !$ejectItem instanceof Record) continue;
+            if ($furnace && $ejectItem->getFuelTime() <= 0) continue;
 
             $slot = $i;
             $item = $ejectItem;
@@ -71,11 +85,42 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
         }
         if ($slot === null) return false;
 
-        $target = $this->getPosition()->getWorld()->getTile($this->getSide($this->getFacing())->getPosition());
-        if (!$target instanceof Container) return false;
-
         $pop = $item->pop();
+        if ($target instanceof Jukebox) {
+            $targetBlock = $target->getBlock();
+            if (!$targetBlock instanceof BlockJukebox) return false;
+            if ($targetBlock->getRecord() !== null) return false;
+            if (!$pop instanceof Record) return false;
+
+            $targetBlock->insertRecord($pop);
+            $targetBlock->writeStateToWorld();
+            $inventory->setItem($slot, $item);
+            return true;
+        }
+
         $targetInventory = $target->getRealInventory();
+        if ($targetInventory instanceof FurnaceInventory) {
+            $targetSlot = $this->getFacing() === Facing::DOWN ? 0 : 1;
+            if ($targetSlot === 1 && $pop->getFuelTime() <= 0) return false;
+
+            $targetItem = $targetInventory->getItem($targetSlot);
+            if ($targetItem->isNull()) {
+                $targetInventory->setItem($targetSlot, $pop);
+                $inventory->setItem($slot, $item);
+                return true;
+            }
+
+            $count = $targetItem->getCount() + $pop->getCount();
+            if ($targetItem->canStackWith($pop) && $count <= $targetItem->getMaxStackSize()) {
+                $targetItem->setCount($count);
+                $targetInventory->setItem($targetSlot, $targetItem);
+                $inventory->setItem($slot, $item);
+                return true;
+            }
+
+            return false;
+        }
+
         if (!$targetInventory->canAddItem($pop)) return false;
 
         $targetInventory->addItem($pop);
@@ -96,13 +141,27 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
         $sourceInventory = $source->getRealInventory();
         $slot = null;
         $item = null;
-        for ($i = 0; $i < $sourceInventory->getSize(); $i++) {
-            $suckItem = $sourceInventory->getItem($i);
-            if ($suckItem->isNull()) continue;
+        if ($sourceInventory instanceof FurnaceInventory) {
+            $fuel = $sourceInventory->getFuel();
+            if ($fuel instanceof Bucket) {
+                $slot = 1;
+                $item = $fuel;
+            } else {
+                $result = $sourceInventory->getResult();
+                if (!$result->isNull()) {
+                    $slot = 2;
+                    $item = $result;
+                }
+            }
+        } else {
+            for ($i = 0; $i < $sourceInventory->getSize(); $i++) {
+                $suckItem = $sourceInventory->getItem($i);
+                if ($suckItem->isNull()) continue;
 
-            $slot = $i;
-            $item = $suckItem;
-            break;
+                $slot = $i;
+                $item = $suckItem;
+                break;
+            }
         }
         if ($slot === null) return false;
 

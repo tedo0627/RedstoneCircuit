@@ -218,19 +218,14 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
     }
 
     protected function check(): bool {
-        return $this->getCommand() !== "" && $this->checkConditions() && $this->checkAuto();
-    }
+        if ($this->getCommand() === "") return false;
 
-    protected function checkConditions(): bool {
-        if (!$this->isConditionalMode()) return true;
+        if ($this->isConditionalMode()) {
+            $block = $this->getSide(Facing::opposite($this->getFacing()));
+            if (!$block instanceof BlockCommand) return false;
+            if ($block->getSuccessCount() <= 0) return false;
+        }
 
-        $block = $this->getSide(Facing::opposite($this->getFacing()));
-        if (!$block instanceof BlockCommand) return false;
-
-        return $block->getSuccessCount() > 0;
-    }
-
-    protected function checkAuto(): bool {
         if ($this->isAuto()) return true;
         return BlockPowerHelper::isPowered($this);
     }
@@ -246,7 +241,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         }
 
         $successful = false;
-        if ($this->checkConditions() && $this->checkAuto()) $successful = $this->dispatch();
+        if ($this->check()) $successful = $this->dispatch();
         $this->setSuccessCount($successful ? 1 : 0);
         $block = $this->getSide($this->getFacing());
         if (!$block instanceof BlockCommand) return;

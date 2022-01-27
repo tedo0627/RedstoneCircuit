@@ -8,8 +8,10 @@ use pocketmine\block\inventory\FurnaceInventory;
 use pocketmine\block\tile\Container;
 use pocketmine\block\tile\Furnace;
 use pocketmine\block\tile\Jukebox;
+use pocketmine\entity\object\ItemEntity;
 use pocketmine\item\Bucket;
 use pocketmine\item\Record;
+use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
 use pocketmine\Server;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
@@ -45,6 +47,7 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
 
         $this->setTransferCooldown($this->getTransferCooldown() - 1);
         $this->setTickedGameTime(Server::getInstance()->getTick());
+        if (!$this->isPowered()) $this->suckEntity();
         if ($this->getTransferCooldown() > 0) {
             $this->writeStateToWorld();
             return;
@@ -175,6 +178,28 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
         $inventory->addItem($pop);
         $sourceInventory->setItem($slot, $item);
         return true;
+    }
+
+    protected function suckEntity(): bool {
+        $hopper = $this->getPosition()->getWorld()->getTile($this->getPosition());
+        if (!$hopper instanceof BlockEntityHopper) return false;
+
+        $inventory = $hopper->getRealInventory();
+        $pos = $this->getPosition();
+        $bb = new AxisAlignedBB($pos->getFloorX(), $pos->getFloorY() + 1, $pos->getFloorZ(), $pos->getFloorX() + 1, $pos->getFloorY() + 2, $pos->getFloorZ() + 1);
+        $entities = $this->getPosition()->getWorld()->getNearbyEntities($bb);
+        $check = false;
+        for ($i = 0; $i < count($entities); $i++) {
+            $entity = $entities[$i];
+            if (!$entity instanceof ItemEntity) continue;
+
+            $source = $entity->getItem();
+            $cant = $inventory->addItem($source);
+            $source->setCount(count($cant) === 0 ? 0 : $cant[0]->getCount());
+            if ($source->getCount() === 0) $entity->flagForDespawn();
+            $check = true;
+        }
+        return $check;
     }
 
     public function onRedstoneUpdate(): void {

@@ -40,7 +40,7 @@ class BlockEntityCommand extends Spawnable implements Container, Nameable {
         $this->powered = $nbt->getByte("powered") === 1;
 
         $this->successCount = $nbt->getInt("successCount");
-        $this->lastExecution = $nbt->getInt("lastExecution");
+        $this->tick = $nbt->getInt("tick");
 
         $this->loadName($nbt);
     }
@@ -56,7 +56,7 @@ class BlockEntityCommand extends Spawnable implements Container, Nameable {
         $nbt->setByte("powered", $this->powered ? 1 : 0);
 
         $nbt->setInt("successCount", $this->successCount);
-        $nbt->setInt("lastExecution", $this->lastExecution);
+        $nbt->setInt("tick", $this->tick);
 
         $this->saveName($nbt);
     }

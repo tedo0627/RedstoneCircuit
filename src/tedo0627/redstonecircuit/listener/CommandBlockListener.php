@@ -36,7 +36,7 @@ class CommandBlockListener implements Listener {
         $block->setCustomName($packet->name);
         $block->setTickDelay($packet->tickDelay);
         $block->setExecuteOnFirstTick($packet->executeOnFirstTick);
-        $block->setLastExecution(-1);
+        $block->setTick(-1);
         $pos = $block->getPosition();
         $world->setBlock($pos, $block);
         $world->scheduleDelayedBlockUpdate($pos, 1);

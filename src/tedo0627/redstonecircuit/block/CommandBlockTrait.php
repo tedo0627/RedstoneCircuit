@@ -16,7 +16,7 @@ trait CommandBlockTrait {
     protected bool $executeOnFirstTick = false;
 
     protected int $successCount = 0;
-    protected int $lastExecution = -1;
+    protected int $tick = -1;
 
     public function getCommandBlockMode(): int {
         return $this->commandBlockMode;
@@ -82,11 +82,11 @@ trait CommandBlockTrait {
         $this->successCount = $count;
     }
 
-    public function getLastExecution(): int {
-        return $this->lastExecution;
+    public function getTick(): int {
+        return $this->tick;
     }
 
-    public function setLastExecution(int $tick): void {
-        $this->lastExecution = $tick;
+    public function setTick(int $tick): void {
+        $this->tick = $tick;
     }
 }

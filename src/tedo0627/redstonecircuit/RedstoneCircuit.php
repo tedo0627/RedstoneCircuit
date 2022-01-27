@@ -19,6 +19,7 @@ use tedo0627\redstonecircuit\block\entity\BlockEntityChest;
 use tedo0627\redstonecircuit\block\entity\BlockEntityCommand;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDispenser;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDropper;
+use tedo0627\redstonecircuit\block\entity\BlockEntityHopper;
 use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
 use tedo0627\redstonecircuit\block\entity\BlockEntityObserver;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
@@ -26,6 +27,7 @@ use tedo0627\redstonecircuit\block\mechanism\BlockCommand;
 use tedo0627\redstonecircuit\block\mechanism\BlockDispenser;
 use tedo0627\redstonecircuit\block\mechanism\BlockDropper;
 use tedo0627\redstonecircuit\block\mechanism\BlockFenceGate;
+use tedo0627\redstonecircuit\block\mechanism\BlockHopper;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronTrapdoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockNote;
@@ -72,6 +74,7 @@ class RedstoneCircuit extends PluginBase {
             Ids::OAK_FENCE_GATE, Ids::SPRUCE_FENCE_GATE, Ids::BIRCH_FENCE_GATE,
             Ids::JUNGLE_FENCE_GATE, Ids::DARK_OAK_FENCE_GATE, Ids::ACACIA_FENCE_GATE
         ], fn($bid, $name, $info) => new BlockFenceGate($bid, $name, $info));
+        $this->registerBlock(Ids::HOPPER_BLOCK, fn($bid, $name, $info) => new BlockHopper($bid, $name, $info), BlockEntityHopper::class);
         $this->registerBlock(Ids::IRON_DOOR_BLOCK, fn($bid, $name, $info) => new BlockIronDoor($bid, $name, $info));
         $this->registerBlock(Ids::IRON_TRAPDOOR, fn($bid, $name, $info) => new BlockIronTrapdoor($bid, $name, $info));
         $this->registerBlock(Ids::NOTEBLOCK, fn($bid, $name, $info) => new BlockNote($bid, $name, $info), BlockEntityNote::class);
@@ -123,6 +126,7 @@ class RedstoneCircuit extends PluginBase {
         TileFactory::getInstance()->register(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
         TileFactory::getInstance()->register(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
         TileFactory::getInstance()->register(BlockEntityCommand::class, ["Command", "minecraft:command"]);
+        TileFactory::getInstance()->register(BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
     }
 
     public function onEnable(): void {

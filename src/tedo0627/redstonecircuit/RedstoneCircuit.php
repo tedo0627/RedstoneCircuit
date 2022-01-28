@@ -23,6 +23,7 @@ use tedo0627\redstonecircuit\block\entity\BlockEntityHopper;
 use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
 use tedo0627\redstonecircuit\block\entity\BlockEntityObserver;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
+use tedo0627\redstonecircuit\block\mechanism\BlockActivatorRail;
 use tedo0627\redstonecircuit\block\mechanism\BlockCommand;
 use tedo0627\redstonecircuit\block\mechanism\BlockDispenser;
 use tedo0627\redstonecircuit\block\mechanism\BlockDropper;
@@ -31,6 +32,7 @@ use tedo0627\redstonecircuit\block\mechanism\BlockHopper;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronTrapdoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockNote;
+use tedo0627\redstonecircuit\block\mechanism\BlockPoweredRail;
 use tedo0627\redstonecircuit\block\mechanism\BlockRedstoneLamp;
 use tedo0627\redstonecircuit\block\mechanism\BlockSkull;
 use tedo0627\redstonecircuit\block\mechanism\BlockTNT;
@@ -63,6 +65,7 @@ class RedstoneCircuit extends PluginBase {
         $factory = BlockFactory::getInstance();
 
         // mechanism
+        $this->registerBlock(Ids::ACTIVATOR_RAIL, fn($bid, $name, $info) => new BlockActivatorRail($bid, $name, $info));
         $bid = new BlockIdentifierFlattened(Ids::COMMAND_BLOCK, [Ids::REPEATING_COMMAND_BLOCK, Ids::CHAIN_COMMAND_BLOCK], 0, null, BlockEntityCommand::class);
         $factory->register(new BlockCommand($bid, "Command Block", BlockBreakInfo::indestructible()), true);
         $bid = new BlockIdentifier(Ids::DISPENSER, 0, null, BlockEntityDispenser::class);
@@ -78,6 +81,7 @@ class RedstoneCircuit extends PluginBase {
         $this->registerBlock(Ids::IRON_DOOR_BLOCK, fn($bid, $name, $info) => new BlockIronDoor($bid, $name, $info));
         $this->registerBlock(Ids::IRON_TRAPDOOR, fn($bid, $name, $info) => new BlockIronTrapdoor($bid, $name, $info));
         $this->registerBlock(Ids::NOTEBLOCK, fn($bid, $name, $info) => new BlockNote($bid, $name, $info), BlockEntityNote::class);
+        $this->registerBlock(Ids::POWERED_RAIL, fn($bid, $name, $info) => new BlockPoweredRail($bid, $name, $info));
         $this->registerBlock(Ids::REDSTONE_LAMP, fn($bid, $name, $info) => new BlockRedstoneLamp($bid, $name, $info));
         $this->registerBlock(Ids::SKULL_BLOCK, fn($bid, $name, $info) => new BlockSkull($bid, $name, $info), BlockEntitySkull::class);
         $this->registerBlock(Ids::TNT, fn($bid, $name, $info) => new BlockTNT($bid, $name, $info));

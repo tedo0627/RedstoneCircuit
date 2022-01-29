@@ -1,0 +1,34 @@
+---
+blocks:
+  # mechanism
+  command_block: true
+  dispenser: true
+  door: true
+  dropper: true
+  fence_gate: true
+  hopper: true
+  note_block: true
+  rail: true
+  redstone_lamp: true
+  skull: true
+  tnt: true
+  trapdoor: true
+
+  # power
+  button: true
+  daylight_sensor: true
+  jukebox: true
+  lever: true
+  observer: true
+  redstone_block: true
+  redstone_torch: true
+  pressure_plate: true
+  trapped_chest: true
+  tripwire: true
+  weighted_pressure_plate: true
+
+  # transmission
+  comparator: true
+  redstone_wire: true
+  repeater: true
+...

@@ -2,15 +2,13 @@
 
 namespace tedo0627\redstonecircuit;
 
+use Closure;
+use pocketmine\block\Block;
 use pocketmine\block\BlockBreakInfo;
-use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockIdentifierFlattened;
 use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\block\BlockToolType;
-use pocketmine\block\tile\TileFactory;
-use pocketmine\item\ItemBlock;
-use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
 use pocketmine\item\ToolTier;
@@ -58,79 +56,81 @@ use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
 use tedo0627\redstonecircuit\listener\CommandBlockListener;
 use tedo0627\redstonecircuit\listener\InventoryListener;
+use tedo0627\redstonecircuit\loader\BlockEntityLoader;
+use tedo0627\redstonecircuit\loader\BlockLoader;
+use tedo0627\redstonecircuit\loader\ItemBlockLoader;
+use tedo0627\redstonecircuit\loader\Loader;
 
 class RedstoneCircuit extends PluginBase {
 
-    public function onLoad(): void {
-        $factory = BlockFactory::getInstance();
+    /** @var Loader[] */
+    private array $loader = [];
 
+    public function onLoad(): void {
         // mechanism
-        $this->registerBlock(Ids::ACTIVATOR_RAIL, fn($bid, $name, $info) => new BlockActivatorRail($bid, $name, $info));
-        $bid = new BlockIdentifierFlattened(Ids::COMMAND_BLOCK, [Ids::REPEATING_COMMAND_BLOCK, Ids::CHAIN_COMMAND_BLOCK], 0, null, BlockEntityCommand::class);
-        $factory->register(new BlockCommand($bid, "Command Block", BlockBreakInfo::indestructible()), true);
-        $bid = new BlockIdentifier(Ids::DISPENSER, 0, null, BlockEntityDispenser::class);
+        $this->addBlock("command_block", new BlockCommand(new BlockIdentifierFlattened(Ids::COMMAND_BLOCK, [Ids::REPEATING_COMMAND_BLOCK, Ids::CHAIN_COMMAND_BLOCK], 0, null, BlockEntityCommand::class), "Command Block", BlockBreakInfo::indestructible()), true);
+        $this->addBlockEntity("command_block", BlockEntityCommand::class, ["Command", "minecraft:command"]);
+
         $info = new BlockBreakInfo(3.5, BlockToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel());
-        $factory->register(new BlockDispenser($bid, "Dispenser", $info), true);
-        $bid = new BlockIdentifier(Ids::DROPPER, 0, null, BlockEntityDropper::class);
-        $factory->register(new BlockDropper($bid, "Dropper", $info), true);
-        $this->registerBlocks([
-            Ids::OAK_FENCE_GATE, Ids::SPRUCE_FENCE_GATE, Ids::BIRCH_FENCE_GATE,
-            Ids::JUNGLE_FENCE_GATE, Ids::DARK_OAK_FENCE_GATE, Ids::ACACIA_FENCE_GATE
-        ], fn($bid, $name, $info) => new BlockFenceGate($bid, $name, $info));
-        $this->registerBlock(Ids::HOPPER_BLOCK, fn($bid, $name, $info) => new BlockHopper($bid, $name, $info), BlockEntityHopper::class);
-        $this->registerBlock(Ids::IRON_DOOR_BLOCK, fn($bid, $name, $info) => new BlockIronDoor($bid, $name, $info));
-        $this->registerBlock(Ids::IRON_TRAPDOOR, fn($bid, $name, $info) => new BlockIronTrapdoor($bid, $name, $info));
-        $this->registerBlock(Ids::NOTEBLOCK, fn($bid, $name, $info) => new BlockNote($bid, $name, $info), BlockEntityNote::class);
-        $this->registerBlock(Ids::POWERED_RAIL, fn($bid, $name, $info) => new BlockPoweredRail($bid, $name, $info));
-        $this->registerBlock(Ids::REDSTONE_LAMP, fn($bid, $name, $info) => new BlockRedstoneLamp($bid, $name, $info));
-        $this->registerBlock(Ids::SKULL_BLOCK, fn($bid, $name, $info) => new BlockSkull($bid, $name, $info), BlockEntitySkull::class);
-        $this->registerBlock(Ids::TNT, fn($bid, $name, $info) => new BlockTNT($bid, $name, $info));
-        $this->registerBlocks([
+        $this->addBlock("dispenser", new BlockDispenser(new BlockIdentifier(Ids::DISPENSER, 0, null, BlockEntityDispenser::class), "Dispenser", $info));
+        $this->addBlockEntity("dispenser", BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
+        $this->overrideBlock("door", Ids::IRON_DOOR_BLOCK, fn($bid, $name, $info) => new BlockIronDoor($bid, $name, $info));
+        $this->overrideBlocks("door", [
             Ids::OAK_DOOR_BLOCK, Ids::SPRUCE_DOOR_BLOCK, Ids::BIRCH_DOOR_BLOCK,
             Ids::JUNGLE_DOOR_BLOCK, Ids::ACACIA_DOOR_BLOCK, Ids::DARK_OAK_DOOR_BLOCK
         ], fn($bid, $name, $info) => new BlockWoodenDoor($bid, $name, $info));
-        $this->registerBlocks([
+        $this->addBlock("dropper", new BlockDropper(new BlockIdentifier(Ids::DROPPER, 0, null, BlockEntityDropper::class), "Dropper", $info));
+        $this->addBlockEntity("dropper", BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
+        $this->overrideBlocks("fence_gate", [
+            Ids::OAK_FENCE_GATE, Ids::SPRUCE_FENCE_GATE, Ids::BIRCH_FENCE_GATE,
+            Ids::JUNGLE_FENCE_GATE, Ids::DARK_OAK_FENCE_GATE, Ids::ACACIA_FENCE_GATE
+        ], fn($bid, $name, $info) => new BlockFenceGate($bid, $name, $info));
+        $this->overrideBlock("hopper", Ids::HOPPER_BLOCK, fn($bid, $name, $info) => new BlockHopper($bid, $name, $info), BlockEntityHopper::class);
+        $this->addBlockEntity("hopper", BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
+        $this->overrideBlock("note_block", Ids::NOTEBLOCK, fn($bid, $name, $info) => new BlockNote($bid, $name, $info), BlockEntityNote::class);
+        $this->addBlockEntity("note_block", BlockEntityNote::class, ["Music", "minecraft:noteblock"]);
+        $this->overrideBlock("rail", Ids::ACTIVATOR_RAIL, fn($bid, $name, $info) => new BlockActivatorRail($bid, $name, $info));
+        $this->overrideBlock("rail", Ids::POWERED_RAIL, fn($bid, $name, $info) => new BlockPoweredRail($bid, $name, $info));
+        $this->overrideBlock("redstone_lamp", Ids::REDSTONE_LAMP, fn($bid, $name, $info) => new BlockRedstoneLamp($bid, $name, $info));
+        $this->overrideBlock("skull", Ids::SKULL_BLOCK, fn($bid, $name, $info) => new BlockSkull($bid, $name, $info), BlockEntitySkull::class);
+        $this->addBlockEntity("skull", BlockEntitySkull::class, ["Skull", "minecraft:skull"]);
+        $this->overrideBlock("tnt", Ids::TNT, fn($bid, $name, $info) => new BlockTNT($bid, $name, $info));
+        $this->overrideBlock("trapdoor", Ids::IRON_TRAPDOOR, fn($bid, $name, $info) => new BlockIronTrapdoor($bid, $name, $info));
+        $this->overrideBlocks("trapdoor", [
             Ids::WOODEN_TRAPDOOR, Ids::ACACIA_TRAPDOOR, Ids::BIRCH_TRAPDOOR,
             Ids::DARK_OAK_TRAPDOOR, Ids::JUNGLE_TRAPDOOR, Ids::SPRUCE_TRAPDOOR
         ], fn($bid, $name, $info) => new BlockWoodenTrapdoor($bid, $name, $info));
 
         // power
-        $this->registerBlock(Ids::DAYLIGHT_SENSOR, fn($bid, $name, $info) => new BlockDaylightSensor($bid, $name, $info));
-        $this->registerBlock(Ids::JUKEBOX, fn($bid, $name, $info) => new BlockJukeBox($bid, $name, $info));
-        $this->registerBlock(Ids::LEVER, fn($bid, $name, $info) => new BlockLever($bid, $name, $info));
-        $bid = new BlockIdentifier(Ids::OBSERVER, 0, null, BlockEntityObserver::class);
-        $factory->register(new BlockObserver($bid, "Observer", $info));
-        $this->registerBlock(Ids::REDSTONE_BLOCK, fn($bid, $name, $info) => new BlockRedstone($bid, $name, $info));
-        $this->registerBlock(Ids::REDSTONE_TORCH, fn($bid, $name, $info) => new BlockRedstoneTorch($bid, $name, $info));
-        $this->registerBlock(Ids::STONE_BUTTON, fn($bid, $name, $info) => new BlockStoneButton($bid, $name, $info));
-        $this->registerBlock(Ids::STONE_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockStonePressurePlate($bid, $name, $info));
-        $this->registerBlock(Ids::TRAPPED_CHEST, fn($bid, $name, $info) => new BlockTrappedChest($bid, $name, $info), BlockEntityChest::class);
-        $this->registerBlock(Ids::TRIPWIRE, fn($bid, $name, $info) => new BlockTripwire($bid, $name, $info));
-        $this->registerBlock(Ids::TRIPWIRE_HOOK, fn($bid, $name, $info) => new BlockTripwireHook($bid, $name, $info));
-        $this->registerBlock(Ids::HEAVY_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateHeavy($bid, $name, $info));
-        $this->registerBlock(Ids::LIGHT_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateLight($bid, $name, $info));
-        $this->registerBlocks([
+        $this->overrideBlock("button", Ids::STONE_BUTTON, fn($bid, $name, $info) => new BlockStoneButton($bid, $name, $info));
+        $this->overrideBlocks("button", [
             Ids::WOODEN_BUTTON, Ids::ACACIA_BUTTON, Ids::BIRCH_BUTTON,
             Ids::DARK_OAK_BUTTON, Ids::JUNGLE_BUTTON, Ids::SPRUCE_BUTTON
         ], fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
-        $this->registerBlock(Ids::WOODEN_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWoodenPressurePlate($bid, $name, $info));
+        $this->overrideBlock("daylight_sensor", Ids::DAYLIGHT_SENSOR, fn($bid, $name, $info) => new BlockDaylightSensor($bid, $name, $info));
+        $this->overrideBlock("jukebox", Ids::JUKEBOX, fn($bid, $name, $info) => new BlockJukeBox($bid, $name, $info));
+        $this->overrideBlock("lever", Ids::LEVER, fn($bid, $name, $info) => new BlockLever($bid, $name, $info));
+        $this->addBlock("observer", new BlockObserver(new BlockIdentifier(Ids::OBSERVER, 0, null, BlockEntityObserver::class), "Observer", $info));
+        $this->addBlockEntity("observer", BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
+        $this->overrideBlock("redstone_block", Ids::REDSTONE_BLOCK, fn($bid, $name, $info) => new BlockRedstone($bid, $name, $info));
+        $this->overrideBlock("redstone_torch", Ids::REDSTONE_TORCH, fn($bid, $name, $info) => new BlockRedstoneTorch($bid, $name, $info));
+        $this->overrideBlock("pressure_plate", Ids::STONE_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockStonePressurePlate($bid, $name, $info));
+        $this->overrideBlock("pressure_plate", Ids::WOODEN_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWoodenPressurePlate($bid, $name, $info));
+        $this->overrideBlock("trapped_chest", Ids::TRAPPED_CHEST, fn($bid, $name, $info) => new BlockTrappedChest($bid, $name, $info), BlockEntityChest::class);
+        $this->addBlockEntity("trapped_chest", BlockEntityChest::class, ["Chest", "minecraft:chest"]);
+        $this->overrideBlock("tripwire", Ids::TRIPWIRE, fn($bid, $name, $info) => new BlockTripwire($bid, $name, $info));
+        $this->overrideBlock("tripwire", Ids::TRIPWIRE_HOOK, fn($bid, $name, $info) => new BlockTripwireHook($bid, $name, $info));
+        $this->addItemBlock("tripwire", Ids::TRIPWIRE, new ItemIdentifier(ItemIds::STRING, 0));
+        $this->overrideBlock("weighted_pressure_plate", Ids::HEAVY_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateHeavy($bid, $name, $info));
+        $this->overrideBlock("weighted_pressure_plate", Ids::LIGHT_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateLight($bid, $name, $info));
 
         // transmission
-        $this->registerBlock(Ids::UNPOWERED_COMPARATOR, fn($bid, $name, $info) => new BlockRedstoneComparator($bid, $name, $info));
-        $this->registerBlock(Ids::UNPOWERED_REPEATER, fn($bid, $name, $info) => new BlockRedstoneRepeater($bid, $name, $info));
-        $this->registerBlock(Ids::REDSTONE_WIRE, fn($bid, $name, $info) => new BlockRedstoneWire($bid, $name, $info));
+        $this->overrideBlock("comparator", Ids::UNPOWERED_COMPARATOR, fn($bid, $name, $info) => new BlockRedstoneComparator($bid, $name, $info));
+        $this->overrideBlock("redstone_wire", Ids::REDSTONE_WIRE, fn($bid, $name, $info) => new BlockRedstoneWire($bid, $name, $info));
+        $this->addItemBlock("redstone_wire", Ids::REDSTONE_WIRE, new ItemIdentifier(ItemIds::REDSTONE, 0));
+        $this->overrideBlock("repeater", Ids::UNPOWERED_REPEATER, fn($bid, $name, $info) => new BlockRedstoneRepeater($bid, $name, $info));
 
-        ItemFactory::getInstance()->register(new ItemBlock(new ItemIdentifier(ItemIds::REDSTONE, 0), $factory->get(Ids::REDSTONE_WIRE, 0)), true);
-        ItemFactory::getInstance()->register(new ItemBlock(new ItemIdentifier(ItemIds::STRING, 0), $factory->get(Ids::TRIPWIRE, 0)), true);
-
-        TileFactory::getInstance()->register(BlockEntityNote::class, ["Music", "minecraft:noteblock"]);
-        TileFactory::getInstance()->register(BlockEntitySkull::class, ["Skull", "minecraft:skull"]);
-        TileFactory::getInstance()->register(BlockEntityChest::class, ["Chest", "minecraft:chest"]);
-        TileFactory::getInstance()->register(BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
-        TileFactory::getInstance()->register(BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
-        TileFactory::getInstance()->register(BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
-        TileFactory::getInstance()->register(BlockEntityCommand::class, ["Command", "minecraft:command"]);
-        TileFactory::getInstance()->register(BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
+        $this->load();
     }
 
     public function onEnable(): void {
@@ -138,23 +138,31 @@ class RedstoneCircuit extends PluginBase {
         $this->getServer()->getPluginManager()->registerEvents(new InventoryListener(), $this);
     }
 
-    private function registerBlock(int $id, callable $callback, ?string $class = null): void {
-        $factory = BlockFactory::getInstance();
-        $oldBlock = $factory->get($id, 0);
-        $bid = $oldBlock->getIdInfo();
-        if ($class !== null) {
-            $bid = new BlockIdentifier($bid->getBlockId(), $bid->getVariant(), $bid->getItemId(), $class);
-        }
-        $block = $callback($bid, $oldBlock->getName(), $oldBlock->getBreakInfo());
-        $factory->register($block, true);
+    private function overrideBlock(string $name, int $id, Closure $callback, ?string $class = null): void {
+        $this->loader[] = BlockLoader::createBlock($name, $id, $callback, $class);
     }
 
-    private function registerBlocks(array $ids, callable $callback): void {
-        $factory = BlockFactory::getInstance();
-        foreach ($ids as $id) {
-            $oldBlock = $factory->get($id, 0);
-            $block = $callback($oldBlock->getIdInfo(), $oldBlock->getName(), $oldBlock->getBreakInfo());
-            $factory->register($block, true);
+    private function overrideBlocks(string $name, array $ids, Closure $callback, ?string $class = null): void {
+        foreach ($ids as $id) $this->overrideBlock($name, $id, $callback, $class);
+    }
+
+    private function addBlock(string $name, Block $block): void {
+        $this->loader[] = new BlockLoader($name, $block);
+    }
+
+    private function addItemBlock(string $name, int $blockId, ItemIdentifier $identifier): void {
+        $this->loader[] = new ItemBlockLoader($name, $blockId, $identifier);
+    }
+
+    private function addBlockEntity(string $name, string $className, array $saveNames): void {
+        $this->loader[] = new BlockEntityLoader($name, $className, $saveNames);
+    }
+
+    private function load(): void {
+        $config = $this->getConfig();
+        for ($i = 0; $i < count($this->loader); $i++) {
+            $loader = $this->loader[$i];
+            if ($config->getNested("blocks." . $loader->getName(), true)) $loader->load();
         }
     }
 }

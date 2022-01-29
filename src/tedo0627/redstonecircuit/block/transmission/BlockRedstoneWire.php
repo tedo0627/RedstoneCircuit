@@ -4,6 +4,9 @@ namespace tedo0627\redstonecircuit\block\transmission;
 
 use pocketmine\block\Block;
 use pocketmine\block\RedstoneWire;
+use pocketmine\block\Slab;
+use pocketmine\block\Stair;
+use pocketmine\block\utils\SlabType;
 use pocketmine\item\Item;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
@@ -111,6 +114,9 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
                     for ($sideFace = 2; $sideFace < 6; $sideFace++) {
                         $sideBlock = $block->getSide($sideFace);
                         if (!$sideBlock instanceof BlockRedstoneWire) continue;
+
+                        $down = $sideBlock->getSide(Facing::DOWN);
+                        if (($down instanceof Slab && $down->getSlabType() !== SlabType::DOUBLE()) || $down instanceof Stair) continue;
 
                         $power = max($power, $sideBlock->getOutputSignalStrength() - 1);
                     }

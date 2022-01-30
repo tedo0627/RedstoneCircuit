@@ -214,7 +214,6 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
 
         $this->setPowered(false);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
-        $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 1);
     }
 
     public function getTransferCooldown(): int {

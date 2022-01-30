@@ -73,7 +73,7 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
 
         $furnace = $target instanceof Furnace && $this->getFacing() !== Facing::DOWN;
 
-        $inventory = $hopper->getRealInventory();
+        $inventory = $hopper->getInventory();
         $slot = null;
         $item = null;
         for ($i = 0; $i < $inventory->getSize(); $i++) {
@@ -101,7 +101,7 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
             return true;
         }
 
-        $targetInventory = $target->getRealInventory();
+        $targetInventory = $target->getInventory();
         if ($targetInventory instanceof FurnaceInventory) {
             $targetSlot = $this->getFacing() === Facing::DOWN ? 0 : 1;
             if ($targetSlot === 1 && $pop->getFuelTime() <= 0) return false;
@@ -141,7 +141,7 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
         $source = $this->getPosition()->getWorld()->getTile($this->getSide(Facing::UP)->getPosition());
         if (!$source instanceof Container) return false;
 
-        $sourceInventory = $source->getRealInventory();
+        $sourceInventory = $source->getInventory();
         $slot = null;
         $item = null;
         if ($sourceInventory instanceof FurnaceInventory) {
@@ -172,7 +172,7 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
         if (!$hopper instanceof BlockEntityHopper) return false;
 
         $pop = $item->pop();
-        $inventory = $hopper->getRealInventory();
+        $inventory = $hopper->getInventory();
         if (!$inventory->canAddItem($pop)) return false;
 
         $inventory->addItem($pop);
@@ -184,7 +184,7 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
         $hopper = $this->getPosition()->getWorld()->getTile($this->getPosition());
         if (!$hopper instanceof BlockEntityHopper) return false;
 
-        $inventory = $hopper->getRealInventory();
+        $inventory = $hopper->getInventory();
         $pos = $this->getPosition();
         $bb = new AxisAlignedBB($pos->getFloorX(), $pos->getFloorY() + 1, $pos->getFloorZ(), $pos->getFloorX() + 1, $pos->getFloorY() + 2, $pos->getFloorZ() + 1);
         $entities = $this->getPosition()->getWorld()->getNearbyEntities($bb);

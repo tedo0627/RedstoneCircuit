@@ -59,7 +59,9 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
             return;
         }
 
-        if ($this->ejectItem() || $this->suckItem()) $this->setTransferCooldown(8);
+        $check = $this->ejectItem();
+        $check |= $this->suckItem();
+        if ($check) $this->setTransferCooldown(8);
         $this->writeStateToWorld();
     }
 

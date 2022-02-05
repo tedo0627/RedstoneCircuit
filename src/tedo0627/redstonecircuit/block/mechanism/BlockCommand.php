@@ -82,9 +82,9 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         $this->setTickDelay($tile->getTickDelay());
         $this->setExecuteOnFirstTick($tile->isExecuteOnFirstTick());
         $this->setPowered($tile->isPowered());
-
         $this->setSuccessCount($tile->getSuccessCount());
         $this->setTick($tile->getTick());
+        $this->setCustomName($tile->getName());
     }
 
     public function writeStateToWorld(): void {
@@ -100,9 +100,9 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         $tile->setTickDelay($this->getTickDelay());
         $tile->setExecuteOnFirstTick($this->isExecuteOnFirstTick());
         $tile->setPowered($this->isPowered());
-
         $tile->setSuccessCount($this->getSuccessCount());
         $tile->setTick($this->getTick());
+        $tile->setName($this->getCustomName());
     }
 
     public function getStateBitmask(): int {

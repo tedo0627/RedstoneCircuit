@@ -145,7 +145,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         if ($tick > 0) {
             if ($mode === BlockCommand::REPEATING && !$this->check()) {
                 $this->setTick(-1);
-                $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+                $this->writeStateToWorld();
                 $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 1);
                 return;
             }
@@ -178,7 +178,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
             if ($mode === BlockCommand::REPEATING) $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 1);
 
             if ($mode !== BlockCommand::NORMAL) {
-                $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+                $this->writeStateToWorld();
                 return;
             }
 
@@ -193,12 +193,12 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         if ($power || !$this->isPowered()) return;
 
         $this->setPowered(false);
-        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+        $this->writeStateToWorld();
     }
 
     protected function delay(): void {
         $this->setTick($this->getTickDelay());
-        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+        $this->writeStateToWorld();
         $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 1);
     }
 
@@ -206,7 +206,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         $successful = false;
         if ($this->check()) $successful = $this->dispatch();
         $this->setSuccessCount($successful ? 1 : 0);
-        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+        $this->writeStateToWorld();
 
         $block = $this->getSide($this->getFacing());
         if (!$block instanceof BlockCommand) return;

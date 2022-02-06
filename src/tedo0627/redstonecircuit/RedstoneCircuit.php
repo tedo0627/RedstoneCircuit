@@ -69,7 +69,7 @@ class RedstoneCircuit extends PluginBase {
     public function onLoad(): void {
         // mechanism
         $this->addBlock("command_block", new BlockCommand(new BlockIdentifierFlattened(Ids::COMMAND_BLOCK, [Ids::REPEATING_COMMAND_BLOCK, Ids::CHAIN_COMMAND_BLOCK], 0, null, BlockEntityCommand::class), "Command Block", BlockBreakInfo::indestructible()));
-        $this->addBlockEntity("command_block", BlockEntityCommand::class, ["Command", "minecraft:command"]);
+        $this->addBlockEntity("command_block", BlockEntityCommand::class, ["CommandBlock", "minecraft:command_block"]);
 
         $info = new BlockBreakInfo(3.5, BlockToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel());
         $this->addBlock("dispenser", new BlockDispenser(new BlockIdentifier(Ids::DISPENSER, 0, null, BlockEntityDispenser::class), "Dispenser", $info));

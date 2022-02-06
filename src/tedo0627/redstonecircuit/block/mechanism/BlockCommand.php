@@ -84,7 +84,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         $this->setPowered($tile->isPowered());
         $this->setSuccessCount($tile->getSuccessCount());
         $this->setTick($tile->getTick());
-        $this->setCustomName($tile->getName());
+        $this->setCustomName($tile->hasName() ? $tile->getName() : "");
     }
 
     public function writeStateToWorld(): void {

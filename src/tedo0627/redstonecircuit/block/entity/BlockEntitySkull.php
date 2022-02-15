@@ -11,7 +11,7 @@ class BlockEntitySkull extends Skull {
 
     public function readSaveData(CompoundTag $nbt): void {
         parent::readSaveData($nbt);
-        $this->mouthMoving = $nbt->getByte("MouthMoving") !== 0;
+        $this->mouthMoving = $nbt->getByte("MouthMoving", 0) !== 0;
     }
 
     public function writeSaveData(CompoundTag $nbt): void {

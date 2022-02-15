@@ -11,7 +11,7 @@ class BlockEntityNote extends Note {
 
     public function readSaveData(CompoundTag $nbt): void {
         parent::readSaveData($nbt);
-        $this->powered = $nbt->getByte("powered") !== 0;
+        $this->powered = $nbt->getByte("powered", 0) !== 0;
     }
 
     public function writeSaveData(CompoundTag $nbt): void {

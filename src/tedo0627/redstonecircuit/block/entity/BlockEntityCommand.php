@@ -30,17 +30,17 @@ class BlockEntityCommand extends Spawnable implements Container, Nameable {
     }
 
     public function readSaveData(CompoundTag $nbt): void {
-        $this->commandBlockMode = $nbt->getInt("commandBlockMode");
-        $this->command = $nbt->getString("command");
-        $this->lastOutput = $nbt->getString("lastOutput");
-        $this->auto = $nbt->getByte("auto") === 1;
-        $this->conditionalMode = $nbt->getByte("conditionalMode") === 1;
-        $this->tickDelay = $nbt->getInt("tickDelay");
-        $this->executeOnFirstTick = $nbt->getByte("executeOnFirstTick") === 1;
-        $this->powered = $nbt->getByte("powered") === 1;
+        $this->commandBlockMode = $nbt->getInt("commandBlockMode", 0);
+        $this->command = $nbt->getString("command", "");
+        $this->lastOutput = $nbt->getString("lastOutput", "");
+        $this->auto = $nbt->getByte("auto", 0) === 1;
+        $this->conditionalMode = $nbt->getByte("conditionalMode", 0) === 1;
+        $this->tickDelay = $nbt->getInt("tickDelay", 0);
+        $this->executeOnFirstTick = $nbt->getByte("executeOnFirstTick", 0) === 1;
+        $this->powered = $nbt->getByte("powered", 0) === 1;
 
-        $this->successCount = $nbt->getInt("successCount");
-        $this->tick = $nbt->getInt("tick");
+        $this->successCount = $nbt->getInt("successCount", 0);
+        $this->tick = $nbt->getInt("tick", 0);
 
         $this->loadName($nbt);
     }

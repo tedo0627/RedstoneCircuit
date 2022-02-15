@@ -11,8 +11,8 @@ class BlockEntityObserver extends Tile {
     protected int $stateMeta = 0;
 
     public function readSaveData(CompoundTag $nbt): void {
-        $this->blockId = $nbt->getInt("blockId");
-        $this->stateMeta = $nbt->getInt("stateMeta");
+        $this->blockId = $nbt->getInt("blockId", 0);
+        $this->stateMeta = $nbt->getInt("stateMeta", 0);
     }
 
     protected function writeSaveData(CompoundTag $nbt): void {

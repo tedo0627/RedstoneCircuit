@@ -82,9 +82,9 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         $this->setTickDelay($tile->getTickDelay());
         $this->setExecuteOnFirstTick($tile->isExecuteOnFirstTick());
         $this->setPowered($tile->isPowered());
-
         $this->setSuccessCount($tile->getSuccessCount());
         $this->setTick($tile->getTick());
+        $this->setCustomName($tile->hasName() ? $tile->getName() : "");
     }
 
     public function writeStateToWorld(): void {
@@ -100,9 +100,9 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         $tile->setTickDelay($this->getTickDelay());
         $tile->setExecuteOnFirstTick($this->isExecuteOnFirstTick());
         $tile->setPowered($this->isPowered());
-
         $tile->setSuccessCount($this->getSuccessCount());
         $tile->setTick($this->getTick());
+        $tile->setName($this->getCustomName());
     }
 
     public function getStateBitmask(): int {
@@ -145,7 +145,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         if ($tick > 0) {
             if ($mode === BlockCommand::REPEATING && !$this->check()) {
                 $this->setTick(-1);
-                $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+                $this->writeStateToWorld();
                 $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 1);
                 return;
             }
@@ -178,7 +178,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
             if ($mode === BlockCommand::REPEATING) $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 1);
 
             if ($mode !== BlockCommand::NORMAL) {
-                $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+                $this->writeStateToWorld();
                 return;
             }
 
@@ -193,12 +193,12 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         if ($power || !$this->isPowered()) return;
 
         $this->setPowered(false);
-        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+        $this->writeStateToWorld();
     }
 
     protected function delay(): void {
         $this->setTick($this->getTickDelay());
-        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+        $this->writeStateToWorld();
         $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 1);
     }
 
@@ -206,7 +206,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         $successful = false;
         if ($this->check()) $successful = $this->dispatch();
         $this->setSuccessCount($successful ? 1 : 0);
-        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+        $this->writeStateToWorld();
 
         $block = $this->getSide($this->getFacing());
         if (!$block instanceof BlockCommand) return;

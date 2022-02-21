@@ -82,7 +82,7 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
     public function onNearbyBlockChange(): void {
         $block = $this->getSide($this->getFacing());
         $id = $block->getId();
-        $state = $block->writeStateToMeta();
+        $state = $block->getMeta();
         if ($this->getSideBlockId() === $id && $this->getSideStateMeta() === $state) return;
 
         $this->setSideBlockId($id);

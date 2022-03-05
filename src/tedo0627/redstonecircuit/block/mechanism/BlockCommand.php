@@ -46,7 +46,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
 
     protected string $customName = "";
 
-    public function __construct(BlockIdentifierFlattened $idInfo, string $name, BlockBreakInfo $breakInfo){
+    public function __construct(BlockIdentifierFlattened $idInfo, string $name, BlockBreakInfo $breakInfo) {
         $this->idInfoFlattened = $idInfo;
         $this->perm = new PermissibleBase([DefaultPermissions::ROOT_OPERATOR => true]);
         parent::__construct($idInfo, $name, $breakInfo);

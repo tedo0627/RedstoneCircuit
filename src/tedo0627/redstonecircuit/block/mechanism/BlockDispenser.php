@@ -16,6 +16,7 @@ use pocketmine\entity\projectile\Egg;
 use pocketmine\entity\projectile\ExperienceBottle;
 use pocketmine\entity\projectile\Snowball;
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
@@ -94,6 +95,10 @@ class BlockDispenser extends Opaque implements IRedstoneComponent {
         $inventory = $tile->getInventory();
         $player->setCurrentWindow($inventory);
         return true;
+    }
+
+    public function asItem(): Item {
+        return ItemFactory::getInstance()->get($this->idInfo->getItemId(), 3);
     }
 
     public function onScheduledUpdate(): void {

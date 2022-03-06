@@ -12,14 +12,20 @@ use pocketmine\block\BlockToolType;
 use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
 use pocketmine\item\ToolTier;
+use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\plugin\PluginBase;
+use pocketmine\scheduler\AsyncTask;
+use ReflectionMethod;
+use tedo0627\redstonecircuit\block\BlockTable;
 use tedo0627\redstonecircuit\block\entity\BlockEntityChest;
 use tedo0627\redstonecircuit\block\entity\BlockEntityCommand;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDispenser;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDropper;
 use tedo0627\redstonecircuit\block\entity\BlockEntityHopper;
+use tedo0627\redstonecircuit\block\entity\BlockEntityMoving;
 use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
 use tedo0627\redstonecircuit\block\entity\BlockEntityObserver;
+use tedo0627\redstonecircuit\block\entity\BlockEntityPistonArm;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
 use tedo0627\redstonecircuit\block\mechanism\BlockActivatorRail;
 use tedo0627\redstonecircuit\block\mechanism\BlockCommand;
@@ -29,10 +35,15 @@ use tedo0627\redstonecircuit\block\mechanism\BlockFenceGate;
 use tedo0627\redstonecircuit\block\mechanism\BlockHopper;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockIronTrapdoor;
+use tedo0627\redstonecircuit\block\mechanism\BlockMoving;
 use tedo0627\redstonecircuit\block\mechanism\BlockNote;
+use tedo0627\redstonecircuit\block\mechanism\BlockPiston;
+use tedo0627\redstonecircuit\block\mechanism\BlockPistonArmCollision;
+use tedo0627\redstonecircuit\block\mechanism\BlockStickyPiston;
 use tedo0627\redstonecircuit\block\mechanism\BlockPoweredRail;
 use tedo0627\redstonecircuit\block\mechanism\BlockRedstoneLamp;
 use tedo0627\redstonecircuit\block\mechanism\BlockSkull;
+use tedo0627\redstonecircuit\block\mechanism\BlockStickyPistonArmCollision;
 use tedo0627\redstonecircuit\block\mechanism\BlockTNT;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenDoor;
 use tedo0627\redstonecircuit\block\mechanism\BlockWoodenTrapdoor;
@@ -89,6 +100,14 @@ class RedstoneCircuit extends PluginBase {
         $this->addBlockEntity("hopper", BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
         $this->overrideBlock("note_block", Ids::NOTEBLOCK, fn($bid, $name, $info) => new BlockNote($bid, $name, $info), BlockEntityNote::class);
         $this->addBlockEntity("note_block", BlockEntityNote::class, ["Music", "minecraft:noteblock"]);
+        $info = new BlockBreakInfo(1.5, BlockToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel());
+        $this->addBlock("piston", new BlockPiston(new BlockIdentifier(Ids::PISTON, 0, null, BlockEntityPistonArm::class), "Piston", $info));
+        $this->addBlock("piston", new BlockStickyPiston(new BlockIdentifier(Ids::STICKY_PISTON, 0, null, BlockEntityPistonArm::class), "Sticky Piston", $info));
+        $this->addBlockEntity("piston", BlockEntityPistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
+        $this->addBlock("piston", new BlockPistonArmCollision(new BlockIdentifier(Ids::PISTONARMCOLLISION, 0, null), "Pistonarmcollision", $info));
+        $this->addBlock("piston", new BlockStickyPistonArmCollision(new BlockIdentifier(472, 0, null), "Sticky Pistonarmcollision", $info));
+        $this->addBlock("piston", new BlockMoving(new BlockIdentifier(Ids::MOVINGBLOCK, 0, null, BlockEntityMoving::class), "Moving Block", BlockBreakInfo::indestructible()));
+        $this->addBlockEntity("piston", BlockEntityMoving::class, ["Movingblock", "minecraft:movingblock"]);
         $this->overrideBlock("rail", Ids::ACTIVATOR_RAIL, fn($bid, $name, $info) => new BlockActivatorRail($bid, $name, $info));
         $this->overrideBlock("rail", Ids::POWERED_RAIL, fn($bid, $name, $info) => new BlockPoweredRail($bid, $name, $info));
         $this->overrideBlock("redstone_lamp", Ids::REDSTONE_LAMP, fn($bid, $name, $info) => new BlockRedstoneLamp($bid, $name, $info));
@@ -131,6 +150,15 @@ class RedstoneCircuit extends PluginBase {
         $this->overrideBlock("repeater", Ids::UNPOWERED_REPEATER, fn($bid, $name, $info) => new BlockRedstoneRepeater($bid, $name, $info));
 
         $this->load();
+
+        self::registerMappings();
+        $this->getServer()->getAsyncPool()->addWorkerStartHook(function (int $worker): void {
+            $this->getServer()->getAsyncPool()->submitTaskToWorker(new class extends AsyncTask {
+                public function onRun(): void {
+                    RedstoneCircuit::registerMappings();
+                }
+            }, $worker);
+        });
     }
 
     public function onEnable(): void {
@@ -163,6 +191,31 @@ class RedstoneCircuit extends PluginBase {
         for ($i = 0; $i < count($this->loader); $i++) {
             $loader = $this->loader[$i];
             if ($config->getNested("blocks." . $loader->getName(), true)) $loader->load();
+        }
+    }
+
+    public static function registerMappings(): void {
+        $mapping = RuntimeBlockMapping::getInstance();
+        $update = $mapping->toRuntimeId(Ids::INFO_UPDATE << Block::INTERNAL_METADATA_BITS);
+        $table = BlockTable::getInstance();
+        $idCheck = -1;
+        $damage = 0;
+        $method = new ReflectionMethod(RuntimeBlockMapping::class, "registerMapping");
+        $method->setAccessible(true);
+        foreach ($mapping->getBedrockKnownStates() as $runtimeId => $tag) {
+            $name = $tag->getString("name");
+            if (!$table->existsId($name)) continue;
+
+            $id = $table->getId($name);
+            if ($idCheck === $id) {
+                $damage++;
+            } else {
+                $damage = 0;
+                $idCheck = $id;
+            }
+            if ($mapping->toRuntimeId(($id << Block::INTERNAL_METADATA_BITS) | $damage) !== $update) continue;
+
+            $method->invoke($mapping, $runtimeId, $id, $damage);
         }
     }
 }

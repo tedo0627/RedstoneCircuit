@@ -8,6 +8,7 @@ blocks:
   fence_gate: true
   hopper: true
   note_block: true
+  piston: true
   rail: true
   redstone_lamp: true
   skull: true

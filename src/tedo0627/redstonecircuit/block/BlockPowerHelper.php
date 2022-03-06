@@ -22,8 +22,9 @@ class BlockPowerHelper {
         return $block instanceof IRedstoneComponent ? $block->isPowerSource() : false;
     }
 
-    public static function isPowered(Block $block): bool {
+    public static function isPowered(Block $block, ?int $ignoreFace = null): bool {
         for ($face = 0; $face < 6; $face++) {
+            if ($face === $ignoreFace) continue;
             if (self::isSidePowered($block, $face)) return true;
         }
 

@@ -1,5 +1,5 @@
 [![](https://poggit.pmmp.io/shield.state/RedstoneCircuit)](https://poggit.pmmp.io/p/RedstoneCircuit)
-[![](https://poggit.pmmp.io/shield.dl/RedstoneCircuit)](https://poggit.pmmp.io/p/RedstoneCircuit)
+[![](https://poggit.pmmp.io/shield.dl.total/RedstoneCircuit)](https://poggit.pmmp.io/p/RedstoneCircuit)
 <h1>RedstoneCircuit<img width=100 align="left" src="https://github.com/tedo0627/RedstoneCircuit/blob/master/icon.png?raw=true"></h1>
 
 This is the PocketMine plugin that implements the Redstone circuit.
@@ -46,9 +46,14 @@ This is the PocketMine plugin that implements the Redstone circuit.
     <li>Dropper
     <li>Fence Gates
     <li>Hopper
+    <li>Moving Block
     <li>Note Block
+    <li>Piston
+    <li>Piston Arm
     <li>Powered Rail
     <li>Redstone Lamp
+    <li>Sticky Piston
+    <li>Sticky Piston Arm
     <li>TNT
     <li>Trapdoors
   </ul>

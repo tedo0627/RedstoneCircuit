@@ -24,6 +24,7 @@ blocks:
   redstone_block: true
   redstone_torch: true
   pressure_plate: true
+  target: true
   trapped_chest: true
   tripwire: true
   weighted_pressure_plate: true

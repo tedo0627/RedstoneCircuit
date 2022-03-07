@@ -27,6 +27,7 @@ use tedo0627\redstonecircuit\block\entity\BlockEntityNote;
 use tedo0627\redstonecircuit\block\entity\BlockEntityObserver;
 use tedo0627\redstonecircuit\block\entity\BlockEntityPistonArm;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
+use tedo0627\redstonecircuit\block\entity\BlockEntityTarget;
 use tedo0627\redstonecircuit\block\mechanism\BlockActivatorRail;
 use tedo0627\redstonecircuit\block\mechanism\BlockCommand;
 use tedo0627\redstonecircuit\block\mechanism\BlockDispenser;
@@ -55,6 +56,7 @@ use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
 use tedo0627\redstonecircuit\block\power\BlockStoneButton;
 use tedo0627\redstonecircuit\block\power\BlockStonePressurePlate;
+use tedo0627\redstonecircuit\block\power\BlockTarget;
 use tedo0627\redstonecircuit\block\power\BlockTrappedChest;
 use tedo0627\redstonecircuit\block\power\BlockTripwire;
 use tedo0627\redstonecircuit\block\power\BlockTripwireHook;
@@ -67,6 +69,7 @@ use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
 use tedo0627\redstonecircuit\listener\CommandBlockListener;
 use tedo0627\redstonecircuit\listener\InventoryListener;
+use tedo0627\redstonecircuit\listener\TargetBlockListener;
 use tedo0627\redstonecircuit\loader\BlockEntityLoader;
 use tedo0627\redstonecircuit\loader\BlockLoader;
 use tedo0627\redstonecircuit\loader\ItemBlockLoader;
@@ -135,6 +138,9 @@ class RedstoneCircuit extends PluginBase {
         $this->overrideBlock("redstone_torch", Ids::REDSTONE_TORCH, fn($bid, $name, $info) => new BlockRedstoneTorch($bid, $name, $info));
         $this->overrideBlock("pressure_plate", Ids::STONE_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockStonePressurePlate($bid, $name, $info));
         $this->overrideBlock("pressure_plate", Ids::WOODEN_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWoodenPressurePlate($bid, $name, $info));
+        $info = new BlockBreakInfo(0.5, BlockToolType::HOE, 0);
+        $this->addBlock("target", new BlockTarget(new BlockIdentifier(494, 0, null, BlockEntityTarget::class), "Target", $info));
+        $this->addBlockEntity("target", BlockEntityTarget::class, ["Target", "minecraft:target"]);
         $this->overrideBlock("trapped_chest", Ids::TRAPPED_CHEST, fn($bid, $name, $info) => new BlockTrappedChest($bid, $name, $info), BlockEntityChest::class);
         $this->addBlockEntity("trapped_chest", BlockEntityChest::class, ["Chest", "minecraft:chest"]);
         $this->overrideBlock("tripwire", Ids::TRIPWIRE, fn($bid, $name, $info) => new BlockTripwire($bid, $name, $info));
@@ -164,6 +170,7 @@ class RedstoneCircuit extends PluginBase {
     public function onEnable(): void {
         $this->getServer()->getPluginManager()->registerEvents(new CommandBlockListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new InventoryListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new TargetBlockListener(), $this);
     }
 
     private function overrideBlock(string $name, int $id, Closure $callback, ?string $class = null): void {

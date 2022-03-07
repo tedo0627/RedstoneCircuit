@@ -28,6 +28,7 @@ This is the PocketMine plugin that implements the Redstone circuit.
     <li>Redstone Block
     <li>Redstone Torch
     <li>Pressure Plates
+    <li>Target
     <li>Trapped Chest
     <li>Tripwire
     <li>Tripwire Hook

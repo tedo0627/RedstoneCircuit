@@ -81,7 +81,6 @@ class RedstoneCircuit extends PluginBase {
         // mechanism
         $this->addBlock("command_block", new BlockCommand(new BlockIdentifierFlattened(Ids::COMMAND_BLOCK, [Ids::REPEATING_COMMAND_BLOCK, Ids::CHAIN_COMMAND_BLOCK], 0, null, BlockEntityCommand::class), "Command Block", BlockBreakInfo::indestructible()));
         $this->addBlockEntity("command_block", BlockEntityCommand::class, ["CommandBlock", "minecraft:command_block"]);
-
         $info = new BlockBreakInfo(3.5, BlockToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel());
         $this->addBlock("dispenser", new BlockDispenser(new BlockIdentifier(Ids::DISPENSER, 0, null, BlockEntityDispenser::class), "Dispenser", $info));
         $this->addBlockEntity("dispenser", BlockEntityDispenser::class, ["Dispenser", "minecraft:dispenser"]);
@@ -129,6 +128,7 @@ class RedstoneCircuit extends PluginBase {
         $this->overrideBlock("daylight_sensor", Ids::DAYLIGHT_SENSOR, fn($bid, $name, $info) => new BlockDaylightSensor($bid, $name, $info));
         $this->overrideBlock("jukebox", Ids::JUKEBOX, fn($bid, $name, $info) => new BlockJukeBox($bid, $name, $info));
         $this->overrideBlock("lever", Ids::LEVER, fn($bid, $name, $info) => new BlockLever($bid, $name, $info));
+        $info = new BlockBreakInfo(3.5, BlockToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel());
         $this->addBlock("observer", new BlockObserver(new BlockIdentifier(Ids::OBSERVER, 0, null, BlockEntityObserver::class), "Observer", $info));
         $this->addBlockEntity("observer", BlockEntityObserver::class, ["Observer", "minecraft:observer"]);
         $this->overrideBlock("redstone_block", Ids::REDSTONE_BLOCK, fn($bid, $name, $info) => new BlockRedstone($bid, $name, $info));

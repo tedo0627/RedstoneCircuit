@@ -107,10 +107,6 @@ class BlockPiston extends Opaque implements IRedstoneComponent, ILinkRedstoneWir
         $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 1);
     }
 
-    public function getDropsForIncompatibleTool(Item $item): array {
-        return $this->getDropsForCompatibleTool($item);
-    }
-
     public function asItem(): Item {
         return ItemFactory::getInstance()->get($this->idInfo->getItemId(), 1);
     }

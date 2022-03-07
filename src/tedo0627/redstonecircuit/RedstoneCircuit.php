@@ -102,7 +102,7 @@ class RedstoneCircuit extends PluginBase {
         $this->addBlockEntity("hopper", BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
         $this->overrideBlock("note_block", Ids::NOTEBLOCK, fn($bid, $name, $info) => new BlockNote($bid, $name, $info), BlockEntityNote::class);
         $this->addBlockEntity("note_block", BlockEntityNote::class, ["Music", "minecraft:noteblock"]);
-        $info = new BlockBreakInfo(1.5, BlockToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel());
+        $info = new BlockBreakInfo(1.5, BlockToolType::PICKAXE);
         $this->addBlock("piston", new BlockPiston(new BlockIdentifier(Ids::PISTON, 0, null, BlockEntityPistonArm::class), "Piston", $info));
         $this->addBlock("piston", new BlockStickyPiston(new BlockIdentifier(Ids::STICKY_PISTON, 0, null, BlockEntityPistonArm::class), "Sticky Piston", $info));
         $this->addBlockEntity("piston", BlockEntityPistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
@@ -138,7 +138,7 @@ class RedstoneCircuit extends PluginBase {
         $this->overrideBlock("redstone_torch", Ids::REDSTONE_TORCH, fn($bid, $name, $info) => new BlockRedstoneTorch($bid, $name, $info));
         $this->overrideBlock("pressure_plate", Ids::STONE_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockStonePressurePlate($bid, $name, $info));
         $this->overrideBlock("pressure_plate", Ids::WOODEN_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWoodenPressurePlate($bid, $name, $info));
-        $info = new BlockBreakInfo(0.5, BlockToolType::HOE, 0);
+        $info = new BlockBreakInfo(0.5, BlockToolType::HOE);
         $this->addBlock("target", new BlockTarget(new BlockIdentifier(494, 0, null, BlockEntityTarget::class), "Target", $info));
         $this->addBlockEntity("target", BlockEntityTarget::class, ["Target", "minecraft:target"]);
         $this->overrideBlock("trapped_chest", Ids::TRAPPED_CHEST, fn($bid, $name, $info) => new BlockTrappedChest($bid, $name, $info), BlockEntityChest::class);

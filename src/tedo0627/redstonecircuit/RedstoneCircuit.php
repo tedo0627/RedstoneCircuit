@@ -92,12 +92,20 @@ class RedstoneCircuit extends PluginBase {
             Ids::OAK_DOOR_BLOCK, Ids::SPRUCE_DOOR_BLOCK, Ids::BIRCH_DOOR_BLOCK,
             Ids::JUNGLE_DOOR_BLOCK, Ids::ACACIA_DOOR_BLOCK, Ids::DARK_OAK_DOOR_BLOCK
         ], fn($bid, $name, $info) => new BlockWoodenDoor($bid, $name, $info));
+        $info = new BlockBreakInfo(3, BlockToolType::AXE, 0, 15);
+        $this->addBlock("door", new BlockWoodenDoor(new BlockIdentifier(499, 0, 755), "Crimson Door", $info));
+        $this->addItemBlock("door", 499, new ItemIdentifier(755, 0));
+        $this->addBlock("door", new BlockWoodenDoor(new BlockIdentifier(500, 0, 756), "Warped Door", $info));
+        $this->addItemBlock("door", 500, new ItemIdentifier(756, 0));
         $this->addBlock("dropper", new BlockDropper(new BlockIdentifier(Ids::DROPPER, 0, null, BlockEntityDropper::class), "Dropper", $info));
         $this->addBlockEntity("dropper", BlockEntityDropper::class, ["Dropper", "minecraft:dropper"]);
         $this->overrideBlocks("fence_gate", [
             Ids::OAK_FENCE_GATE, Ids::SPRUCE_FENCE_GATE, Ids::BIRCH_FENCE_GATE,
             Ids::JUNGLE_FENCE_GATE, Ids::DARK_OAK_FENCE_GATE, Ids::ACACIA_FENCE_GATE
         ], fn($bid, $name, $info) => new BlockFenceGate($bid, $name, $info));
+        $info = new BlockBreakInfo(2, BlockToolType::AXE, 0, 15);
+        $this->addBlock("fence_gate", new BlockFenceGate(new BlockIdentifier(513, 0), "Crimson Fence Gate", $info), true);
+        $this->addBlock("fence_gate", new BlockFenceGate(new BlockIdentifier(514, 0), "Warped Fence Gate", $info), true);
         $this->overrideBlock("hopper", Ids::HOPPER_BLOCK, fn($bid, $name, $info) => new BlockHopper($bid, $name, $info), BlockEntityHopper::class);
         $this->addBlockEntity("hopper", BlockEntityHopper::class, ["Hopper", "minecraft:hopper"]);
         $this->overrideBlock("note_block", Ids::NOTEBLOCK, fn($bid, $name, $info) => new BlockNote($bid, $name, $info), BlockEntityNote::class);
@@ -121,6 +129,9 @@ class RedstoneCircuit extends PluginBase {
             Ids::WOODEN_TRAPDOOR, Ids::ACACIA_TRAPDOOR, Ids::BIRCH_TRAPDOOR,
             Ids::DARK_OAK_TRAPDOOR, Ids::JUNGLE_TRAPDOOR, Ids::SPRUCE_TRAPDOOR
         ], fn($bid, $name, $info) => new BlockWoodenTrapdoor($bid, $name, $info));
+        $info = new BlockBreakInfo(3, BlockToolType::AXE, 0, 15);
+        $this->addBlock("trapdoor", new BlockWoodenTrapdoor(new BlockIdentifier(501, 0), "Crimson Trapdoor", $info), true);
+        $this->addBlock("trapdoor", new BlockWoodenTrapdoor(new BlockIdentifier(502, 0), "Warped Trapdoor", $info), true);
 
         // power
         $this->overrideBlock("button", Ids::STONE_BUTTON, fn($bid, $name, $info) => new BlockStoneButton($bid, $name, $info));
@@ -128,6 +139,11 @@ class RedstoneCircuit extends PluginBase {
             Ids::WOODEN_BUTTON, Ids::ACACIA_BUTTON, Ids::BIRCH_BUTTON,
             Ids::DARK_OAK_BUTTON, Ids::JUNGLE_BUTTON, Ids::SPRUCE_BUTTON
         ], fn($bid, $name, $info) => new BlockWoodenButton($bid, $name, $info));
+        $info = new BlockBreakInfo(0.5, BlockToolType::AXE);
+        $this->addBlock("button", new BlockWoodenButton(new BlockIdentifier(515, 0), "Crimson Button", $info), true);
+        $this->addBlock("button", new BlockWoodenButton(new BlockIdentifier(516, 0), "Warped Button", $info), true);
+        $info = new BlockBreakInfo(0.5, BlockToolType::PICKAXE);
+        $this->addBlock("button", new BlockStoneButton(new BlockIdentifier(551, 0), "Polished Blackstone Button", $info), true);
         $this->overrideBlock("daylight_sensor", Ids::DAYLIGHT_SENSOR, fn($bid, $name, $info) => new BlockDaylightSensor($bid, $name, $info));
         $this->overrideBlock("jukebox", Ids::JUKEBOX, fn($bid, $name, $info) => new BlockJukeBox($bid, $name, $info));
         $this->overrideBlock("lever", Ids::LEVER, fn($bid, $name, $info) => new BlockLever($bid, $name, $info));
@@ -137,7 +153,14 @@ class RedstoneCircuit extends PluginBase {
         $this->overrideBlock("redstone_block", Ids::REDSTONE_BLOCK, fn($bid, $name, $info) => new BlockRedstone($bid, $name, $info));
         $this->overrideBlock("redstone_torch", Ids::REDSTONE_TORCH, fn($bid, $name, $info) => new BlockRedstoneTorch($bid, $name, $info));
         $this->overrideBlock("pressure_plate", Ids::STONE_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockStonePressurePlate($bid, $name, $info));
-        $this->overrideBlock("pressure_plate", Ids::WOODEN_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWoodenPressurePlate($bid, $name, $info));
+        $this->overrideBlocks("pressure_plate", [
+            Ids::WOODEN_PRESSURE_PLATE, Ids::ACACIA_PRESSURE_PLATE, Ids::BIRCH_PRESSURE_PLATE,
+            Ids::DARK_OAK_PRESSURE_PLATE, Ids::JUNGLE_PRESSURE_PLATE, Ids::SPRUCE_PRESSURE_PLATE
+        ], fn($bid, $name, $info) => new BlockWoodenPressurePlate($bid, $name, $info));
+        $this->addBlock("pressure_plate", new BlockWoodenPressurePlate(new BlockIdentifier(517, 0), "Crimson Pressure Plate", $info), true);
+        $this->addBlock("pressure_plate", new BlockWoodenPressurePlate(new BlockIdentifier(518, 0), "Warped Pressure Plate", $info), true);
+        $info = new BlockBreakInfo(0.5, BlockToolType::PICKAXE, ToolTier::WOOD()->getHarvestLevel());
+        $this->addBlock("pressure_plate", new BlockStonePressurePlate(new BlockIdentifier(550, 0), "Polished Blackstone Pressure Plate", $info), true);
         $info = new BlockBreakInfo(0.5, BlockToolType::HOE);
         $this->addBlock("target", new BlockTarget(new BlockIdentifier(494, 0, null, BlockEntityTarget::class), "Target", $info));
         $this->addBlockEntity("target", BlockEntityTarget::class, ["Target", "minecraft:target"]);
@@ -181,8 +204,8 @@ class RedstoneCircuit extends PluginBase {
         foreach ($ids as $id) $this->overrideBlock($name, $id, $callback, $class);
     }
 
-    private function addBlock(string $name, Block $block): void {
-        $this->loader[] = new BlockLoader($name, $block);
+    private function addBlock(string $name, Block $block, bool $addCreative = false): void {
+        $this->loader[] = new BlockLoader($name, $block, $addCreative);
     }
 
     private function addItemBlock(string $name, int $blockId, ItemIdentifier $identifier): void {

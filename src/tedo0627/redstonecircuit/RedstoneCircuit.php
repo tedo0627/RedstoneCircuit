@@ -238,7 +238,11 @@ class RedstoneCircuit extends PluginBase {
 
             $id = $table->getId($name);
             if ($idCheck === $id) {
-                $damage++;
+                if (str_contains($name, "button") && $damage == 5) {
+                    $damage = 8;
+                } else {
+                    $damage++;
+                }
             } else {
                 $damage = 0;
                 $idCheck = $id;

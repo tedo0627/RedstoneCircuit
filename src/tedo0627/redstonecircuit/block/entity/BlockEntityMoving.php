@@ -18,6 +18,9 @@ class BlockEntityMoving extends Spawnable {
         if ($tag !== null) {
             $this->setMovingBlockName($tag->getString("name", "minecraft:air"));
             $this->setMovingBlockStates($tag->getCompoundTag("states") ?? new CompoundTag());
+        } else {
+            $this->setMovingBlockName("minecraft:air");
+            $this->setMovingBlockStates(new CompoundTag());
         }
 
         $tag = $nbt->getCompoundTag("movingEntity");

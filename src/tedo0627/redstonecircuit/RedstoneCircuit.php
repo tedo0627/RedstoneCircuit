@@ -9,6 +9,7 @@ use pocketmine\block\BlockIdentifier;
 use pocketmine\block\BlockIdentifierFlattened;
 use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\block\BlockToolType;
+use pocketmine\inventory\CreativeInventory;
 use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
 use pocketmine\item\ToolTier;
@@ -188,6 +189,8 @@ class RedstoneCircuit extends PluginBase {
                 }
             }, $worker);
         });
+
+        CreativeInventory::reset();
     }
 
     public function onEnable(): void {

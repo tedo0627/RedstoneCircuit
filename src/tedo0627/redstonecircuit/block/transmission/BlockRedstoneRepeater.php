@@ -48,20 +48,18 @@ class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneCompone
 
         $powered = $this->isPowered();
         $side = BlockPowerHelper::isSidePowered($this, $this->getFacing());
-        if ($powered && !$side) {
+        if ($powered) {
             $this->setPowered(false);
             $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
             BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
             return;
         }
 
-        if (!$powered) {
-            $this->setPowered(true);
-            $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
-            BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
+        $this->setPowered(true);
+        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+        BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
 
-            if (!$side) $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), $this->getDelay() * 2);
-        }
+        if (!$side) $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), $this->getDelay() * 2);
     }
 
     public function isLocked(): bool {

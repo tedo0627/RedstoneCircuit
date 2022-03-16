@@ -18,6 +18,9 @@ class BlockRedstoneLamp extends RedstoneLamp implements IRedstoneComponent {
     }
 
     public function onScheduledUpdate(): void {
+        $side = BlockPowerHelper::isPowered($this);
+        if ($side) return;
+
         $this->setPowered(false);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
     }

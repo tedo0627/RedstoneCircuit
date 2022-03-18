@@ -75,14 +75,6 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
             $world->scheduleDelayedBlockUpdate($this->getPosition(), 1);
             break;
         }
-        /*
-        $this->setConnected(false);
-        $this->setPowered(false);
-        $world = $this->getPosition()->getWorld();
-        $world->setBlock($this->getPosition(), $this);
-        $world->addSound($this->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOffSound());
-        BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()));
-        */
     }
 
     public function tryConnect(): void {

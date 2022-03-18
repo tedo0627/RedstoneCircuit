@@ -26,11 +26,6 @@ class BlockRedstoneTorch extends RedstoneTorch implements IRedstoneComponent, IL
         return true;
     }
 
-    public function onNearbyBlockChange(): void {
-        parent::onNearbyBlockChange();
-        BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::UP);
-    }
-
     public function onScheduledUpdate(): void {
         $this->setLit(!$this->isLit());
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);

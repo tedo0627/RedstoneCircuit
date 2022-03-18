@@ -69,6 +69,8 @@ class BlockPoweredRail extends PoweredRail implements IRedstoneComponent {
 
     protected function updatePower(PoweredRail $block): void {
         if (BlockPowerHelper::isPowered($block)) {
+            if ($block->isPowered()) return;
+
             $block->setPowered(true);
             $block->getPosition()->getWorld()->setBlock($block->getPosition(), $block);
             return;

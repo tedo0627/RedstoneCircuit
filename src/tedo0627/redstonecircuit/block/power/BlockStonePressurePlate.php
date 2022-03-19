@@ -20,6 +20,8 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockStonePressurePlate extends StonePressurePlate implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
@@ -51,7 +53,13 @@ class BlockStonePressurePlate extends StonePressurePlate implements IRedstoneCom
             return;
         }
 
-        $this->setPressed(false);
+        $pressed = false;
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, false, $this->isPressed());
+            $event->call();
+            $pressed = $event->getNewPowered();
+        }
+        $this->setPressed($pressed);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         $this->getPosition()->getWorld()->addSound($this->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOffSound());
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::DOWN);
@@ -63,7 +71,13 @@ class BlockStonePressurePlate extends StonePressurePlate implements IRedstoneCom
         if (count($entities) <= 0) return true;
 
         if (!$this->isPressed()) {
-            $this->setPressed(true);
+            $pressed = true;
+            if (RedstoneCircuit::isCallEvent()) {
+                $event = new BlockRedstonePowerUpdateEvent($this, true, $this->isPressed());
+                $event->call();
+                $pressed = $event->getNewPowered();
+            }
+            $this->setPressed($pressed);
             $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
             $this->getPosition()->getWorld()->addSound($this->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOnSound());
             BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::DOWN);

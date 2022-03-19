@@ -33,4 +33,6 @@ blocks:
   comparator: true
   redstone_wire: true
   repeater: true
+
+event: false
 ...

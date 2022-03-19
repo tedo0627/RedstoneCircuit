@@ -15,6 +15,8 @@ use tedo0627\redstonecircuit\block\FlowablePlaceHelper;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\IRedstoneDiode;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneComponent, ILinkRedstoneWire, IRedstoneDiode {
 
@@ -46,20 +48,20 @@ class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneCompone
     public function onScheduledUpdate(): void {
         if ($this->isLocked()) return;
 
-        $powered = $this->isPowered();
         $side = BlockPowerHelper::isSidePowered($this, $this->getFacing());
-        if ($powered) {
-            $this->setPowered(false);
-            $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
-            BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
-            return;
-        }
 
-        $this->setPowered(true);
+        $oldPowered = $this->isPowered();
+        $powered = !$oldPowered;
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, $powered, $oldPowered);
+            $event->call();
+
+            $powered = $event->getNewPowered();
+        }
+        $this->setPowered($powered);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
-
-        if (!$side) $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), $this->getDelay() * 2);
+        if (!$oldPowered &&!$side) $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), $this->getDelay() * 2);
     }
 
     public function isLocked(): bool {

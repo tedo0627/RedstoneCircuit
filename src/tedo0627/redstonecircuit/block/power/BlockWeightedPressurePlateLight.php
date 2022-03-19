@@ -19,6 +19,8 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstoneSignalUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockWeightedPressurePlateLight extends WeightedPressurePlateLight implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
@@ -49,8 +51,16 @@ class BlockWeightedPressurePlateLight extends WeightedPressurePlateLight impleme
             $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 20);
         }
 
+        $oldPower = $this->getOutputSignalStrength();
         $power = min($count, 15);
-        if ($this->getOutputSignalStrength() === $power) return;
+        if ($oldPower === $power) return;
+
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstoneSignalUpdateEvent($this, $power, $oldPower);
+            $event->call();
+            $power = $event->getNewSignal();
+            if ($oldPower === $power) return;
+        }
 
         if ($power === 0) {
             $this->getPosition()->getWorld()->addSound($this->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOffSound());
@@ -65,10 +75,19 @@ class BlockWeightedPressurePlateLight extends WeightedPressurePlateLight impleme
         $count = count($entities);
         if ($count <= 0) return true;
 
-        if ($this->getOutputSignalStrength() === 0) {
+        $oldPower = $this->getOutputSignalStrength();
+        $power = min($count, 15);
+        if ($oldPower !== $power && RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstoneSignalUpdateEvent($this, $power, $oldPower);
+            $event->call();
+            $power = $event->getNewSignal();
+            if ($oldPower === $power) return true;
+        }
+
+        if ($oldPower === 0) {
             $this->getPosition()->getWorld()->addSound($this->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOnSound());
         }
-        $this->setOutputSignalStrength(min($count, 15));
+        $this->setOutputSignalStrength($power);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::DOWN);
         $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 10);

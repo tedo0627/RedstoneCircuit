@@ -25,6 +25,8 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\IRedstoneDiode;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstoneSignalUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneComponent, ILinkRedstoneWire {
     use RedstoneComponentTrait;
@@ -103,8 +105,15 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
         $power = $this->isSubtractMode() ? max(0, $power - $sidePower) : ($power >= $sidePower ? $power : 0);
         if ($this->getOutputSignalStrength() === $power) return;
 
-        if ($this->getOutputSignalStrength() === 0 && $power > 0) $this->setPowered(true);
-        if ($this->getOutputSignalStrength() > 0 && $power === 0) $this->setPowered(false);
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstoneSignalUpdateEvent($this, $power, $this->getOutputSignalStrength());
+            $event->call();
+
+            $power = $event->getNewSignal();
+            if ($this->getOutputSignalStrength() == $power) return;
+        }
+
+        $this->setPowered($power > 0);
         $this->setOutputSignalStrength($power);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));

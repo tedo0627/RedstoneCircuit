@@ -17,6 +17,7 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
 use tedo0627\redstonecircuit\sound\AttachSound;
 use tedo0627\redstonecircuit\sound\DetachSound;
 
@@ -126,7 +127,7 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
             $world = $this->getPosition()->getWorld();
             $block->setConnected(false);
             if ($step === 0) {
-                $block->setPowered(false);
+                $block->setPowered($this->callEvent($block, false));
                 $world->setBlock($block->getPosition(), $block);
 
                 $world->addSound($this->getPosition()->add(0.5, 0.5, 0.5), new DetachSound());
@@ -142,12 +143,12 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
             }
 
             if ($powered) {
-                $this->setPowered(true);
+                $this->setPowered($this->callEvent($this, true));
                 $world->setBlock($this->getPosition(), $this);
                 BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()));
                 $world->addSound($this->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOnSound());
 
-                $block->setPowered(true);
+                $block->setPowered($this->callEvent($block, true));
                 $world->setBlock($block->getPosition(), $block);
                 BlockUpdateHelper::updateAroundDirectionRedstone($block, Facing::opposite($block->getFacing()));
                 $world->addSound($block->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOnSound());
@@ -178,20 +179,26 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
             if ($block->getFacing() !== Facing::opposite($this->getFacing())) break;
             if (!$triggered) break;
 
-            $this->setPowered(true);
+            $this->setPowered($this->callEvent($this, true));
             $world = $this->getPosition()->getWorld();
             $world->setBlock($this->getPosition(), $this);
             BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()));
             $world->addSound($this->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOnSound());
             $world->scheduleDelayedBlockUpdate($this->getPosition(), 1);
 
-            $block->setPowered(true);
+            $block->setPowered($this->callEvent($block, true));
             $world->setBlock($block->getPosition(), $block);
             BlockUpdateHelper::updateAroundDirectionRedstone($block, Facing::opposite($block->getFacing()));
             $world->addSound($block->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOnSound());
             $world->scheduleDelayedBlockUpdate($block->getPosition(), 1);
             break;
         }
+    }
+
+    private function callEvent(BlockTripwireHook $block, bool $powered): bool {
+        $event = new BlockRedstonePowerUpdateEvent($block, $powered, $block->isPowered());
+        $event->call();
+        return $event->getNewPowered();
     }
 
     public function getStrongPower(int $face): int {

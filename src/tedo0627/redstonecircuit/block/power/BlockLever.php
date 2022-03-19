@@ -15,6 +15,8 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockLever extends Lever implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
@@ -37,6 +39,11 @@ class BlockLever extends Lever implements IRedstoneComponent, ILinkRedstoneWire 
     }
 
     public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null): bool {
+        if (RedstoneCircuit::isCallEvent()) {
+            $powered = $this->isActivated();
+            $event = new BlockRedstonePowerUpdateEvent($this, !$powered, $powered);
+            $event->call();
+        }
         parent::onInteract($item, $face, $clickVector, $player);
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()->getFacing()));
         return true;

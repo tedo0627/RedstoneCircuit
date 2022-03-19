@@ -78,6 +78,8 @@ use tedo0627\redstonecircuit\loader\Loader;
 
 class RedstoneCircuit extends PluginBase {
 
+    private static bool $callEvent = false;
+
     /** @var Loader[] */
     private array $loader = [];
 
@@ -197,6 +199,8 @@ class RedstoneCircuit extends PluginBase {
         $this->getServer()->getPluginManager()->registerEvents(new CommandBlockListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new InventoryListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new TargetBlockListener(), $this);
+
+        self::$callEvent = $this->getConfig()->get("event", false);
     }
 
     private function overrideBlock(string $name, int $id, Closure $callback, ?string $class = null): void {
@@ -254,5 +258,9 @@ class RedstoneCircuit extends PluginBase {
 
             $method->invoke($mapping, $runtimeId, $id, $damage);
         }
+    }
+
+    public static function isCallEvent(): bool {
+        return self::$callEvent;
     }
 }

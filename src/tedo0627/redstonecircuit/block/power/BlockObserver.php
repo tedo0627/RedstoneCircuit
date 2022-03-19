@@ -17,6 +17,8 @@ use tedo0627\redstonecircuit\block\entity\BlockEntityObserver;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneWire {
     use AnyFacingTrait;
@@ -94,7 +96,13 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
     }
 
     public function onScheduledUpdate(): void {
-        $this->setPowered(!$this->isPowered());
+        $powered = !$this->isPowered();
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, $powered, $powered);
+            $event->call();
+            $powered = $event->getNewPowered();
+        }
+        $this->setPowered($powered);
         $pos = $this->getPosition();
         $world = $pos->getWorld();
         $world->setBlock($pos, $this);

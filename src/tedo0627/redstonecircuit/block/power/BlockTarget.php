@@ -17,6 +17,8 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstoneSignalUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockTarget extends Opaque implements IRedstoneComponent, ILinkRedstoneWire {
     use AnalogRedstoneSignalEmitterTrait;
@@ -46,7 +48,13 @@ class BlockTarget extends Opaque implements IRedstoneComponent, ILinkRedstoneWir
     }
 
     public function onScheduledUpdate(): void {
-        $this->setOutputSignalStrength(0);
+        $signal = 0;
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstoneSignalUpdateEvent($this, $signal, $this->getOutputSignalStrength());
+            $event->call();
+            $signal = $event->getNewSignal();
+        }
+        $this->setOutputSignalStrength($signal);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         BlockUpdateHelper::updateAroundRedstone($this);
     }
@@ -69,6 +77,12 @@ class BlockTarget extends Opaque implements IRedstoneComponent, ILinkRedstoneWir
             Axis::Z => max($x, $y)
         };
         $signal = (int) max(1, ceil(15 * $this->clamp((0.5 - $max) / 0.5, 0.0, 1.0)));
+        $oldSignal = $this->getOutputSignalStrength();
+        if ($oldSignal !== $signal && RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstoneSignalUpdateEvent($this, $signal, $oldSignal);
+            $event->call();
+            $signal = $event->getNewSignal();
+        }
         $this->setOutputSignalStrength($signal);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         BlockUpdateHelper::updateAroundRedstone($this);

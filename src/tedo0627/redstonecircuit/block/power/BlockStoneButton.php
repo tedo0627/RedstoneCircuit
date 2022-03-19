@@ -15,6 +15,8 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockStoneButton extends StoneButton implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
@@ -33,6 +35,10 @@ class BlockStoneButton extends StoneButton implements IRedstoneComponent, ILinkR
     public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null): bool {
         if ($this->isPressed()) return true;
 
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, !$this->isPressed(), $this->isPressed());
+            $event->call();
+        }
         parent::onInteract($item, $face, $clickVector, $player);
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()));
         return true;
@@ -41,6 +47,10 @@ class BlockStoneButton extends StoneButton implements IRedstoneComponent, ILinkR
     public function onScheduledUpdate(): void {
         if (!$this->isPressed()) return;
 
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, !$this->isPressed(), $this->isPressed());
+            $event->call();
+        }
         parent::onScheduledUpdate();
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()));
     }

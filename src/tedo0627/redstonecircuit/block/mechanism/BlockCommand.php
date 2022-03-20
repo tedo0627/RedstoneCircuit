@@ -30,6 +30,8 @@ use tedo0627\redstonecircuit\block\CommandBlockTrait;
 use tedo0627\redstonecircuit\block\entity\BlockEntityCommand;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
     use AnyFacingTrait;
@@ -171,9 +173,18 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
     }
 
     public function onRedstoneUpdate(): void {
-        $power = BlockPowerHelper::isPowered($this);
-        if ($power && !$this->isPowered()) {
-            $this->setPowered(true);
+        $powered = BlockPowerHelper::isPowered($this);
+        if ($powered === $this->isPowered()) return;
+
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isPowered());
+            $event->call();
+            $powered = $event->getNewPowered();
+            if ($powered === $this->isPowered()) return;
+        }
+
+        $this->setPowered($powered);
+        if ($powered) {
             $mode = $this->getCommandBlockMode();
             if ($mode === BlockCommand::REPEATING) $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 1);
 
@@ -187,13 +198,9 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
             } else {
                 $this->delay();
             }
-            return;
+        } else {
+            $this->writeStateToWorld();
         }
-
-        if ($power || !$this->isPowered()) return;
-
-        $this->setPowered(false);
-        $this->writeStateToWorld();
     }
 
     protected function delay(): void {

@@ -10,6 +10,8 @@ use pocketmine\player\Player;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockPoweredRail extends PoweredRail implements IRedstoneComponent {
     use RedstoneComponentTrait;
@@ -69,10 +71,7 @@ class BlockPoweredRail extends PoweredRail implements IRedstoneComponent {
 
     protected function updatePower(PoweredRail $block): void {
         if (BlockPowerHelper::isPowered($block)) {
-            if ($block->isPowered()) return;
-
-            $block->setPowered(true);
-            $block->getPosition()->getWorld()->setBlock($block->getPosition(), $block);
+            $this->updatePowered($block, true);
             return;
         }
 
@@ -97,8 +96,7 @@ class BlockPoweredRail extends PoweredRail implements IRedstoneComponent {
                 $faces = $side->getCurrentShapeConnections();
                 if (in_array($face, $faces, true)) {
                     if (BlockPowerHelper::isPowered($side)) {
-                        $block->setPowered(true);
-                        $block->getPosition()->getWorld()->setBlock($block->getPosition(), $block);
+                        $this->updatePowered($block, true);
                         return;
                     }
                     $up = false;
@@ -107,8 +105,7 @@ class BlockPoweredRail extends PoweredRail implements IRedstoneComponent {
 
                 if (in_array($face | RailConnectionInfo::FLAG_ASCEND, $faces, true)) {
                     if (BlockPowerHelper::isPowered($side)) {
-                        $block->setPowered(true);
-                        $block->getPosition()->getWorld()->setBlock($block->getPosition(), $block);
+                        $this->updatePowered($block, true);
                         return;
                     }
                     $up = true;
@@ -118,7 +115,21 @@ class BlockPoweredRail extends PoweredRail implements IRedstoneComponent {
             }
         }
 
-        $block->setPowered(false);
+        $this->updatePowered($block, false);
+    }
+
+    protected function updatePowered(PoweredRail $block, bool $powered): void {
+        $oldPowered = $block->isPowered();
+        if ($oldPowered === $powered) return;
+
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, $powered, $oldPowered);
+            $event->call();
+            $powered = $event->getNewPowered();
+            if ($oldPowered === $powered) return;
+        }
+
+        $block->setPowered($powered);
         $block->getPosition()->getWorld()->setBlock($block->getPosition(), $block);
     }
 }

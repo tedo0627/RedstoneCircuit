@@ -8,6 +8,8 @@ use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockSkull extends Skull implements IRedstoneComponent {
     use RedstoneComponentTrait;
@@ -31,15 +33,16 @@ class BlockSkull extends Skull implements IRedstoneComponent {
         if ($this->getSkullType() !== SkullType::DRAGON()) return;
 
         $powered = BlockPowerHelper::isPowered($this);
-        if ($powered && !$this->isMouthMoving()) {
-            $this->setMouthMoving(true);
-            $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
-            return;
+        if ($powered === $this->isMouthMoving()) return;
+
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isMouthMoving());
+            $event->call();
+            $powered = $event->getNewPowered();
+            if ($powered === $this->isMouthMoving()) return;
         }
 
-        if ($powered || !$this->isMouthMoving()) return;
-
-        $this->setMouthMoving(false);
+        $this->setMouthMoving($powered);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
     }
 

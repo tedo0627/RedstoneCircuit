@@ -18,6 +18,8 @@ use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\entity\BlockEntityHopper;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockHopper extends Hopper implements IRedstoneComponent {
     use RedstoneComponentTrait;
@@ -206,15 +208,16 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
 
     public function onRedstoneUpdate(): void {
         $powered = BlockPowerHelper::isPowered($this);
-        if ($powered && !$this->isPowered()) {
-            $this->setPowered(true);
-            $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
-            return;
+        if ($powered === $this->isPowered()) return;
+
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isPowered());
+            $event->call();
+            $powered = $event->getNewPowered();
+            if ($powered === $this->isPowered()) return;
         }
 
-        if ($powered || !$this->isPowered()) return;
-
-        $this->setPowered(false);
+        $this->setPowered($powered);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
     }
 

@@ -13,6 +13,8 @@ use pocketmine\world\sound\DoorSound;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockIronDoor extends Door implements IRedstoneComponent {
     use RedstoneComponentTrait;
@@ -31,36 +33,27 @@ class BlockIronDoor extends Door implements IRedstoneComponent {
     public function onRedstoneUpdate(): void {
         $other = $this->getSide($this->isTop() ? Facing::DOWN : Facing::UP);
         $powered = BlockPowerHelper::isPowered($this) || BlockPowerHelper::isPowered($other);
-        $world = $this->getPosition()->getWorld();
-        if ($powered && !$this->isPowered()) {
-            $this->setPowered(true);
-            if (!$this->isOpen()) {
-                $this->setOpen(true);
-                $world->addSound($this->getPosition(), new DoorSound());
-            }
+        if ($powered === $this->isPowered()) return;
 
-            if ($other instanceof Door && $this->isSameType($other)) {
-                $other->setPowered(true);
-                $other->setOpen(true);
-                $world->setBlock($other->getPosition(), $other);
-            }
-            $world->setBlock($this->getPosition(), $this);
-            return;
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isPowered());
+            $event->call();
+            $powered = $event->getNewPowered();
+            if ($powered === $this->isPowered()) return;
         }
 
-        if (!$powered && $this->isPowered()) {
-            $this->setPowered(false);
-            if ($this->isOpen()) {
-                $this->setOpen(false);
-                $world->addSound($this->getPosition(), new DoorSound());
-            }
+        $this->setPowered($powered);
+        $world = $this->getPosition()->getWorld();
+        if ($this->isOpen() !== $powered) {
+            $this->setOpen($powered);
+            $world->addSound($this->getPosition(), new DoorSound());
+        }
+        $world->setBlock($this->getPosition(), $this);
 
-            if ($other instanceof Door && $this->isSameType($other)) {
-                $other->setPowered(false);
-                $other->setOpen(false);
-                $world->setBlock($other->getPosition(), $other);
-            }
-            $world->setBlock($this->getPosition(), $this);
+        if ($other instanceof Door && $this->isSameType($other)) {
+            $other->setPowered($this->isPowered());
+            $other->setOpen($this->isOpen());
+            $world->setBlock($other->getPosition(), $other);
         }
     }
 }

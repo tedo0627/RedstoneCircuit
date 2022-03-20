@@ -37,6 +37,8 @@ use tedo0627\redstonecircuit\block\dispenser\TNTDispenseBehavior;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDispenser;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 use tedo0627\redstonecircuit\sound\ClickFailSound;
 
 class BlockDispenser extends Opaque implements IRedstoneComponent {
@@ -121,17 +123,18 @@ class BlockDispenser extends Opaque implements IRedstoneComponent {
 
     public function onRedstoneUpdate(): void {
         $powered = BlockPowerHelper::isPowered($this);
-        if ($powered && !$this->isPowered()) {
-            $this->setPowered(true);
-            $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
-            $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 4);
-            return;
+        if ($powered === $this->isPowered()) return;
+
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isPowered());
+            $event->call();
+            $powered = $event->getNewPowered();
+            if ($powered === $this->isPowered()) return;
         }
 
-        if ($powered || !$this->isPowered()) return;
-
-        $this->setPowered(false);
+        $this->setPowered(true);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+        if ($powered) $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 4);
     }
 
     public function dispense(Item $item): ?Item {

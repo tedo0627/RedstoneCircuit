@@ -132,7 +132,7 @@ class BlockDispenser extends Opaque implements IRedstoneComponent {
             if ($powered === $this->isPowered()) return;
         }
 
-        $this->setPowered(true);
+        $this->setPowered($powered);
         $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         if ($powered) $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 4);
     }

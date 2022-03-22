@@ -11,6 +11,7 @@ use pocketmine\block\utils\BlockDataSerializer;
 use pocketmine\block\utils\PoweredByRedstoneTrait;
 use pocketmine\command\CommandSender;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
+use pocketmine\event\server\CommandEvent;
 use pocketmine\item\Item;
 use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\lang\Language;
@@ -260,8 +261,17 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
     }
 
     protected function dispatch(): bool {
+        $command = $this->getCommand();
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new CommandEvent($this, $command);
+            $event->call();
+            if ($event->isCancelled()) return false;
+
+            $command = $event->getCommand();
+        }
+
         $args = [];
-        preg_match_all('/"((?:\\\\.|[^\\\\"])*)"|(\S+)/u', $this->getCommand(), $matches);
+        preg_match_all('/"((?:\\\\.|[^\\\\"])*)"|(\S+)/u', $command, $matches);
         foreach($matches[0] as $k => $_){
             for($i = 1; $i <= 2; ++$i){
                 if($matches[$i][$k] !== ""){
@@ -273,14 +283,14 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
 
         $successful = false;
         $sentCommandLabel = array_shift($args);
-        if($sentCommandLabel !== null && ($target = Server::getInstance()->getCommandMap()->getCommand($sentCommandLabel)) !== null){
+        if ($sentCommandLabel !== null && ($target = Server::getInstance()->getCommandMap()->getCommand($sentCommandLabel)) !== null) {
             $target->timings->startTiming();
 
-            try{
+            try {
                 $successful = $target->execute($this, $sentCommandLabel, $args);
-            }catch(InvalidCommandSyntaxException $e){
+            } catch (InvalidCommandSyntaxException) {
                 $this->sendMessage($this->getLanguage()->translate(KnownTranslationFactory::commands_generic_usage($target->getUsage())));
-            }finally{
+            } finally {
                 $target->timings->stopTiming();
             }
         } else {

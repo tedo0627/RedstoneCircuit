@@ -25,6 +25,9 @@ use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\PistonResolver;
 use tedo0627\redstonecircuit\block\PistonTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\event\BlockPistonExtendEvent;
+use tedo0627\redstonecircuit\event\BlockPistonRetractEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 use tedo0627\redstonecircuit\sound\PistonInSound;
 use tedo0627\redstonecircuit\sound\PistonOutSound;
 
@@ -135,6 +138,12 @@ class BlockPiston extends Opaque implements IRedstoneComponent, ILinkRedstoneWir
             $resolver->resolve();
             if (!$resolver->isSuccess()) return false;
 
+            if (RedstoneCircuit::isCallEvent()) {
+                $event = new BlockPistonExtendEvent($this, $resolver->getAttachBlocks(), $resolver->getBreakBlocks());
+                $event->call();
+                if ($event->isCancelled()) return false;
+            }
+
             $world = $this->getPosition()->getWorld();
             foreach ($resolver->getBreakBlocks() as $block) {
                 $this->addBreakBlock($block);
@@ -206,6 +215,12 @@ class BlockPiston extends Opaque implements IRedstoneComponent, ILinkRedstoneWir
             $resolver = new PistonResolver($this, $this->isSticky(), false);
             $resolver->resolve();
             if (!$resolver->isSuccess()) return false;
+
+            if (RedstoneCircuit::isCallEvent()) {
+                $event = new BlockPistonRetractEvent($this, $resolver->getAttachBlocks(), $resolver->getBreakBlocks());
+                $event->call();
+                if ($event->isCancelled()) return false;
+            }
 
             $world = $this->getPosition()->getWorld();
             foreach ($resolver->getBreakBlocks() as $block) {

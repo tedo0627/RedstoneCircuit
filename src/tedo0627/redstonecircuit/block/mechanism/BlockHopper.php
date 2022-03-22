@@ -19,6 +19,8 @@ use tedo0627\redstonecircuit\block\entity\BlockEntityHopper;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\event\HopperMoveItemEvent;
+use tedo0627\redstonecircuit\event\HopperPickupItemEvent;
 use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockHopper extends Hopper implements IRedstoneComponent {
@@ -99,6 +101,12 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
             if ($targetBlock->getRecord() !== null) return false;
             if (!$pop instanceof Record) return false;
 
+            if (RedstoneCircuit::isCallEvent()) {
+                $event = new HopperMoveItemEvent($this, $inventory, $targetBlock, clone $pop);
+                $event->call();
+                if ($event->isCancelled()) return false;
+            }
+
             $targetBlock->insertRecord($pop);
             $targetBlock->writeStateToWorld();
             $inventory->setItem($slot, $item);
@@ -129,6 +137,12 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
         }
 
         if (!$targetInventory->canAddItem($pop)) return false;
+
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new HopperMoveItemEvent($this, $inventory, $targetInventory, clone $pop);
+            $event->call();
+            if ($event->isCancelled()) return false;
+        }
 
         $targetInventory->addItem($pop);
         $inventory->setItem($slot, $item);
@@ -179,6 +193,12 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
         $inventory = $hopper->getInventory();
         if (!$inventory->canAddItem($pop)) return false;
 
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new HopperMoveItemEvent($this, $sourceInventory, $inventory, clone $pop);
+            $event->call();
+            if ($event->isCancelled()) return false;
+        }
+
         $inventory->addItem($pop);
         $sourceInventory->setItem($slot, $item);
         return true;
@@ -197,10 +217,23 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
             $entity = $entities[$i];
             if (!$entity instanceof ItemEntity) continue;
 
-            $source = $entity->getItem();
-            $cant = $inventory->addItem($source);
-            $source->setCount(count($cant) === 0 ? 0 : $cant[0]->getCount());
-            if ($source->getCount() === 0) $entity->flagForDespawn();
+            $source = clone $entity->getItem();
+            $count = $inventory->getAddableItemQuantity($source);
+            if ($count === 0) continue;
+
+            $pop = $source->pop($count);
+            if (RedstoneCircuit::isCallEvent()) {
+                $event = new HopperPickupItemEvent($this, $inventory, $entity, clone $pop);
+                $event->call();
+                if ($event->isCancelled()) continue;
+            }
+
+            $inventory->addItem($pop);
+            if ($source->getCount() === 0) {
+                $entity->flagForDespawn();
+            } else {
+                $entity->getItem()->pop($count);
+            }
             $check = true;
         }
         return $check;

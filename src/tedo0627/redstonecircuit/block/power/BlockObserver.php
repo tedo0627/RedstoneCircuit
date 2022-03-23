@@ -87,18 +87,21 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
         $state = $block->getMeta();
         if ($this->getSideBlockId() === $id && $this->getSideStateMeta() === $state) return;
 
-        $this->setSideBlockId($id);
-        $this->setSideStateMeta($state);
-        $pos = $this->getPosition();
-        $world = $pos->getWorld();
-        $world->setBlock($pos, $this);
-        $world->scheduleDelayedBlockUpdate($pos, 2);
+        $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 2);
     }
 
     public function onScheduledUpdate(): void {
+        $block = $this->getSide($this->getFacing());
+        $id = $block->getId();
+        $state = $block->getMeta();
+        if ($this->getSideBlockId() !== $id || $this->getSideStateMeta() !== $state) {
+            $this->setSideBlockId($id);
+            $this->setSideStateMeta($state);
+        } else if (!$this->isPowered()) return;
+
         $powered = !$this->isPowered();
         if (RedstoneCircuit::isCallEvent()) {
-            $event = new BlockRedstonePowerUpdateEvent($this, $powered, $powered);
+            $event = new BlockRedstonePowerUpdateEvent($this, $powered, !$powered);
             $event->call();
             $powered = $event->getNewPowered();
         }

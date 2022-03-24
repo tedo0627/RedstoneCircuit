@@ -25,6 +25,7 @@ use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\BlockTransaction;
 use pocketmine\world\sound\ClickSound;
+use tedo0627\redstonecircuit\block\BlockEntityInitializeTrait;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\dispenser\ArmorDispenseBehavior;
 use tedo0627\redstonecircuit\block\dispenser\BoneMealDispenseBehavior;
@@ -46,6 +47,7 @@ use tedo0627\redstonecircuit\sound\ClickFailSound;
 
 class BlockDispenser extends Opaque implements IRedstoneComponent {
     use AnyFacingTrait;
+    use BlockEntityInitializeTrait;
     use PoweredByRedstoneTrait;
     use RedstoneComponentTrait;
 
@@ -69,6 +71,21 @@ class BlockDispenser extends Opaque implements IRedstoneComponent {
     public function readStateFromData(int $id, int $stateMeta): void {
         $this->setFacing(BlockDataSerializer::readFacing($stateMeta & 0x07));
         $this->setPowered(($stateMeta & 0x08) !== 0);
+    }
+
+    public function readStateFromWorld(): void {
+        parent::readStateFromWorld();
+        $tile = $this->getPosition()->getWorld()->getTile($this->getPosition());
+        if($tile instanceof BlockEntityDispenser) {
+            $this->setInitialized($tile->isInitialized());
+        }
+    }
+
+    public function writeStateToWorld(): void {
+        parent::writeStateToWorld();
+        $tile = $this->getPosition()->getWorld()->getTile($this->getPosition());
+        assert($tile instanceof BlockEntityDispenser);
+        $tile->setInitialized($this->isInitialized());
     }
 
     public function getStateBitmask(): int {
@@ -107,6 +124,12 @@ class BlockDispenser extends Opaque implements IRedstoneComponent {
     }
 
     public function onScheduledUpdate(): void {
+        if (!$this->isInitialized()) {
+            $this->setInitialized(true);
+            $this->writeStateToWorld();
+            return;
+        }
+
         $tile = $this->getPosition()->getWorld()->getTile($this->getPosition());
         if (!$tile instanceof BlockEntityDispenser) return;
 

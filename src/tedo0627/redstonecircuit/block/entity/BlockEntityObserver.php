@@ -4,8 +4,10 @@ namespace tedo0627\redstonecircuit\block\entity;
 
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
+use tedo0627\redstonecircuit\block\BlockEntityInitializeTrait;
 
 class BlockEntityObserver extends Tile {
+    use BlockEntityInitializeTrait;
 
     protected int $blockId = 0;
     protected int $stateMeta = 0;

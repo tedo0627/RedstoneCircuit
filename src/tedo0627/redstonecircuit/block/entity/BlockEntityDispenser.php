@@ -10,9 +10,11 @@ use pocketmine\block\tile\Spawnable;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\world\World;
+use tedo0627\redstonecircuit\block\BlockEntityInitializeTrait;
 use tedo0627\redstonecircuit\block\inventory\DispenserInventory;
 
 class BlockEntityDispenser extends Spawnable implements Container, Nameable {
+    use BlockEntityInitializeTrait;
     use NameableTrait;
     use ContainerTrait;
 

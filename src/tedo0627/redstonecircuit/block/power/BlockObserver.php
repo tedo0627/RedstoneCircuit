@@ -12,6 +12,7 @@ use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\BlockTransaction;
+use tedo0627\redstonecircuit\block\BlockEntityInitializeTrait;
 use tedo0627\redstonecircuit\block\BlockUpdateHelper;
 use tedo0627\redstonecircuit\block\entity\BlockEntityObserver;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
@@ -22,6 +23,7 @@ use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneWire {
     use AnyFacingTrait;
+    use BlockEntityInitializeTrait;
     use PoweredByRedstoneTrait;
     use RedstoneComponentTrait;
 
@@ -44,6 +46,7 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
         if($tile instanceof BlockEntityObserver) {
             $this->setSideBlockId($tile->getBlockId());
             $this->setSideStateMeta($tile->getStateMeta());
+            $this->setInitialized($tile->isInitialized());
         }
     }
 
@@ -53,6 +56,7 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
         assert($tile instanceof BlockEntityObserver);
         $tile->setBlockId($this->getSideBlockId());
         $tile->setStateMeta($this->getSideStateMeta());
+        $tile->setInitialized($this->isInitialized());
     }
 
     public function getStateBitmask(): int {
@@ -94,6 +98,12 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
     }
 
     public function onScheduledUpdate(): void {
+        if (!$this->isInitialized()) {
+            $this->setInitialized(true);
+            $this->writeStateToWorld();
+            return;
+        }
+
         $powered = !$this->isPowered();
         if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, !$powered);

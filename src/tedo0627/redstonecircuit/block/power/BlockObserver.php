@@ -87,18 +87,13 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
         $state = $block->getMeta();
         if ($this->getSideBlockId() === $id && $this->getSideStateMeta() === $state) return;
 
+        $this->setSideBlockId($id);
+        $this->setSideStateMeta($state);
+        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 2);
     }
 
     public function onScheduledUpdate(): void {
-        $block = $this->getSide($this->getFacing());
-        $id = $block->getId();
-        $state = $block->getMeta();
-        if ($this->getSideBlockId() !== $id || $this->getSideStateMeta() !== $state) {
-            $this->setSideBlockId($id);
-            $this->setSideStateMeta($state);
-        } else if (!$this->isPowered()) return;
-
         $powered = !$this->isPowered();
         if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, !$powered);
@@ -106,12 +101,10 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
             $powered = $event->getNewPowered();
         }
         $this->setPowered($powered);
-        $pos = $this->getPosition();
-        $world = $pos->getWorld();
-        $world->setBlock($pos, $this);
+        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
         BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
 
-        if ($this->isPowered()) $world->scheduleDelayedBlockUpdate($pos, 2);
+        if ($this->isPowered()) $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 4);
     }
 
     public function getSideBlockId(): int {

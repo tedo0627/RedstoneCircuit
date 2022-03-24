@@ -2,6 +2,7 @@
 
 namespace tedo0627\redstonecircuit\block\mechanism;
 
+use InvalidArgumentException;
 use pocketmine\block\Block;
 use pocketmine\block\BlockBreakInfo;
 use pocketmine\block\BlockIdentifier;
@@ -15,6 +16,7 @@ use pocketmine\entity\projectile\Arrow;
 use pocketmine\entity\projectile\Egg;
 use pocketmine\entity\projectile\ExperienceBottle;
 use pocketmine\entity\projectile\Snowball;
+use pocketmine\entity\projectile\SplashPotion;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
@@ -177,6 +179,12 @@ class BlockDispenser extends Opaque implements IRedstoneComponent {
         self::$behaviors[ItemIds::EXPERIENCE_BOTTLE] = new class extends ProjectileDispenseBehavior {
             public function getEntity(Location $location, Item $item): Entity {
                 return new ExperienceBottle($location, null);
+            }
+        };
+        self::$behaviors[ItemIds::SPLASH_POTION] = new class extends ProjectileDispenseBehavior {
+            public function getEntity(Location $location, Item $item): Entity {
+                if (!$item instanceof \pocketmine\item\SplashPotion) throw new InvalidArgumentException("item was not SplashPotion");
+                return new SplashPotion($location, null, $item->getType());
             }
         };
         self::$behaviors[ItemIds::BUCKET] = new BucketDispenseBehavior();

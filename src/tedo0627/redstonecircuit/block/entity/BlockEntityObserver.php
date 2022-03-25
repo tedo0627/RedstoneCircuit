@@ -6,15 +6,15 @@ use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
 use tedo0627\redstonecircuit\block\BlockEntityInitializeTrait;
 
-class BlockEntityObserver extends Tile {
+class BlockEntityObserver extends Tile implements IgnorePiston {
     use BlockEntityInitializeTrait;
 
-    protected int $blockId = 0;
-    protected int $stateMeta = 0;
+    protected int $blockId = -1;
+    protected int $stateMeta = -1;
 
     public function readSaveData(CompoundTag $nbt): void {
-        $this->blockId = $nbt->getInt("blockId", 0);
-        $this->stateMeta = $nbt->getInt("stateMeta", 0);
+        $this->blockId = $nbt->getInt("blockId", -1);
+        $this->stateMeta = $nbt->getInt("stateMeta", -1);
     }
 
     protected function writeSaveData(CompoundTag $nbt): void {

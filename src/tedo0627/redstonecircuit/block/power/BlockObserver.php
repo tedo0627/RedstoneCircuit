@@ -27,8 +27,8 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
     use PoweredByRedstoneTrait;
     use RedstoneComponentTrait;
 
-    protected int $blockId = 0;
-    protected int $stateMeta = 0;
+    protected int $blockId = -1;
+    protected int $stateMeta = -1;
 
     protected function writeStateToMeta(): int {
         return BlockDataSerializer::writeFacing($this->facing) |
@@ -89,11 +89,13 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
         $block = $this->getSide($this->getFacing());
         $id = $block->getId();
         $state = $block->getMeta();
+
         if ($this->getSideBlockId() === $id && $this->getSideStateMeta() === $state) return;
 
         $this->setSideBlockId($id);
         $this->setSideStateMeta($state);
-        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+        $this->setInitialized(true);
+        $this->writeStateToWorld();
         $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 2);
     }
 

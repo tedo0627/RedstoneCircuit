@@ -19,6 +19,7 @@ use pocketmine\world\BlockTransaction;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\BlockUpdateHelper;
 use tedo0627\redstonecircuit\block\entity\BlockEntityPistonArm;
+use tedo0627\redstonecircuit\block\entity\IgnorePiston;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
@@ -155,6 +156,7 @@ class BlockPiston extends Opaque implements IRedstoneComponent, ILinkRedstoneWir
                 $this->addAttachedBlock($side);
                 $moving = BlockFactory::getInstance()->get(Ids::MOVINGBLOCK, 0);
                 $tile = $world->getTile($block->getPosition());
+                if ($tile instanceof IgnorePiston) $tile = null;
                 if ($moving instanceof BlockMoving) $moving->setMovingBlock($block, $tile);
                 $world->setBlock($side->getPosition(), $moving);
                 $world->setBlock($block->getPosition(), VanillaBlocks::AIR());
@@ -233,6 +235,7 @@ class BlockPiston extends Opaque implements IRedstoneComponent, ILinkRedstoneWir
                 $this->addAttachedBlock($side);
                 $moving = BlockFactory::getInstance()->get(Ids::MOVINGBLOCK, 0);
                 $tile = $world->getTile($block->getPosition());
+                if ($tile instanceof IgnorePiston) $tile = null;
                 if ($moving instanceof BlockMoving) $moving->setMovingBlock($block, $tile);
                 $world->setBlock($side->getPosition(), $moving);
                 $world->setBlock($block->getPosition(), VanillaBlocks::AIR());

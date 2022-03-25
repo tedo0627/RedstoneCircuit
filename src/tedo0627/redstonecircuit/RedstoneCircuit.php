@@ -235,8 +235,6 @@ class RedstoneCircuit extends PluginBase {
         $mapping = RuntimeBlockMapping::getInstance();
         $update = $mapping->toRuntimeId(Ids::INFO_UPDATE << Block::INTERNAL_METADATA_BITS);
         $table = BlockTable::getInstance();
-        $idCheck = -1;
-        $damage = 0;
         $method = new ReflectionMethod(RuntimeBlockMapping::class, "registerMapping");
         $method->setAccessible(true);
         foreach ($mapping->getBedrockKnownStates() as $runtimeId => $tag) {
@@ -244,16 +242,8 @@ class RedstoneCircuit extends PluginBase {
             if (!$table->existsId($name)) continue;
 
             $id = $table->getId($name);
-            if ($idCheck === $id) {
-                if (str_contains($name, "button") && $damage == 5) {
-                    $damage = 8;
-                } else {
-                    $damage++;
-                }
-            } else {
-                $damage = 0;
-                $idCheck = $id;
-            }
+            $states = $tag->getCompoundTag("states");
+            $damage = $table->getDamage($id, $states);
             if ($mapping->toRuntimeId(($id << Block::INTERNAL_METADATA_BITS) | $damage) !== $update) continue;
 
             $method->invoke($mapping, $runtimeId, $id, $damage);

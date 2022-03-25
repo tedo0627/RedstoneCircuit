@@ -2,9 +2,12 @@
 
 namespace tedo0627\redstonecircuit\block;
 
+use pocketmine\block\Block;
+use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\utils\SingletonTrait;
+use ReflectionClass;
 use const pocketmine\BEDROCK_DATA_PATH;
 
 class BlockTable {
@@ -28,22 +31,42 @@ class BlockTable {
         }
 
         $mapping = RuntimeBlockMapping::getInstance();
+        $reflection = new ReflectionClass(RuntimeBlockMapping::class);
+        $property = $reflection->getProperty("runtimeToLegacyMap");
+        $property->setAccessible(true);
+        $runtimeToLegacyMap = $property->getValue($mapping);
+        if (!is_array($runtimeToLegacyMap)) return;
+
         $idCheck = -1;
         $damage = 0;
-        foreach ($mapping->getBedrockKnownStates() as $tag) {
+        $remap = [7 => 0, 15 => 8];
+        $remapIds = [Ids::DISPENSER, Ids::STICKY_PISTON, Ids::PISTON, Ids::PISTONARMCOLLISION, Ids::DROPPER, Ids::OBSERVER];
+        foreach ($mapping->getBedrockKnownStates() as $runtimeId => $tag) {
             $name = $tag->getString("name");
             if (!$this->existsId($name)) continue;
 
             $id = $this->getId($name);
-            if ($id === $idCheck) {
-                $damage++;
+            if ($id < 470 && array_key_exists($runtimeId, $runtimeToLegacyMap)) {
+                $legacy = $mapping->fromRuntimeId($runtimeId);
+                $damage = $legacy ^ ($id << Block::INTERNAL_METADATA_BITS);
+                if (array_key_exists($damage, $remap) && in_array($id, $remapIds, true)) {
+                    $damage = $remap[$damage];
+                }
             } else {
-                $damage = 0;
-                $idCheck = $id;
+                if ($id === $idCheck) {
+                    if (($id === 472 || str_contains($name, "button")) && $damage == 5) {
+                        $damage = 8;
+                    } else {
+                        $damage++;
+                    }
+                } else {
+                    $damage = 0;
+                    $idCheck = $id;
+                }
             }
-            if (!array_key_exists($id, $this->idToDamageToState)) $this->idToDamageToState[$id] = [];
-            if (!array_key_exists($id, $this->idToStateToDamage)) $this->idToStateToDamage[$id] = [];
+            //echo $runtimeId . " : " . $id . " : " . $damage . " : " . ($id < 470 && array_key_exists($runtimeId, $runtimeToLegacyMap) ? "true" : "false") . "\n";
             $states = $tag->getCompoundTag("states");
+            //if ($id === 251 || $id === 222) echo $states->toString() . "\n";
             $this->idToDamageToState[$id][$damage] = $states;
             $this->idToStateToDamage[$id][$states->toString()] = $damage;
         }

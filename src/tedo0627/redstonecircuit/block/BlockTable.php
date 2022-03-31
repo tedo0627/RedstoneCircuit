@@ -2,12 +2,15 @@
 
 namespace tedo0627\redstonecircuit\block;
 
-use pocketmine\block\Block;
-use pocketmine\block\BlockLegacyIds as Ids;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\convert\GlobalItemTypeDictionary;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
+use pocketmine\network\mcpe\protocol\serializer\NetworkNbtSerializer;
+use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
+use pocketmine\network\mcpe\protocol\serializer\PacketSerializerContext;
 use pocketmine\utils\SingletonTrait;
-use ReflectionClass;
+use pocketmine\utils\Utils;
+use Webmozart\PathUtil\Path;
 use const pocketmine\BEDROCK_DATA_PATH;
 
 class BlockTable {
@@ -30,45 +33,47 @@ class BlockTable {
             $this->nameToId[$name] = $id;
         }
 
-        $mapping = RuntimeBlockMapping::getInstance();
-        $reflection = new ReflectionClass(RuntimeBlockMapping::class);
-        $property = $reflection->getProperty("runtimeToLegacyMap");
-        $property->setAccessible(true);
-        $runtimeToLegacyMap = $property->getValue($mapping);
-        if (!is_array($runtimeToLegacyMap)) return;
+        $legacyStateMapReader = PacketSerializer::decoder(
+            Utils::assumeNotFalse(file_get_contents(Path::join(BEDROCK_DATA_PATH, "r12_to_current_block_map.bin")), "Missing required resource file"),
+            0,
+            new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary())
+        );
+        $nbtReader = new NetworkNbtSerializer();
+        while(!$legacyStateMapReader->feof()){
+            $id = $this->getId($legacyStateMapReader->getString());
+            $damage = $legacyStateMapReader->getLShort();
 
+            $offset = $legacyStateMapReader->getOffset();
+            $tag = $nbtReader->read($legacyStateMapReader->getBuffer(), $offset)->mustGetCompoundTag();
+            $legacyStateMapReader->setOffset($offset);
+
+            $states = $tag->getCompoundTag("states");
+            $strStates = ltrim($states->toString(), "TAG_Compound=");
+            $this->idToDamageToState[$id][$damage] = $states;
+            $this->idToStateToDamage[$id][$strStates] = $damage;
+        }
+
+        $mapping = RuntimeBlockMapping::getInstance();
         $idCheck = -1;
         $damage = 0;
-        $remap = [7 => 0, 15 => 8];
-        $remapIds = [Ids::DISPENSER, Ids::STICKY_PISTON, Ids::PISTON, Ids::PISTONARMCOLLISION, Ids::DROPPER, Ids::OBSERVER];
-        foreach ($mapping->getBedrockKnownStates() as $runtimeId => $tag) {
+        foreach ($mapping->getBedrockKnownStates() as $tag) {
             $name = $tag->getString("name");
             if (!$this->existsId($name)) continue;
 
             $id = $this->getId($name);
-            if ($id < 470 && array_key_exists($runtimeId, $runtimeToLegacyMap)) {
-                $legacy = $mapping->fromRuntimeId($runtimeId);
-                $damage = $legacy ^ ($id << Block::INTERNAL_METADATA_BITS);
-                if (array_key_exists($damage, $remap) && in_array($id, $remapIds, true)) {
-                    $damage = $remap[$damage];
-                }
-            } else {
-                if ($id === $idCheck) {
-                    if (($id === 472 || str_contains($name, "button")) && $damage == 5) {
-                        $damage = 8;
-                    } else {
-                        $damage++;
-                    }
-                } else {
-                    $damage = 0;
-                    $idCheck = $id;
-                }
-            }
-            //echo $runtimeId . " : " . $id . " : " . $damage . " : " . ($id < 470 && array_key_exists($runtimeId, $runtimeToLegacyMap) ? "true" : "false") . "\n";
             $states = $tag->getCompoundTag("states");
-            //if ($id === 251 || $id === 222) echo $states->toString() . "\n";
+            $strStates = ltrim($states->toString(), "TAG_Compound=");
+            if (array_key_exists($id, $this->idToStateToDamage) && array_key_exists($strStates, $this->idToStateToDamage[$id])) continue;
+
+            if ($id === $idCheck) {
+                $damage = ($id === 472 || str_contains($name, "button")) && $damage == 5 ? 8 : $damage + 1;
+            } else {
+                $damage = 0;
+                $idCheck = $id;
+            }
+
             $this->idToDamageToState[$id][$damage] = $states;
-            $this->idToStateToDamage[$id][$states->toString()] = $damage;
+            $this->idToStateToDamage[$id][$strStates] = $damage;
         }
     }
 
@@ -93,6 +98,7 @@ class BlockTable {
     }
 
     public function getDamage(int $id, CompoundTag $states): int {
-        return $this->idToStateToDamage[$id][$states->toString()];
+        $strStates = ltrim($states->toString(), "TAG_Compound=");
+        return $this->idToStateToDamage[$id][$strStates];
     }
 }

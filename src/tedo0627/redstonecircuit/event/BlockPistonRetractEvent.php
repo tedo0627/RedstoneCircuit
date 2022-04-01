@@ -7,9 +7,9 @@ use tedo0627\redstonecircuit\block\mechanism\BlockPiston;
 
 class BlockPistonRetractEvent extends BlockPistonEvent {
 
-    /** @param Block[] $moveBlocks */
+    /** @var Block[] */
     private array $moveBlocks;
-    /** @param Block[] $breakBlocks */
+    /** @var Block[] */
     private array $breakBlocks;
 
     /**

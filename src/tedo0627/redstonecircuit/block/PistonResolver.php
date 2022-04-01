@@ -19,12 +19,12 @@ class PistonResolver {
     private bool $sticky;
     private bool $push;
 
-    /** @var Block[] $break */
+    /** @var Block[] */
     private array $break = [];
-    /** @var Block[] $attach */
+    /** @var Block[] */
     private array $attach = [];
 
-    /** @var int[] $checked */
+    /** @var int[] */
     private array $checked = [];
 
     private bool $success = false;

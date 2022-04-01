@@ -53,9 +53,7 @@ class BlockDispenser extends Opaque implements IRedstoneComponent {
 
     protected static bool $init = false;
     protected static DispenseItemBehavior $default;
-    /**
-     * @var DispenseItemBehavior[]
-     */
+    /** @var DispenseItemBehavior[] */
     protected static array $behaviors = [];
 
     public function __construct(BlockIdentifier $idInfo, string $name, BlockBreakInfo $breakInfo) {

@@ -12,7 +12,9 @@ trait PistonTrait {
     protected int $state = 0;
     protected int $newState = 0;
 
+    /** @var int[] */
     protected array $breakBlocks = [];
+    /** @var int[] */
     protected array $attachedBlocks = [];
 
     public function getProgress(): float {
@@ -52,7 +54,7 @@ trait PistonTrait {
         return $this->breakBlocks;
     }
 
-    /** @var int[] $breakBlocks */
+    /** @param int[] $breakBlocks */
     public function setBreakBlocks(array $breakBlocks): void {
         $this->breakBlocks = $breakBlocks;
     }
@@ -69,7 +71,7 @@ trait PistonTrait {
         return $this->attachedBlocks;
     }
 
-    /** @var int[] $attachedBlocks */
+    /** @param int[] $attachedBlocks */
     public function setAttachedBlocks(array $attachedBlocks): void {
         $this->attachedBlocks = $attachedBlocks;
     }

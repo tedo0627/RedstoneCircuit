@@ -86,8 +86,7 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
 
     public function onScheduledUpdate(): void {
         $power = $this->recalculateUtilityPower();
-
-        if ($power === 0) $power = BlockPowerHelper::getPower($this->getSide($this->getFacing()), $this->getFacing());
+        if ($power === null) $power = BlockPowerHelper::getPower($this->getSide($this->getFacing()), $this->getFacing());
 
         $sidePower = 0;
         $face = Facing::rotateY($this->getFacing(), true);
@@ -119,7 +118,7 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
         BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
     }
 
-    private function recalculateUtilityPower(int $step = 1): int {
+    private function recalculateUtilityPower(int $step = 1): ?int {
         $block = $this->getSide($this->getFacing(), $step);
         $tile = $this->getPosition()->getWorld()->getTile($block->getPosition());
         $power = 0;
@@ -172,7 +171,7 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
         }
 
         if ($step === 1 && BlockPowerHelper::isNormalBlock($block)) return $this->recalculateUtilityPower(2);
-        return 0;
+        return null;
     }
 
     private function createCallBack(Inventory $inventory): void {

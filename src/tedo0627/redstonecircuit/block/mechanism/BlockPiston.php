@@ -160,6 +160,7 @@ class BlockPiston extends Opaque implements IRedstoneComponent, ILinkRedstoneWir
                 if ($moving instanceof BlockMoving) $moving->setMovingBlock($block, $tile);
                 $world->setBlock($side->getPosition(), $moving);
                 $world->setBlock($block->getPosition(), VanillaBlocks::AIR());
+                BlockUpdateHelper::updateAroundRedstone($block);
             }
             $this->setState(1);
             $side = $this->getSide($face);
@@ -239,6 +240,7 @@ class BlockPiston extends Opaque implements IRedstoneComponent, ILinkRedstoneWir
                 if ($moving instanceof BlockMoving) $moving->setMovingBlock($block, $tile);
                 $world->setBlock($side->getPosition(), $moving);
                 $world->setBlock($block->getPosition(), VanillaBlocks::AIR());
+                BlockUpdateHelper::updateAroundRedstone($block);
             }
             $this->setState(3);
         } else if ($state === 3) {

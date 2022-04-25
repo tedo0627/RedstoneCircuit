@@ -29,6 +29,10 @@ class BlockTable {
     public function __construct() {
         $json = json_decode(file_get_contents(BEDROCK_DATA_PATH . "block_id_map.json"), true);
         foreach ($json as $name => $id) {
+            // pistonArmCollision -> piston_arm_collision
+            if (str_contains(strtolower($name), "piston")) {
+                $name = ltrim(strtolower(preg_replace('/[A-Z]/', '_\0', $name)), '_');
+            }
             $this->idToName[$id] = $name;
             $this->nameToId[$name] = $id;
         }
@@ -40,7 +44,13 @@ class BlockTable {
         );
         $nbtReader = new NetworkNbtSerializer();
         while(!$legacyStateMapReader->feof()){
-            $id = $this->getId($legacyStateMapReader->getString());
+            $name = $legacyStateMapReader->getString();
+            // pistonArmCollision -> piston_arm_collision
+            if (str_contains(strtolower($name), "piston")) {
+                $name = ltrim(strtolower(preg_replace('/[A-Z]/', '_\0', $name)), '_');
+            }
+
+            $id = $this->getId($name);
             $damage = $legacyStateMapReader->getLShort();
 
             $offset = $legacyStateMapReader->getOffset();

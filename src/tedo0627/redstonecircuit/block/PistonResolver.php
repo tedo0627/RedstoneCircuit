@@ -65,17 +65,35 @@ class PistonResolver {
 
         $this->checked[] = $hash;
         if ($block->getId() === Ids::AIR) return true;
-        if (!$this->canMove($block)) return $face !== $breakFace;
+        if (!$this->canMove($block)) {
+            $result = $face !== $breakFace;
+            if (!$result) {
+                $this->break = [];
+                $this->attach = [];
+            }
+            return $result;
+        }
 
         if ($this->canBreak($block)) {
             if ($face === $breakFace) $this->break[] = $block;
             return true;
         }
 
+        $y = $block->getPosition()->getSide($breakFace)->getY();
+        if ($y < 0 || 255 < $y) {
+            $this->break = [];
+            $this->attach = [];
+            return false;
+        }
+
         if ($block instanceof GlazedTerracotta && $face !== $breakFace) return true;
 
         $this->attach[] = $block;
-        if (count($this->attach) >= 13) return false;
+        if (count($this->attach) >= 13) {
+            $this->break = [];
+            $this->attach = [];
+            return false;
+        }
 
         if ($block->getId() === Ids::SLIME) {
             for ($i = 0; $i < 6; $i++) {

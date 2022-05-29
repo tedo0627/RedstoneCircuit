@@ -4,10 +4,11 @@ namespace tedo0627\redstonecircuit\event;
 
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockEvent;
+use pocketmine\event\Cancellable;
 use pocketmine\event\CancellableTrait;
 use pocketmine\item\Item;
 
-class BlockDispenseEvent extends BlockEvent {
+class BlockDispenseEvent extends BlockEvent implements Cancellable {
     use CancellableTrait;
 
     private Item $item;

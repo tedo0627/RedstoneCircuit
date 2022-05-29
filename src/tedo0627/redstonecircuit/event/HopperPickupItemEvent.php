@@ -5,11 +5,12 @@ namespace tedo0627\redstonecircuit\event;
 use pocketmine\block\Hopper;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\event\block\BlockEvent;
+use pocketmine\event\Cancellable;
 use pocketmine\event\CancellableTrait;
 use pocketmine\inventory\Inventory;
 use pocketmine\item\Item;
 
-class HopperPickupItemEvent extends BlockEvent {
+class HopperPickupItemEvent extends BlockEvent implements Cancellable {
     use CancellableTrait;
 
     private Hopper $hopper;

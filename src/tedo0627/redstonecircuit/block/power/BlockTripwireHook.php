@@ -4,6 +4,7 @@ namespace tedo0627\redstonecircuit\block\power;
 
 use pocketmine\block\Block;
 use pocketmine\block\TripwireHook;
+use pocketmine\block\utils\SupportType;
 use pocketmine\item\Item;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
@@ -12,7 +13,6 @@ use pocketmine\world\BlockTransaction;
 use pocketmine\world\sound\RedstonePowerOffSound;
 use pocketmine\world\sound\RedstonePowerOnSound;
 use tedo0627\redstonecircuit\block\BlockUpdateHelper;
-use tedo0627\redstonecircuit\block\FlowablePlaceHelper;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
@@ -26,8 +26,9 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
     use RedstoneComponentTrait;
 
     public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null): bool {
-        if (!FlowablePlaceHelper::checkSurface($this, Facing::opposite($face))) return false;
-        return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
+        $bool = parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
+        if (!$this->canBeSupportedBy($this->getSide(Facing::opposite($face)))) return false;
+        return $bool;
     }
 
     public function onPostPlace(): void {
@@ -41,7 +42,7 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
     }
 
     public function onNearbyBlockChange(): void {
-        if (FlowablePlaceHelper::checkSurface($this, Facing::opposite($this->getFacing()))) return;
+        if ($this->canBeSupportedBy($this->getSide(Facing::opposite($this->getFacing())))) return;
         $this->getPosition()->getWorld()->useBreakOn($this->getPosition());
     }
 
@@ -211,5 +212,9 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
 
     public function isPowerSource(): bool {
         return $this->isPowered();
+    }
+
+    private function canBeSupportedBy(Block $block): bool {
+        return $block->getSupportType($this->getFacing())->equals(SupportType::FULL());
     }
 }

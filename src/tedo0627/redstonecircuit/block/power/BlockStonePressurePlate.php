@@ -4,18 +4,16 @@ namespace tedo0627\redstonecircuit\block\power;
 
 use pocketmine\block\Block;
 use pocketmine\block\StonePressurePlate;
+use pocketmine\block\utils\SupportType;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Living;
 use pocketmine\item\Item;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
-use pocketmine\math\Vector3;
 use pocketmine\player\Player;
-use pocketmine\world\BlockTransaction;
 use pocketmine\world\sound\RedstonePowerOffSound;
 use pocketmine\world\sound\RedstonePowerOnSound;
 use tedo0627\redstonecircuit\block\BlockUpdateHelper;
-use tedo0627\redstonecircuit\block\FlowablePlaceHelper;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
@@ -27,11 +25,6 @@ class BlockStonePressurePlate extends StonePressurePlate implements IRedstoneCom
     use LinkRedstoneWireTrait;
     use RedstoneComponentTrait;
 
-    public function place(BlockTransaction $tx, Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null): bool {
-        if (!FlowablePlaceHelper::check($this, Facing::DOWN)) return false;
-        return parent::place($tx, $item, $blockReplace, $blockClicked, $face, $clickVector, $player);
-    }
-
     public function onBreak(Item $item, ?Player $player = null): bool {
         parent::onBreak($item, $player);
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::DOWN);
@@ -39,7 +32,7 @@ class BlockStonePressurePlate extends StonePressurePlate implements IRedstoneCom
     }
 
     public function onNearbyBlockChange(): void {
-        if (FlowablePlaceHelper::check($this, Facing::DOWN)) return;
+        if ($this->canBeSupportedBy($this->getSide(Facing::DOWN))) return;
         $this->getPosition()->getWorld()->useBreakOn($this->getPosition());
     }
 
@@ -111,5 +104,9 @@ class BlockStonePressurePlate extends StonePressurePlate implements IRedstoneCom
 
     public function isPowerSource(): bool {
         return $this->isPressed();
+    }
+
+    private function canBeSupportedBy(Block $block): bool {
+        return !$block->getSupportType(Facing::UP)->equals(SupportType::NONE());
     }
 }

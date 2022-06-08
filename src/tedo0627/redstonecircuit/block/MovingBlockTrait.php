@@ -5,7 +5,6 @@ namespace tedo0627\redstonecircuit\block;
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\tile\Tile;
-use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 
 trait MovingBlockTrait {

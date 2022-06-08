@@ -3,8 +3,8 @@
 namespace tedo0627\redstonecircuit\block\mechanism;
 
 use pocketmine\block\Hopper;
-use pocketmine\block\Jukebox as BlockJukebox;
 use pocketmine\block\inventory\FurnaceInventory;
+use pocketmine\block\Jukebox as BlockJukebox;
 use pocketmine\block\tile\Container;
 use pocketmine\block\tile\Furnace;
 use pocketmine\block\tile\Jukebox;

@@ -16,8 +16,6 @@ class CommandBlockListener implements Listener {
 
         $player = $event->getOrigin()->getPlayer();
         if ($player === null) return;
-
-        $player->removeCurrentWindow();
         if (!$packet->isBlock) return;
 
         $server = Server::getInstance();

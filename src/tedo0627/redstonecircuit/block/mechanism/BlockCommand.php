@@ -18,6 +18,11 @@ use pocketmine\lang\Language;
 use pocketmine\lang\Translatable;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\InventoryManager;
+use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
+use pocketmine\network\mcpe\protocol\types\BlockPosition;
+use pocketmine\network\mcpe\protocol\types\inventory\ContainerIds;
+use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
 use pocketmine\permission\DefaultPermissions;
 use pocketmine\permission\PermissibleBase;
 use pocketmine\permission\PermissibleDelegateTrait;
@@ -136,9 +141,17 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         if (!$player->isCreative()) return true;
         if (!Server::getInstance()->isOp($player->getName())) return true;
 
-        $inventory = $tile->getInventory();
-        if ($inventory === $player->getCurrentWindow()) $player->removeCurrentWindow();
-        $player->setCurrentWindow($inventory);
+        $inventoryManager = $player->getNetworkSession()->getInvManager();
+
+        $reflection = new \ReflectionClass(InventoryManager::class);
+        $property = $reflection->getProperty("lastInventoryNetworkId");
+        $property->setAccessible(true);
+        $value = $property->getValue($inventoryManager);
+        $value = max(ContainerIds::FIRST, ($value + 1) % ContainerIds::LAST);
+        $property->setValue($inventoryManager, $value);
+
+        $pk = ContainerOpenPacket::blockInv($value, WindowTypes::COMMAND_BLOCK, BlockPosition::fromVector3($this->getPosition()));
+        $player->getNetworkSession()->sendDataPacket($pk);
         return true;
     }
 

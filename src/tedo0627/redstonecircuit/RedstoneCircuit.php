@@ -185,7 +185,6 @@ class RedstoneCircuit extends PluginBase {
 
         self::registerMappings();
         $this->getServer()->getAsyncPool()->addWorkerStartHook(function (int $worker): void {
-            /** @phpstan-ignore-next-line */
             $this->getServer()->getAsyncPool()->submitTaskToWorker(new class extends AsyncTask {
                 public function onRun(): void {
                     RedstoneCircuit::registerMappings();

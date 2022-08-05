@@ -182,26 +182,31 @@ class BlockDispenser extends Opaque implements IRedstoneComponent {
         self::$init = true;
         self::$default = new DefaultItemDispenseBehavior();
 
+        /** @phpstan-ignore-next-line */
         self::$behaviors[ItemIds::ARROW] = new class extends ProjectileDispenseBehavior {
             public function getEntity(Location $location, Item $item): Entity {
                 return new Arrow($location, null, false);
             }
         };
+        /** @phpstan-ignore-next-line */
         self::$behaviors[ItemIds::EGG] = new class extends ProjectileDispenseBehavior {
             public function getEntity(Location $location, Item $item): Entity {
                 return new Egg($location, null);
             }
         };
+        /** @phpstan-ignore-next-line */
         self::$behaviors[ItemIds::SNOWBALL] = new class extends ProjectileDispenseBehavior {
             public function getEntity(Location $location, Item $item): Entity {
                 return new Snowball($location, null);
             }
         };
+        /** @phpstan-ignore-next-line */
         self::$behaviors[ItemIds::EXPERIENCE_BOTTLE] = new class extends ProjectileDispenseBehavior {
             public function getEntity(Location $location, Item $item): Entity {
                 return new ExperienceBottle($location, null);
             }
         };
+        /** @phpstan-ignore-next-line */
         self::$behaviors[ItemIds::SPLASH_POTION] = new class extends ProjectileDispenseBehavior {
             public function getEntity(Location $location, Item $item): Entity {
                 if (!$item instanceof \pocketmine\item\SplashPotion) throw new InvalidArgumentException("item was not SplashPotion");

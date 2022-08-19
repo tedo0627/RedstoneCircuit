@@ -229,11 +229,8 @@ class BlockHopper extends Hopper implements IRedstoneComponent {
             }
 
             $inventory->addItem($pop);
-            if ($source->getCount() === 0) {
-                $entity->flagForDespawn();
-            } else {
-                $entity->getItem()->pop($count);
-            }
+            $entity->getItem()->pop($count);
+            if ($source->getCount() === 0) $entity->flagForDespawn();
             $check = true;
         }
         return $check;

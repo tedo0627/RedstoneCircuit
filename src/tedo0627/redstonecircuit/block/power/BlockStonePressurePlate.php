@@ -59,7 +59,7 @@ class BlockStonePressurePlate extends StonePressurePlate implements IRedstoneCom
     }
 
     public function onEntityInside(Entity $entity): bool {
-		if ($entity instanceof Player && $entity->isSpectator()) return true;
+        if ($entity instanceof Player && $entity->isSpectator()) return true;
 
         $entities = $this->getPosition()->getWorld()->getNearbyEntities($this->getHitCollision());
         $entities = array_filter($entities, fn($entity) => $entity instanceof Living);

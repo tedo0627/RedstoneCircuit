@@ -64,7 +64,7 @@ class BlockWeightedPressurePlateHeavy extends WeightedPressurePlateHeavy impleme
     }
 
     public function onEntityInside(Entity $entity): bool {
-		if ($entity instanceof Player && $entity->isSpectator()) return true;
+        if ($entity instanceof Player && $entity->isSpectator()) return true;
 
         $entities = $this->getPosition()->getWorld()->getNearbyEntities($this->getHitCollision());
         $count = count($entities);

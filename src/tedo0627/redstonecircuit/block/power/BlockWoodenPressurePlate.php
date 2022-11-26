@@ -57,7 +57,7 @@ class BlockWoodenPressurePlate extends WoodenPressurePlate implements IRedstoneC
     }
 
     public function onEntityInside(Entity $entity): bool {
-		if ($entity instanceof Player && $entity->isSpectator()) return true;
+        if ($entity instanceof Player && $entity->isSpectator()) return true;
 
         $entities = $this->getPosition()->getWorld()->getNearbyEntities($this->getHitCollision());
         if (count($entities) <= 0) return true;

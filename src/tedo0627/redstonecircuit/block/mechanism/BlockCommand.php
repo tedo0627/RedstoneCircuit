@@ -225,7 +225,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
 
     protected function execute(): void {
         $successful = false;
-        if ($this->check()) $successful = $this->dispatch();
+        if ($this->check()) $successful = $this->dispatch() ?? false;
         $this->setSuccessCount($successful ? 1 : 0);
         $this->writeStateToWorld();
 
@@ -273,7 +273,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         $block->chain($blockIndex);
     }
 
-    protected function dispatch(): bool {
+    protected function dispatch(): ?bool {
         $command = $this->getCommand();
         if (RedstoneCircuit::isCallEvent()) {
             $event = new CommandEvent($this, $command);

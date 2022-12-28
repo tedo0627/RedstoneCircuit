@@ -75,6 +75,7 @@ use tedo0627\redstonecircuit\loader\BlockEntityLoader;
 use tedo0627\redstonecircuit\loader\BlockLoader;
 use tedo0627\redstonecircuit\loader\ItemBlockLoader;
 use tedo0627\redstonecircuit\loader\Loader;
+use tedo0627\redstonecircuit\tasks\RegisterMappingsAsync;
 
 class RedstoneCircuit extends PluginBase {
 
@@ -185,11 +186,7 @@ class RedstoneCircuit extends PluginBase {
 
         self::registerMappings();
         $this->getServer()->getAsyncPool()->addWorkerStartHook(function (int $worker): void {
-            $this->getServer()->getAsyncPool()->submitTaskToWorker(new class extends AsyncTask {
-                public function onRun(): void {
-                    RedstoneCircuit::registerMappings();
-                }
-            }, $worker);
+            $this->getServer()->getAsyncPool()->submitTaskToWorker(new RegisterMappingsAsync(), $worker);
         });
 
         CreativeInventory::reset();

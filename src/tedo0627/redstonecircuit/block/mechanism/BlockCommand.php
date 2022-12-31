@@ -300,7 +300,8 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
             $target->timings->startTiming();
 
             try {
-                $successful = $target->execute($this, $sentCommandLabel, $args);
+                $result = $target->execute($this, $sentCommandLabel, $args);
+                if (is_bool($result)) $successful = $result;
             } catch (InvalidCommandSyntaxException) {
                 $this->sendMessage($this->getLanguage()->translate(KnownTranslationFactory::commands_generic_usage($target->getUsage())));
             } finally {
@@ -309,7 +310,6 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         } else {
             $this->sendMessage(KnownTranslationFactory::pocketmine_command_notFound($sentCommandLabel ?? "", "/help")->prefix(TextFormat::RED));
         }
-
         return $successful;
     }
 

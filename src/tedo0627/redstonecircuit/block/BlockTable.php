@@ -27,7 +27,12 @@ class BlockTable {
     private array $idToStateToDamage = [];
 
     public function __construct() {
-        $json = json_decode(file_get_contents(BEDROCK_DATA_PATH . "block_id_map.json"), true);
+        $dir = dirname(__DIR__);
+        if (!str_ends_with($dir, ".phar")) {
+            $dir = mb_substr($dir, 0, - (strlen("src\\tedo0627\\redstonecircuit")));
+        }
+        $dir = $dir . "resources\\block_id_map.json";
+        $json = json_decode(file_get_contents($dir), true);
         foreach ($json as $name => $id) {
             // pistonArmCollision -> piston_arm_collision
             if (str_contains(strtolower($name), "piston")) {

@@ -29,9 +29,10 @@ class BlockTable {
     public function __construct() {
         $dir = dirname(__DIR__);
         if (!str_ends_with($dir, ".phar")) {
-            $dir = mb_substr($dir, 0, - (strlen("src\\tedo0627\\redstonecircuit")));
+            $remove = "src" . DIRECTORY_SEPARATOR . "tedo0627" . DIRECTORY_SEPARATOR . "redstonecircuit";
+            $dir = mb_substr($dir, 0, - (strlen($remove)));
         }
-        $dir = $dir . "resources\\block_id_map.json";
+        $dir = $dir . "resources" . DIRECTORY_SEPARATOR ."block_id_map.json";
         $json = json_decode(file_get_contents($dir), true);
         foreach ($json as $name => $id) {
             // pistonArmCollision -> piston_arm_collision

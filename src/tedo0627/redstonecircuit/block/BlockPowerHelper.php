@@ -3,10 +3,12 @@
 namespace tedo0627\redstonecircuit\block;
 
 use pocketmine\block\Block;
+use pocketmine\block\VanillaBlocks;
 
 class BlockPowerHelper {
 
     public static function isNormalBlock(Block $block): bool {
+        if (VanillaBlocks::SLIME()->isSameType($block)) return true;
         return !$block->isTransparent() && $block->isSolid() && !self::isPowerSource($block);
     }
 

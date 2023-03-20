@@ -10,6 +10,8 @@ use pocketmine\block\Flowable;
 use pocketmine\block\GlazedTerracotta;
 use pocketmine\math\Axis;
 use pocketmine\math\Facing;
+use pocketmine\world\format\Chunk;
+use pocketmine\world\Position;
 use pocketmine\world\World;
 use tedo0627\redstonecircuit\block\mechanism\BlockPiston;
 use tedo0627\redstonecircuit\block\mechanism\BlockPistonArmCollision;
@@ -89,8 +91,8 @@ class PistonResolver {
             return true;
         }
 
-        $y = $block->getPosition()->getSide($breakFace)->getY();
-        if ($y < 0 || 255 < $y) {
+        $sideBlock = $block->getPosition()->getSide($breakFace);
+        if (!$this->isLoaded($sideBlock)) {
             $this->break = [];
             $this->attach = [];
             return false;
@@ -114,6 +116,15 @@ class PistonResolver {
             if (!$this->calculateBlocks($block->getSide($breakFace), $breakFace, $breakFace)) return false;
         }
         return true;
+    }
+
+    private function isLoaded(Position $position): bool {
+        $world = $position->getWorld();
+        if (!$world->isInWorld($position->getX(), $position->getY(), $position->getZ())) return false;
+
+        $chunkX = $position->getX() >> Chunk::COORD_BIT_SIZE;
+        $chunkZ = $position->getZ() >> Chunk::COORD_BIT_SIZE;
+        return $world->loadChunk($chunkX, $chunkZ) !== null;
     }
 
     /** @return Block[] */

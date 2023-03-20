@@ -14,6 +14,8 @@ class BlockMoving extends Transparent {
         $tile = $this->getPosition()->getWorld()->getTile($this->getPosition());
         if (!$tile instanceof BlockEntityMoving) return;
 
+        $this->setExpanding($tile->isExpanding());
+
         $this->setPistonPosX($tile->getPistonPosX());
         $this->setPistonPosY($tile->getPistonPosY());
         $this->setPistonPosZ($tile->getPistonPosZ());
@@ -27,6 +29,8 @@ class BlockMoving extends Transparent {
         parent::writeStateToWorld();
         $tile = $this->getPosition()->getWorld()->getTile($this->getPosition());
         assert($tile instanceof BlockEntityMoving);
+
+        $tile->setExpanding($this->isExpanding());
 
         $tile->setPistonPosX($this->getPistonPosX());
         $tile->setPistonPosY($this->getPistonPosY());

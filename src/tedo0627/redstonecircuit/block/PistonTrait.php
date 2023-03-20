@@ -16,6 +16,8 @@ trait PistonTrait {
     protected array $breakBlocks = [];
     /** @var int[] */
     protected array $attachedBlocks = [];
+    /** @var int[] */
+    protected array $hideAttached = [];
 
     public function getProgress(): float {
         return $this->progress;
@@ -81,5 +83,22 @@ trait PistonTrait {
         $this->attachedBlocks[] = $pos->getFloorX();
         $this->attachedBlocks[] = $pos->getFloorY();
         $this->attachedBlocks[] = $pos->getFloorZ();
+    }
+
+    /** @return int[] */
+    public function getHideAttachedBlocks(): array {
+        return $this->hideAttached;
+    }
+
+    /** @param int[] $attachedBlocks */
+    public function setHideAttachedBlocks(array $attachedBlocks): void {
+        $this->hideAttached = $attachedBlocks;
+    }
+
+    public function addHideAttachedBlock(Block $block): void {
+        $pos = $block->getPosition();
+        $this->hideAttached[] = $pos->getFloorX();
+        $this->hideAttached[] = $pos->getFloorY();
+        $this->hideAttached[] = $pos->getFloorZ();
     }
 }

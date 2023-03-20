@@ -24,6 +24,8 @@ class BlockEntityPistonArm extends Spawnable {
         if ($list !== null && $list->getTagType() === NBT::TAG_Int) $this->setBreakBlocks($list->getAllValues());
         $list = $nbt->getListTag("AttachedBlocks");
         if ($list !== null && $list->getTagType() === NBT::TAG_Int) $this->setAttachedBlocks($list->getAllValues());
+        $list = $nbt->getListTag("HideAttached");
+        if ($list !== null && $list->getTagType() === NBT::TAG_Int) $this->setHideAttachedBlocks($list->getAllValues());
     }
 
     protected function writeSaveData(CompoundTag $nbt): void {
@@ -38,6 +40,9 @@ class BlockEntityPistonArm extends Spawnable {
         $tags = [];
         foreach ($this->getAttachedBlocks() as $i) $tags[] = new IntTag($i);
         $nbt->setTag("AttachedBlocks", new ListTag($tags, NBT::TAG_Int));
+        $tags = [];
+        foreach ($this->getHideAttachedBlocks() as $i) $tags[] = new IntTag($i);
+        $nbt->setTag("HideAttached", new ListTag($tags, NBT::TAG_Int));
     }
 
     protected function addAdditionalSpawnData(CompoundTag $nbt): void {

@@ -12,6 +12,7 @@ use pocketmine\math\Axis;
 use pocketmine\math\Facing;
 use pocketmine\world\World;
 use tedo0627\redstonecircuit\block\mechanism\BlockPiston;
+use tedo0627\redstonecircuit\block\mechanism\BlockPistonArmCollision;
 
 class PistonResolver {
 
@@ -33,6 +34,15 @@ class PistonResolver {
         $this->piston = $piston;
         $this->sticky = $sticky;
         $this->push = $push;
+
+        if (!$push) {
+            $arm = $piston->getSide($piston->getPistonArmFace());
+            if ($arm instanceof BlockPistonArmCollision && $arm->getFacing() === $piston->getFacing()) {
+                $pos = $arm->getPosition();
+                $hash = World::chunkBlockHash($pos->getFloorX(), $pos->getFloorY(), $pos->getFloorZ());
+                $this->checked[] = $hash;
+            }
+        }
     }
 
     public function resolve(): void {

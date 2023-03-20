@@ -6,8 +6,11 @@ use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\tile\Tile;
 use pocketmine\nbt\tag\CompoundTag;
+use tedo0627\redstonecircuit\block\mechanism\BlockPiston;
 
 trait MovingBlockTrait {
+
+    protected bool $expanding = false;
 
     protected int $pistonPosX = 0;
     protected int $pistonPosY = 0;
@@ -17,6 +20,14 @@ trait MovingBlockTrait {
     protected CompoundTag $movingBlockStates;
 
     protected ?CompoundTag $movingEntity = null;
+
+    public function isExpanding(): bool {
+        return $this->expanding;
+    }
+
+    public function setExpanding(bool $expanding): void {
+        $this->expanding = $expanding;
+    }
 
     public function getPistonPosX(): Int {
         return $this->pistonPosX;
@@ -78,5 +89,12 @@ trait MovingBlockTrait {
         $this->setMovingBlockName($table->getName($block->getId()));
         $this->setMovingBlockStates($table->getStates($block->getId(), $block->getMeta()));
         if ($tile !== null) $this->setMovingEntity($tile->saveNBT());
+    }
+
+    public function setPistonPos(BlockPiston $piston): void {
+        $pos = $piston->getPosition();
+        $this->pistonPosX = $pos->getX();
+        $this->pistonPosY = $pos->getY();
+        $this->pistonPosZ = $pos->getZ();
     }
 }

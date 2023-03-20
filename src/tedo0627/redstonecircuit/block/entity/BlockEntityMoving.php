@@ -10,6 +10,8 @@ class BlockEntityMoving extends Spawnable {
     use MovingBlockTrait;
 
     public function readSaveData(CompoundTag $nbt): void {
+        $this->setExpanding($nbt->getByte("expanding", 0));
+
         $this->setPistonPosX($nbt->getInt("pistonPosX", 0));
         $this->setPistonPosY($nbt->getInt("pistonPosY", 0));
         $this->setPistonPosZ($nbt->getInt("pistonPosZ", 0));
@@ -28,6 +30,8 @@ class BlockEntityMoving extends Spawnable {
     }
 
     protected function writeSaveData(CompoundTag $nbt): void {
+        $nbt->setByte("expanding", $this->isExpanding());
+
         $nbt->setInt("pistonPosX", $this->getPistonPosX());
         $nbt->setInt("pistonPosY", $this->getPistonPosY());
         $nbt->setInt("pistonPosZ", $this->getPistonPosZ());
@@ -42,6 +46,8 @@ class BlockEntityMoving extends Spawnable {
     }
 
     protected function addAdditionalSpawnData(CompoundTag $nbt): void {
+        $nbt->setByte("expanding", $this->isExpanding());
+
         $nbt->setInt("pistonPosX", $this->getPistonPosX());
         $nbt->setInt("pistonPosY", $this->getPistonPosY());
         $nbt->setInt("pistonPosZ", $this->getPistonPosZ());
@@ -50,6 +56,11 @@ class BlockEntityMoving extends Spawnable {
         $tag->setString("name", $this->getMovingBlockName());
         $tag->setTag("states", $this->getMovingBlockStates());
         $nbt->setTag("movingBlock", $tag);
+
+        $tag = new CompoundTag();
+        $tag->setString("name", "minecraft:air");
+        $tag->setTag("states", new CompoundTag());
+        $nbt->setTag("movingBlockExtra", $tag);
 
         $tag = $this->getMovingEntity();
         if ($tag !== null) $nbt->setTag("movingEntity", $this->getMovingEntity());

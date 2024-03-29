@@ -1,0 +1,14 @@
+{
+  "name": "tedo0627/redstonecircuit",
+  "description": "This is the PocketMine plugin that is sample for using InventoryUI",
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "pocketmine/pocketmine-mp": "^5.12.0",
+    "ext-pmmpthread": "^6.0.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "tedo0627\\redstonecircuit\\": "src"
+    }
+  }
+}

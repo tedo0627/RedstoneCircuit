@@ -84,6 +84,7 @@ class RedstoneCircuit extends PluginBase {
     private array $loader = [];
 
     public function onLoad(): void {
+        /*
         // mechanism
         $this->addBlock("command_block", new BlockCommand(new BlockIdentifierFlattened(Ids::COMMAND_BLOCK, [Ids::REPEATING_COMMAND_BLOCK, Ids::CHAIN_COMMAND_BLOCK], 0, null, BlockEntityCommand::class), "Command Block", BlockBreakInfo::indestructible()));
         $this->addBlockEntity("command_block", BlockEntityCommand::class, ["CommandBlock", "minecraft:command_block"]);
@@ -193,16 +194,20 @@ class RedstoneCircuit extends PluginBase {
         });
 
         CreativeInventory::reset();
+        */
     }
 
     public function onEnable(): void {
+        /*
         $this->getServer()->getPluginManager()->registerEvents(new CommandBlockListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new InventoryListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new TargetBlockListener(), $this);
 
         self::$callEvent = $this->getConfig()->get("event", false);
+        */
     }
 
+    /*
     private function overrideBlock(string $name, int $id, Closure $callback, ?string $class = null): void {
         $this->loader[] = BlockLoader::createBlock($name, $id, $callback, $class);
     }
@@ -249,6 +254,7 @@ class RedstoneCircuit extends PluginBase {
             $method->invoke($mapping, $runtimeId, $id, $damage);
         }
     }
+    */
 
     public static function isCallEvent(): bool {
         return self::$callEvent;

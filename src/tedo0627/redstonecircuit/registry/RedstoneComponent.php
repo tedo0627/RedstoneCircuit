@@ -8,6 +8,7 @@ use pocketmine\block\BlockTypeInfo;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\utils\CloningRegistryTrait;
 use ReflectionClass;
+use tedo0627\redstonecircuit\block\mechanism\BlockRedstoneLamp;
 use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneComparator;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
@@ -15,6 +16,7 @@ use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
 
 /**
  * mechanism
+ * @method static BlockRedstoneLamp REDSTONE_LAMP()
  *
  * power
  * @method static BlockRedstone REDSTONE()
@@ -58,7 +60,7 @@ class RedstoneComponent {
     }
 
     private static function setupMechanism(): void {
-
+        self::registerCallback("redstone_lamp", fn($id, $name, $type) => new BlockRedstoneLamp($id, $name, $type));
     }
 
     private static function setupPower(): void {

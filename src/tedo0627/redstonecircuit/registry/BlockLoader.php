@@ -3,6 +3,7 @@
 namespace tedo0627\redstonecircuit\registry;
 
 use pocketmine\block\RedstoneComparator;
+use pocketmine\block\RedstoneLamp;
 use pocketmine\block\RedstoneRepeater;
 use pocketmine\block\RedstoneWire;
 use pocketmine\data\bedrock\block\BlockStateNames as SNames;
@@ -28,7 +29,13 @@ class BlockLoader {
     }
 
     private function setupMechanism(): void {
-
+        $this->add("redstone_lamp", function () {
+            Helper::runtime(Blocks::REDSTONE_LAMP());
+            Helper::serialize(Blocks::REDSTONE_LAMP(), fn(RedstoneLamp $block) => new Writer($block->isPowered() ? BNames::LIT_REDSTONE_LAMP : BNames::REDSTONE_LAMP));
+            Helper::deserialize(BNames::LIT_REDSTONE_LAMP, fn() => Blocks::REDSTONE_LAMP()->setPowered(true));
+            Helper::deserialize(BNames::REDSTONE_LAMP, fn() => Blocks::REDSTONE_LAMP()->setPowered(false));
+            Helper::stringToItemParser(["active_redstone_lamp", "inactive_redstone_lamp", "lit_redstone_lamp", "redstone_lamp"], Blocks::REDSTONE_COMPARATOR());
+        });
     }
 
     private function setupPower(): void {

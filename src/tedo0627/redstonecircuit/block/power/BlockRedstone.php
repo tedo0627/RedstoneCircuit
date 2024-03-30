@@ -19,7 +19,7 @@ class BlockRedstone extends Redstone implements IRedstoneComponent, ILinkRedston
         BlockUpdateHelper::updateAroundRedstone($this);
     }
 
-    public function onBreak(Item $item, ?Player $player = null): bool {
+    public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []): bool {
         $bool = parent::onBreak($item, $player);
         BlockUpdateHelper::updateAroundRedstone($this);
         return $bool;

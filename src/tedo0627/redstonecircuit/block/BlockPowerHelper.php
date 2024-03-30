@@ -3,13 +3,14 @@
 namespace tedo0627\redstonecircuit\block;
 
 use pocketmine\block\Block;
+use pocketmine\block\Opaque;
 use pocketmine\block\VanillaBlocks;
 
 class BlockPowerHelper {
 
     public static function isNormalBlock(Block $block): bool {
-        if (VanillaBlocks::SLIME()->isSameType($block)) return true;
-        return !$block->isTransparent() && $block->isSolid() && !self::isPowerSource($block);
+        if (VanillaBlocks::SLIME()->isSameState($block)) return true;
+        return !$block->isTransparent() && $block instanceof Opaque && !self::isPowerSource($block);
     }
 
     public static function getStrongPower(Block $block, int $face): int {
@@ -44,7 +45,7 @@ class BlockPowerHelper {
     public static function getAroundStrongPower(Block $block): int {
         $power = 0;
         for ($face = 0; $face < 6; $face++) {
-            $power = max($power, BlockPowerHelper::getStrongPower($block->getSide($face), $face));
+            $power = max($power, self::getStrongPower($block->getSide($face), $face));
             if ($power >= 15) return $power;
         }
         return $power;

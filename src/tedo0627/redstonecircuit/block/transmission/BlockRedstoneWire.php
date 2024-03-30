@@ -25,8 +25,8 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
         $this->calculatePower();
     }
 
-    public function onBreak(Item $item, ?Player $player = null): bool {
-        $bool = parent::onBreak($item, $player);
+    public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []): bool {
+        $bool = parent::onBreak($item, $player, $returnedItems);
         BlockUpdateHelper::updateAroundStrongRedstone($this);
         return $bool;
     }
@@ -44,8 +44,8 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
     }
 
     public function getWeakPower(int $face): int {
-        if ($face == Facing::UP) return $this->getOutputSignalStrength();
-        if ($face == Facing::DOWN) return 0;
+        if ($face === Facing::UP) return $this->getOutputSignalStrength();
+        if ($face === Facing::DOWN) return 0;
         if ($this->isConnected(Facing::opposite($face))) return $this->getOutputSignalStrength();
 
         $right = Facing::rotateY($face, true);
@@ -78,7 +78,7 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
         $power = 0;
         for ($face = 0; $face < 6; $face++) {
             $block = $this->getSide($face);
-            if ($block instanceof BlockRedstoneWire) {
+            if ($block instanceof self) {
                 $power = max($power, $block->getOutputSignalStrength() - 1);
                 continue;
             }
@@ -90,7 +90,7 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
 
             if (BlockPowerHelper::isNormalBlock($block)) {
                 for ($sideFace = 0; $sideFace < 6; $sideFace++) {
-                    if ($sideFace == Facing::opposite($face)) continue;
+                    if ($sideFace === Facing::opposite($face)) continue;
 
                     $sideBlock = $block->getSide($sideFace);
                     if (!BlockPowerHelper::isPowerSource($sideBlock)) continue;
@@ -100,13 +100,13 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
                 continue;
             }
 
-            if ($face == Facing::DOWN) continue;
+            if ($face === Facing::DOWN) continue;
 
             if ($block->isTransparent()) {
-                if ($face == Facing::UP) {
+                if ($face === Facing::UP) {
                     for ($sideFace = 2; $sideFace < 6; $sideFace++) {
                         $sideBlock = $block->getSide($sideFace);
-                        if (!$sideBlock instanceof BlockRedstoneWire) continue;
+                        if (!$sideBlock instanceof self) continue;
 
                         $down = $sideBlock->getSide(Facing::DOWN);
                         if (($down instanceof Slab && $down->getSlabType() !== SlabType::DOUBLE()) || $down instanceof Stair) continue;
@@ -117,20 +117,20 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
                 }
 
                 $sideBlock = $block->getSide(Facing::DOWN);
-                if (!$sideBlock instanceof BlockRedstoneWire) continue;
+                if (!$sideBlock instanceof self) continue;
 
                 $power = max($power, $sideBlock->getOutputSignalStrength() - 1);
             }
         }
 
-        if ($this->getOutputSignalStrength() == $power) return false;
+        if ($this->getOutputSignalStrength() === $power) return false;
 
         if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstoneSignalUpdateEvent($this, $power, $this->getOutputSignalStrength());
             $event->call();
 
             $power = $event->getNewSignal();
-            if ($this->getOutputSignalStrength() == $power) return false;
+            if ($this->getOutputSignalStrength() === $power) return false;
         }
 
         $this->setOutputSignalStrength($power);

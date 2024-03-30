@@ -29,9 +29,9 @@ class BlockUpdateHelper {
 
             $opposite = Facing::opposite($face1);
             for ($face2 = 0; $face2 < 6; $face2++) {
-                if ($face2 == $opposite) continue;
-                if (Facing::axis($face1) == Axis::Y && Facing::axis($face2) != Axis::Y) continue;
-                if (Facing::axis($face1) != Axis::Y && Facing::rotate($face1, Axis::Y, true) == $face2) continue;
+                if ($face2 === $opposite) continue;
+                if (Facing::axis($face1) === Axis::Y && Facing::axis($face2) !== Axis::Y) continue;
+                if (Facing::axis($face1) !== Axis::Y && Facing::rotate($face1, Axis::Y, true) === $face2) continue;
 
                 $sideBlock = $block->getSide($face2);
                 if ($sideBlock instanceof IRedstoneComponent) $sideBlock->onRedstoneUpdate();
@@ -45,7 +45,7 @@ class BlockUpdateHelper {
 
         $opposite = Facing::opposite($face);
         for ($face1 = 0; $face1 < 6; $face1++) {
-            if ($face1 == $opposite) continue;
+            if ($face1 === $opposite) continue;
 
             $sideBlock = $block->getSide($face1);
             if ($sideBlock instanceof IRedstoneComponent) $sideBlock->onRedstoneUpdate();

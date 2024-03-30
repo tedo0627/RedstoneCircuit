@@ -2,7 +2,6 @@
 
 namespace tedo0627\redstonecircuit\block\transmission;
 
-use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\Cake;
 use pocketmine\block\EndPortalFrame;
 use pocketmine\block\ItemFrame;
@@ -13,6 +12,7 @@ use pocketmine\block\utils\RecordType;
 use pocketmine\inventory\CallbackInventoryListener;
 use pocketmine\inventory\Inventory;
 use pocketmine\item\Item;
+use pocketmine\item\VanillaItems;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
@@ -35,14 +35,14 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
         $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 1);
     }
 
-    public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null): bool {
-        parent::onInteract($item, $face, $clickVector, $player);
+    public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []): bool {
+        parent::onInteract($item, $face, $clickVector, $player, $returnedItems);
         BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
         return true;
     }
 
-    public function onBreak(Item $item, ?Player $player = null): bool {
-        if ($this->callBack != null) {
+    public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []): bool {
+        if ($this->callBack !== null) {
             $block = $this->getSide($this->getFacing());
             $tile = $this->getPosition()->getWorld()->getTile($block->getPosition());
             if ($tile instanceof Container) {
@@ -60,7 +60,7 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
             }
         }
 
-        parent::onBreak($item, $player);
+        parent::onBreak($item, $player, $returnedItems);
         BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
         return true;
     }
@@ -90,7 +90,7 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
             $event->call();
 
             $power = $event->getNewSignal();
-            if ($this->getOutputSignalStrength() == $power) return;
+            if ($this->getOutputSignalStrength() === $power) return;
         }
 
         $this->setPowered($power > 0);
@@ -107,11 +107,11 @@ class BlockRedstoneComparator extends RedstoneComparator implements IRedstoneCom
             $inventory = $tile->getInventory();
             $this->createCallBack($inventory);
 
-            if (count($inventory->getContents()) != 0) {
+            if (count($inventory->getContents()) !== 0) {
                 $stack = 0;
                 for ($slot = 0; $slot < $inventory->getSize(); $slot++) {
                     $item = $inventory->getItem($slot);
-                    if ($item->getId() === BlockLegacyIds::AIR) continue;
+                    if ($item->equals(VanillaItems::AIR())) continue;
                     $stack += $item->getCount() / $item->getMaxStackSize();
                 }
                 $power = 1 + ($stack / $inventory->getSize()) * 14;

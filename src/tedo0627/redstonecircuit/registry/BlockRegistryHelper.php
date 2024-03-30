@@ -110,7 +110,7 @@ class BlockRegistryHelper {
     }
 
     /**
-     * @see VanillaBlocks::register()
+     * @see VanillaBlocks::register() Call this method error avoiding.
      * @see VanillaBlocks::$members
      */
     public static function vanillaBlocks(string $name, Block $block): void {
@@ -124,7 +124,7 @@ class BlockRegistryHelper {
     }
 
     /**
-     * @see ItemSerializerDeserializerRegistrar::map1to1Block()
+     * @see ItemSerializerDeserializerRegistrar::map1to1Block() Call this method error avoiding.
      *
      * @see ItemSerializer::mapBlock()
      * @see ItemSerializer::$blockItemSerializers

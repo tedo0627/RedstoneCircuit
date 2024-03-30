@@ -20,8 +20,8 @@ class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneCompone
         $this->onRedstoneUpdate();
     }
 
-    public function onBreak(Item $item, ?Player $player = null): bool {
-        parent::onBreak($item, $player);
+    public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []): bool {
+        parent::onBreak($item, $player, $returnedItems);
         BlockUpdateHelper::updateDiodeRedstone($this, Facing::opposite($this->getFacing()));
         return true;
     }
@@ -60,7 +60,7 @@ class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneCompone
     }
 
     public function getWeakPower(int $face): int {
-        return $this->isPowered() && $face == $this->getFacing() ? 15 : 0;
+        return $this->isPowered() && $face === $this->getFacing() ? 15 : 0;
     }
 
     public function isPowerSource(): bool {
@@ -81,6 +81,6 @@ class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneCompone
     }
 
     public function isConnect(int $face): bool {
-        return $face == $this->getFacing() || $face == Facing::opposite($this->getFacing());
+        return $face === $this->getFacing() || $face === Facing::opposite($this->getFacing());
     }
 }

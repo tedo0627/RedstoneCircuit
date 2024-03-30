@@ -9,6 +9,8 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\utils\CloningRegistryTrait;
 use ReflectionClass;
 use tedo0627\redstonecircuit\block\power\BlockRedstone;
+use tedo0627\redstonecircuit\block\transmission\BlockRedstoneComparator;
+use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
 
 /**
@@ -18,6 +20,8 @@ use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
  * @method static BlockRedstone REDSTONE()
  *
  * transmission
+ * @method static BlockRedstoneComparator REDSTONE_COMPARATOR()
+ * @method static BlockRedstoneRepeater REDSTONE_REPEATER()
  * @method static BlockRedstoneWire REDSTONE_WIRE()
  */
 class RedstoneComponent {
@@ -62,6 +66,8 @@ class RedstoneComponent {
     }
 
     private static function setupTransmission(): void {
+        self::registerCallback("redstone_comparator", fn($id, $name, $type) => new BlockRedstoneComparator($id, $name, $type));
+        self::registerCallback("redstone_repeater", fn($id, $name, $type) => new BlockRedstoneRepeater($id, $name, $type));
         self::registerCallback("redstone_wire", fn($id, $name, $type) => new BlockRedstoneWire($id, $name, $type));
     }
 

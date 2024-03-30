@@ -2,9 +2,12 @@
 
 namespace tedo0627\redstonecircuit\registry;
 
+use pocketmine\block\RedstoneComparator;
+use pocketmine\block\RedstoneRepeater;
 use pocketmine\block\RedstoneWire;
 use pocketmine\data\bedrock\block\BlockStateNames as SNames;
 use pocketmine\data\bedrock\block\BlockTypeNames as BNames;
+use pocketmine\data\bedrock\block\convert\BlockStateDeserializerHelper;
 use pocketmine\data\bedrock\block\convert\BlockStateReader;
 use pocketmine\data\bedrock\block\convert\BlockStateWriter as Writer;
 use tedo0627\redstonecircuit\registry\BlockRegistryHelper as Helper;
@@ -39,6 +42,29 @@ class BlockLoader {
     }
 
     private function setupTransmission(): void {
+        $this->add("redstone_comparator", function () {
+            Helper::runtime(Blocks::REDSTONE_COMPARATOR());
+            Helper::serialize(Blocks::REDSTONE_COMPARATOR(), fn(RedstoneComparator $block) => Writer::create($block->isPowered() ? BNames::POWERED_COMPARATOR : BNames::UNPOWERED_COMPARATOR)
+                ->writeBool(SNames::OUTPUT_LIT_BIT, $block->isPowered())
+                ->writeBool(SNames::OUTPUT_SUBTRACT_BIT, $block->isSubtractMode())
+                ->writeCardinalHorizontalFacing($block->getFacing())
+            );
+            Helper::deserialize(BNames::POWERED_COMPARATOR, fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeComparator(Blocks::REDSTONE_COMPARATOR(), $in)->setPowered(true));
+            Helper::deserialize(BNames::UNPOWERED_COMPARATOR, fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeComparator(Blocks::REDSTONE_COMPARATOR(), $in)->setPowered(false));
+            Helper::stringToItemParser(["comparator", "comparator_block", "redstone_comparator", "powered_comparator", "powered_comparator_block", "unpowered_comparator", "unpowered_comparator_block"], Blocks::REDSTONE_COMPARATOR());
+        });
+
+        $this->add("redstone_repeater", function () {
+            Helper::runtime(Blocks::REDSTONE_REPEATER());
+            Helper::serialize(Blocks::REDSTONE_REPEATER(), fn(RedstoneRepeater $block) => Writer::create($block->isPowered() ? BNames::POWERED_REPEATER : BNames::UNPOWERED_REPEATER)
+                ->writeCardinalHorizontalFacing($block->getFacing())
+                ->writeInt(SNames::REPEATER_DELAY, $block->getDelay() - 1)
+            );
+            Helper::deserialize(BNames::POWERED_REPEATER, fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeRepeater(Blocks::REDSTONE_REPEATER(), $in)->setPowered(true));
+            Helper::deserialize(BNames::UNPOWERED_REPEATER, fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeRepeater(Blocks::REDSTONE_REPEATER(), $in)->setPowered(false));
+            Helper::stringToItemParser(["powered_repeater", "powered_repeater_block", "redstone_repeater", "repeater", "repeater_block", "unpowered_repeater", "unpowered_repeater_block"], Blocks::REDSTONE_REPEATER());
+        });
+
         $this->add("redstone_wire", function () {
             Helper::runtime(Blocks::REDSTONE_WIRE());
             Helper::serialize(Blocks::REDSTONE_WIRE(), fn(RedstoneWire $block) => Writer::create(BNames::REDSTONE_WIRE)
@@ -49,7 +75,6 @@ class BlockLoader {
             );
             Helper::stringToItemParser("redstone_wire", Blocks::REDSTONE_WIRE());
             Helper::vanillaBlocks("redstone_wire", Blocks::REDSTONE_WIRE());
-            //Helper::item(ItemTypeNames::REDSTONE, Blocks::REDSTONE_WIRE());
         });
     }
 

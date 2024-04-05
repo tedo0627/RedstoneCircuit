@@ -22,8 +22,8 @@ class BlockRedstoneTorch extends RedstoneTorch implements IRedstoneComponent, IL
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::UP);
     }
 
-    public function onBreak(Item $item, ?Player $player = null): bool {
-        parent::onBreak($item, $player);
+    public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []): bool {
+        parent::onBreak($item, $player, $returnedItems);
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::UP);
         return true;
     }

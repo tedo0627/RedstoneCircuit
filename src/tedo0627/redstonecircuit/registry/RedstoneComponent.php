@@ -11,6 +11,7 @@ use ReflectionClass;
 use tedo0627\redstonecircuit\block\mechanism\BlockRedstoneLamp;
 use tedo0627\redstonecircuit\block\power\BlockLever;
 use tedo0627\redstonecircuit\block\power\BlockRedstone;
+use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneComparator;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
@@ -22,6 +23,7 @@ use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
  * power
  * @method static BlockLever LEVER()
  * @method static BlockRedstone REDSTONE()
+ * @method static BlockRedstoneTorch REDSTONE_TORCH()
  *
  * transmission
  * @method static BlockRedstoneComparator REDSTONE_COMPARATOR()
@@ -68,6 +70,7 @@ class RedstoneComponent {
     private static function setupPower(): void {
         self::registerCallback("lever", fn($id, $name, $type) => new BlockLever($id, $name, $type));
         self::registerCallback("redstone", fn($id, $name, $type) => new BlockRedstone($id, $name, $type));
+        self::registerCallback("redstone_torch", fn($id, $name, $type) => new BlockRedstoneTorch($id, $name, $type));
     }
 
     private static function setupTransmission(): void {

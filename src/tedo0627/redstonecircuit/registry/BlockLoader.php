@@ -6,6 +6,7 @@ use pocketmine\block\Lever;
 use pocketmine\block\RedstoneComparator;
 use pocketmine\block\RedstoneLamp;
 use pocketmine\block\RedstoneRepeater;
+use pocketmine\block\RedstoneTorch;
 use pocketmine\block\RedstoneWire;
 use pocketmine\block\utils\LeverFacing;
 use pocketmine\data\bedrock\block\BlockStateNames as SNames;
@@ -81,6 +82,22 @@ class BlockLoader {
             Helper::deserialize(BNames::REDSTONE_BLOCK, fn() => Blocks::REDSTONE());
             Helper::stringToItemParser("redstone_block", Blocks::REDSTONE());
             Helper::vanillaBlocks("redstone", Blocks::REDSTONE());
+        });
+        $this->add("redstone_torch", function () {
+            Helper::runtime(Blocks::REDSTONE_TORCH());
+            Helper::serialize(Blocks::REDSTONE_TORCH(), fn(RedstoneTorch $block) => Writer::create($block->isLit() ? BNames::REDSTONE_TORCH : BNames::UNLIT_REDSTONE_TORCH)
+                ->writeTorchFacing($block->getFacing())
+            );
+            Helper::deserialize(BNames::REDSTONE_TORCH, fn(BlockStateReader $in) => Blocks::REDSTONE_TORCH()
+                ->setFacing($in->readTorchFacing())
+                ->setLit(true)
+            );
+            Helper::deserialize(BNames::UNLIT_REDSTONE_TORCH, fn(BlockStateReader $in) => Blocks::REDSTONE_TORCH()
+                ->setFacing($in->readTorchFacing())
+                ->setLit(false)
+            );
+            Helper::stringToItemParser(["lit_redstone_torch", "redstone_torch", "unlit_redstone_torch"], Blocks::REDSTONE_TORCH());
+            Helper::vanillaBlocks("redstone_torch", Blocks::REDSTONE_TORCH());
         });
     }
 

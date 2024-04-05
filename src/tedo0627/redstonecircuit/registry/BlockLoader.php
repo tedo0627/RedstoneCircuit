@@ -2,11 +2,14 @@
 
 namespace tedo0627\redstonecircuit\registry;
 
+use pocketmine\block\Lever;
 use pocketmine\block\RedstoneComparator;
 use pocketmine\block\RedstoneLamp;
 use pocketmine\block\RedstoneRepeater;
 use pocketmine\block\RedstoneWire;
+use pocketmine\block\utils\LeverFacing;
 use pocketmine\data\bedrock\block\BlockStateNames as SNames;
+use pocketmine\data\bedrock\block\BlockStateStringValues;
 use pocketmine\data\bedrock\block\BlockTypeNames as BNames;
 use pocketmine\data\bedrock\block\convert\BlockStateDeserializerHelper;
 use pocketmine\data\bedrock\block\convert\BlockStateReader;
@@ -40,6 +43,38 @@ class BlockLoader {
     }
 
     private function setupPower(): void {
+        $this->add("lever", function () {
+            Helper::runtime(Blocks::LEVER());
+            Helper::serialize(Blocks::LEVER(), fn(Lever $block) => Writer::create(BNames::LEVER)
+                ->writeBool(SNames::OPEN_BIT, $block->isActivated())
+                ->writeString(SNames::LEVER_DIRECTION, match($block->getFacing()){
+                    LeverFacing::DOWN_AXIS_Z => BlockStateStringValues::LEVER_DIRECTION_DOWN_NORTH_SOUTH,
+                    LeverFacing::DOWN_AXIS_X => BlockStateStringValues::LEVER_DIRECTION_DOWN_EAST_WEST,
+                    LeverFacing::UP_AXIS_Z => BlockStateStringValues::LEVER_DIRECTION_UP_NORTH_SOUTH,
+                    LeverFacing::UP_AXIS_X => BlockStateStringValues::LEVER_DIRECTION_UP_EAST_WEST,
+                    LeverFacing::NORTH => BlockStateStringValues::LEVER_DIRECTION_NORTH,
+                    LeverFacing::SOUTH => BlockStateStringValues::LEVER_DIRECTION_SOUTH,
+                    LeverFacing::WEST => BlockStateStringValues::LEVER_DIRECTION_WEST,
+                    LeverFacing::EAST => BlockStateStringValues::LEVER_DIRECTION_EAST,
+                })
+            );
+            Helper::deserialize(BNames::LEVER, fn(BlockStateReader $in) => Blocks::LEVER()
+                ->setActivated($in->readBool(SNames::OPEN_BIT))
+                ->setFacing(match($value = $in->readString(SNames::LEVER_DIRECTION)){
+                    BlockStateStringValues::LEVER_DIRECTION_DOWN_NORTH_SOUTH => LeverFacing::DOWN_AXIS_Z,
+                    BlockStateStringValues::LEVER_DIRECTION_DOWN_EAST_WEST => LeverFacing::DOWN_AXIS_X,
+                    BlockStateStringValues::LEVER_DIRECTION_UP_NORTH_SOUTH => LeverFacing::UP_AXIS_Z,
+                    BlockStateStringValues::LEVER_DIRECTION_UP_EAST_WEST => LeverFacing::UP_AXIS_X,
+                    BlockStateStringValues::LEVER_DIRECTION_NORTH => LeverFacing::NORTH,
+                    BlockStateStringValues::LEVER_DIRECTION_SOUTH => LeverFacing::SOUTH,
+                    BlockStateStringValues::LEVER_DIRECTION_WEST => LeverFacing::WEST,
+                    BlockStateStringValues::LEVER_DIRECTION_EAST => LeverFacing::EAST,
+                    default => throw $in->badValueException(SNames::LEVER_DIRECTION, $value),
+                })
+            );
+            Helper::stringToItemParser("lever", Blocks::LEVER());
+            Helper::vanillaBlocks("lever", Blocks::LEVER());
+        });
         $this->add("redstone", function () {
             Helper::runtime(Blocks::REDSTONE());
             Helper::serialize(Blocks::REDSTONE(), fn() => new Writer(BNames::REDSTONE_BLOCK));

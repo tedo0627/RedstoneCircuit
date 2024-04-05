@@ -19,19 +19,19 @@ class BlockLever extends Lever implements IRedstoneComponent, ILinkRedstoneWire 
     use LinkRedstoneWireTrait;
     use RedstoneComponentTrait;
 
-    public function onBreak(Item $item, ?Player $player = null): bool {
-        parent::onBreak($item, $player);
+    public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []): bool {
+        parent::onBreak($item, $player, $returnedItems);
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()->getFacing()));
         return true;
     }
 
-    public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null): bool {
+    public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []): bool {
         if (RedstoneCircuit::isCallEvent()) {
             $powered = $this->isActivated();
             $event = new BlockRedstonePowerUpdateEvent($this, !$powered, $powered);
             $event->call();
         }
-        parent::onInteract($item, $face, $clickVector, $player);
+        parent::onInteract($item, $face, $clickVector, $player, $returnedItems);
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()->getFacing()));
         return true;
     }

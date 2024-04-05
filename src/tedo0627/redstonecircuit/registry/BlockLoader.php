@@ -13,6 +13,7 @@ use pocketmine\data\bedrock\block\convert\BlockStateReader;
 use pocketmine\data\bedrock\block\convert\BlockStateWriter as Writer;
 use tedo0627\redstonecircuit\registry\BlockRegistryHelper as Helper;
 use tedo0627\redstonecircuit\registry\RedstoneComponent as Blocks;
+use pmmp\thread\ThreadSafeArray;
 use Closure;
 
 class BlockLoader {
@@ -93,9 +94,12 @@ class BlockLoader {
         $this->loader[$name] = $closure;
     }
 
-    public function load(): void {
+    public function load(ThreadSafeArray $blockConfig): void {
         foreach ($this->loader as $key => $value) {
-            $value(); // TODO
+            $check = $blockConfig[$key];
+            if ($check === true || $check === null) {
+                $value();
+            }
         }
     }
 }

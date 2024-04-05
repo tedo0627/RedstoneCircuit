@@ -6,6 +6,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\AsyncTask;
 use tedo0627\redstonecircuit\loader\Loader;
 use tedo0627\redstonecircuit\registry\BlockLoader;
+use pmmp\thread\ThreadSafeArray;
 
 class RedstoneCircuit extends PluginBase {
 
@@ -126,11 +127,15 @@ class RedstoneCircuit extends PluginBase {
 
         CreativeInventory::reset();
         */
-        self::register();
-        $this->getServer()->getAsyncPool()->addWorkerStartHook(function (int $worker): void {
-            $this->getServer()->getAsyncPool()->submitTaskToWorker(new class extends AsyncTask {
+        $blocks = $this->getConfig()->get("blocks", []);
+        $blockConfig = ThreadSafeArray::fromArray($blocks);
+
+        self::register($blockConfig);
+        $this->getServer()->getAsyncPool()->addWorkerStartHook(function (int $worker) use ($blockConfig): void {
+            $this->getServer()->getAsyncPool()->submitTaskToWorker(new class($blockConfig) extends AsyncTask {
+                public function __construct(private ThreadSafeArray $blockConfig) {}
                 public function onRun(): void {
-                    RedstoneCircuit::register();
+                    RedstoneCircuit::register($this->blockConfig);
                 }
             }, $worker);
         });
@@ -146,10 +151,10 @@ class RedstoneCircuit extends PluginBase {
         */
     }
 
-    public static function register(): void {
+    public static function register(ThreadSafeArray $blockConfig): void {
         $loader = new BlockLoader();
         $loader->setup();
-        $loader->load();
+        $loader->load($blockConfig);
     }
 
     /*

@@ -8,12 +8,15 @@ use pocketmine\block\RedstoneLamp;
 use pocketmine\block\RedstoneRepeater;
 use pocketmine\block\RedstoneTorch;
 use pocketmine\block\RedstoneWire;
+use pocketmine\block\StoneButton;
 use pocketmine\block\utils\LeverFacing;
+use pocketmine\block\WoodenButton;
 use pocketmine\data\bedrock\block\BlockStateNames as SNames;
 use pocketmine\data\bedrock\block\BlockStateStringValues;
 use pocketmine\data\bedrock\block\BlockTypeNames as BNames;
 use pocketmine\data\bedrock\block\convert\BlockStateDeserializerHelper;
 use pocketmine\data\bedrock\block\convert\BlockStateReader;
+use pocketmine\data\bedrock\block\convert\BlockStateSerializerHelper;
 use pocketmine\data\bedrock\block\convert\BlockStateWriter as Writer;
 use tedo0627\redstonecircuit\registry\BlockRegistryHelper as Helper;
 use tedo0627\redstonecircuit\registry\RedstoneComponent as Blocks;
@@ -98,6 +101,38 @@ class BlockLoader {
             );
             Helper::stringToItemParser(["lit_redstone_torch", "redstone_torch", "unlit_redstone_torch"], Blocks::REDSTONE_TORCH());
             Helper::vanillaBlocks("redstone_torch", Blocks::REDSTONE_TORCH());
+        });
+        $this->add("stone_button", function () {
+            $blocks = [Blocks::POLISHED_BLACKSTONE_BUTTON(), Blocks::STONE_BUTTON()];
+            $names = [BNames::POLISHED_BLACKSTONE_BUTTON, BNames::STONE_BUTTON];
+            $alias = ["polished_blackstone_button", "stone_button"];
+            for ($i = 0; $i < count($blocks); $i++) {
+                Helper::runtime(clone $blocks[$i]);
+                Helper::serialize(clone $blocks[$i], fn(StoneButton $block) => BlockStateSerializerHelper::encodeButton(clone $block, new Writer($names[$i])));
+                Helper::deserialize($names[$i], fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeButton(clone $blocks[$i], $in));
+                Helper::stringToItemParser($alias[$i], clone $blocks[$i]);
+                Helper::vanillaBlocks($alias[$i], clone $blocks[$i]);
+            }
+        });
+        $this->add("wooden_button", function () {
+            $blocks = [
+                Blocks::ACACIA_BUTTON(), Blocks::BIRCH_BUTTON(), Blocks::CHERRY_BUTTON(), Blocks::CRIMSON_BUTTON(),
+                Blocks::DARK_OAK_BUTTON(), Blocks::JUNGLE_BUTTON(), Blocks::MANGROVE_BUTTON(), Blocks::OAK_BUTTON(),
+                Blocks::SPRUCE_BUTTON(), Blocks::WARPED_BUTTON()
+            ];
+            $names = [
+                BNames::ACACIA_BUTTON, BNames::BIRCH_BUTTON, BNames::CHERRY_BUTTON, BNames::CRIMSON_BUTTON,
+                BNames::DARK_OAK_BUTTON, BNames::JUNGLE_BUTTON, BNames::MANGROVE_BUTTON, BNames::WOODEN_BUTTON,
+                BNames::SPRUCE_BUTTON, BNames::WARPED_BUTTON
+            ];
+            $alias = array_map(fn(string $str) => str_replace("minecraft:", "", $str), $names);
+            for ($i = 0; $i < count($blocks); $i++) {
+                Helper::runtime(clone $blocks[$i]);
+                Helper::serialize(clone $blocks[$i], fn(WoodenButton $block) => BlockStateSerializerHelper::encodeButton(clone $block, new Writer($names[$i])));
+                Helper::deserialize($names[$i], fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeButton(clone $blocks[$i], $in));
+                Helper::stringToItemParser($alias[$i], clone $blocks[$i]);
+                Helper::vanillaBlocks($alias[$i], clone $blocks[$i]);
+            }
         });
     }
 

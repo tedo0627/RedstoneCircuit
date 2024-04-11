@@ -19,14 +19,14 @@ class BlockStoneButton extends StoneButton implements IRedstoneComponent, ILinkR
     use LinkRedstoneWireTrait;
     use RedstoneComponentTrait;
 
-    public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null): bool {
+    public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []): bool {
         if ($this->isPressed()) return true;
 
         if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, !$this->isPressed(), $this->isPressed());
             $event->call();
         }
-        parent::onInteract($item, $face, $clickVector, $player);
+        parent::onInteract($item, $face, $clickVector, $player, $returnedItems);
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()));
         return true;
     }
@@ -42,8 +42,8 @@ class BlockStoneButton extends StoneButton implements IRedstoneComponent, ILinkR
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()));
     }
 
-    public function onBreak(Item $item, ?Player $player = null): bool {
-        parent::onBreak($item, $player);
+    public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []): bool {
+        parent::onBreak($item, $player, $returnedItems);
         if ($this->isPressed()) BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::opposite($this->getFacing()));
         return true;
     }

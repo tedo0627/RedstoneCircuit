@@ -5,6 +5,7 @@ namespace tedo0627\redstonecircuit\registry;
 use Closure;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeInfo;
+use pocketmine\block\utils\WoodType;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\utils\CloningRegistryTrait;
 use ReflectionClass;
@@ -12,6 +13,8 @@ use tedo0627\redstonecircuit\block\mechanism\BlockRedstoneLamp;
 use tedo0627\redstonecircuit\block\power\BlockLever;
 use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
+use tedo0627\redstonecircuit\block\power\BlockStoneButton;
+use tedo0627\redstonecircuit\block\power\BlockWoodenButton;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneComparator;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
@@ -24,6 +27,20 @@ use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
  * @method static BlockLever LEVER()
  * @method static BlockRedstone REDSTONE()
  * @method static BlockRedstoneTorch REDSTONE_TORCH()
+ * stone button
+ * @method static BlockStoneButton POLISHED_BLACKSTONE_BUTTON()
+ * @method static BlockStoneButton STONE_BUTTON()
+ * wooden button
+ * @method static BlockWoodenButton ACACIA_BUTTON()
+ * @method static BlockWoodenButton BIRCH_BUTTON()
+ * @method static BlockWoodenButton CHERRY_BUTTON()
+ * @method static BlockWoodenButton CRIMSON_BUTTON()
+ * @method static BlockWoodenButton DARK_OAK_BUTTON()
+ * @method static BlockWoodenButton JUNGLE_BUTTON()
+ * @method static BlockWoodenButton MANGROVE_BUTTON()
+ * @method static BlockWoodenButton OAK_BUTTON()
+ * @method static BlockWoodenButton SPRUCE_BUTTON()
+ * @method static BlockWoodenButton WARPED_BUTTON()
  *
  * transmission
  * @method static BlockRedstoneComparator REDSTONE_COMPARATOR()
@@ -71,6 +88,15 @@ class RedstoneComponent {
         self::registerCallback("lever", fn($id, $name, $type) => new BlockLever($id, $name, $type));
         self::registerCallback("redstone", fn($id, $name, $type) => new BlockRedstone($id, $name, $type));
         self::registerCallback("redstone_torch", fn($id, $name, $type) => new BlockRedstoneTorch($id, $name, $type));
+
+        // StoneButton
+        self::registerCallback("polished_blackstone_button", fn($id, $name, $type) => new BlockStoneButton($id, $name, $type));
+        self::registerCallback("stone_button", fn($id, $name, $type) => new BlockStoneButton($id, $name, $type));
+
+        // WoodenButton
+        foreach (WoodType::cases() as $woodType) {
+            self::registerCallback(mb_strtolower(str_replace(" ", "_", $woodType->getDisplayName())) . "_button", fn($id, $name, $type) => new BlockWoodenButton($id, $name, $type, $woodType));
+        }
     }
 
     private static function setupTransmission(): void {

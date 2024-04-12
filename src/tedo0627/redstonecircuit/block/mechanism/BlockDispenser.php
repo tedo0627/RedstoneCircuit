@@ -40,9 +40,9 @@ use tedo0627\redstonecircuit\block\dispenser\TNTDispenseBehavior;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDispenser;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockDispenseEvent;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
-use tedo0627\redstonecircuit\RedstoneCircuit;
 use tedo0627\redstonecircuit\sound\ClickFailSound;
 
 class BlockDispenser extends Opaque implements IRedstoneComponent {
@@ -139,7 +139,7 @@ class BlockDispenser extends Opaque implements IRedstoneComponent {
         }
 
         $item = $inventory->getItem($slot);
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockDispenseEvent($this, clone $item);
             $event->call();
             if ($event->isCancelled()) return;
@@ -155,7 +155,7 @@ class BlockDispenser extends Opaque implements IRedstoneComponent {
         $powered = BlockPowerHelper::isPowered($this);
         if ($powered === $this->isPowered()) return;
 
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isPowered());
             $event->call();
             $powered = $event->getNewPowered();

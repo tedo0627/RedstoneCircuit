@@ -18,8 +18,8 @@ use tedo0627\redstonecircuit\block\entity\BlockEntityObserver;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
-use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneWire {
     use AnyFacingTrait;
@@ -107,7 +107,7 @@ class BlockObserver extends Opaque implements IRedstoneComponent, ILinkRedstoneW
         }
 
         $powered = !$this->isPowered();
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, !$powered);
             $event->call();
             $powered = $event->getNewPowered();

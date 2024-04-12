@@ -12,8 +12,8 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
-use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockStoneButton extends StoneButton implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
@@ -22,7 +22,7 @@ class BlockStoneButton extends StoneButton implements IRedstoneComponent, ILinkR
     public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []): bool {
         if ($this->isPressed()) return true;
 
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, !$this->isPressed(), $this->isPressed());
             $event->call();
         }
@@ -34,7 +34,7 @@ class BlockStoneButton extends StoneButton implements IRedstoneComponent, ILinkR
     public function onScheduledUpdate(): void {
         if (!$this->isPressed()) return;
 
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, !$this->isPressed(), $this->isPressed());
             $event->call();
         }

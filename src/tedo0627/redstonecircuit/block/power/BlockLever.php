@@ -12,8 +12,8 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
-use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockLever extends Lever implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
@@ -26,7 +26,7 @@ class BlockLever extends Lever implements IRedstoneComponent, ILinkRedstoneWire 
     }
 
     public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []): bool {
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $powered = $this->isActivated();
             $event = new BlockRedstonePowerUpdateEvent($this, !$powered, $powered);
             $event->call();

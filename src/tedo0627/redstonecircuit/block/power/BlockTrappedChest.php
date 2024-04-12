@@ -11,8 +11,8 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstoneSignalUpdateEvent;
-use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockTrappedChest extends TrappedChest implements IRedstoneComponent, ILinkRedstoneWire {
     use AnalogRedstoneSignalEmitterTrait;
@@ -34,7 +34,7 @@ class BlockTrappedChest extends TrappedChest implements IRedstoneComponent, ILin
         $signal = min($tile->getInventory()->getViewerCount(), 15);
         if ($this->getOutputSignalStrength() === $signal) return;
 
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockRedstoneSignalUpdateEvent($this, $signal, $this->getOutputSignalStrength());
             $event->call();
             $signal = $event->getNewSignal();

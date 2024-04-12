@@ -15,8 +15,8 @@ use tedo0627\redstonecircuit\block\BlockUpdateHelper;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstoneSignalUpdateEvent;
-use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILinkRedstoneWire {
     use RedstoneComponentTrait;
@@ -125,7 +125,7 @@ class BlockRedstoneWire extends RedstoneWire implements IRedstoneComponent, ILin
 
         if ($this->getOutputSignalStrength() === $power) return false;
 
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockRedstoneSignalUpdateEvent($this, $power, $this->getOutputSignalStrength());
             $event->call();
 

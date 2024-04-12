@@ -11,8 +11,8 @@ use tedo0627\redstonecircuit\block\BlockUpdateHelper;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\IRedstoneDiode;
+use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
-use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneComponent, ILinkRedstoneWire, IRedstoneDiode {
 
@@ -33,7 +33,7 @@ class BlockRedstoneRepeater extends RedstoneRepeater implements IRedstoneCompone
 
         $oldPowered = $this->isPowered();
         $powered = !$oldPowered;
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, $oldPowered);
             $event->call();
 

@@ -10,8 +10,8 @@ use pocketmine\world\sound\DoorSound;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
-use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockIronTrapdoor extends Trapdoor implements IRedstoneComponent {
     use RedstoneComponentTrait;
@@ -24,7 +24,7 @@ class BlockIronTrapdoor extends Trapdoor implements IRedstoneComponent {
         $powered = BlockPowerHelper::isPowered($this);
         if ($powered === $this->isOpen()) return;
 
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isOpen());
             $event->call();
             $powered = $event->getNewPowered();

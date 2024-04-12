@@ -10,8 +10,8 @@ use pocketmine\player\Player;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
-use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockPoweredRail extends PoweredRail implements IRedstoneComponent {
     use RedstoneComponentTrait;
@@ -122,7 +122,7 @@ class BlockPoweredRail extends PoweredRail implements IRedstoneComponent {
         $oldPowered = $block->isPowered();
         if ($oldPowered === $powered) return;
 
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, $oldPowered);
             $event->call();
             $powered = $event->getNewPowered();

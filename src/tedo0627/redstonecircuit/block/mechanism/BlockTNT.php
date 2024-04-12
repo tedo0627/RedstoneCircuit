@@ -6,8 +6,8 @@ use pocketmine\block\TNT;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
+use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
-use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockTNT extends TNT implements IRedstoneComponent {
     use RedstoneComponentTrait;
@@ -15,7 +15,7 @@ class BlockTNT extends TNT implements IRedstoneComponent {
     public function onRedstoneUpdate(): void {
         if (!BlockPowerHelper::isPowered($this)) return;
 
-        if (RedstoneCircuit::isCallEvent()) {
+        if (CustomConfig::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, true, false);
             $event->call();
             if (!$event->getNewPowered()) return;

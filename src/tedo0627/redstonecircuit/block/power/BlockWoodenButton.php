@@ -15,7 +15,6 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
-use tedo0627\redstonecircuit\block\ScheduleUpdateHelper;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
 use tedo0627\redstonecircuit\RedstoneCircuit;
 
@@ -39,9 +38,6 @@ class BlockWoodenButton extends WoodenButton implements IRedstoneComponent, ILin
         if (!$this->isPressed()) return;
 
         $entities = $this->getPosition()->getWorld()->getNearbyEntities($this->getHitCollision());
-        if (0 < count($entities)) {
-            ScheduleUpdateHelper::scheduleUpdate($this->getPosition(), $this->getActivationTime());
-        }
         for ($i = 0; $i < count($entities); $i++) {
             if ($entities[$i] instanceof Arrow) return;
         }
@@ -68,7 +64,7 @@ class BlockWoodenButton extends WoodenButton implements IRedstoneComponent, ILin
         if (!$entity instanceof Arrow) return true;
         if (!$this->getHitCollision()->intersectsWith($entity->getBoundingBox())) return true;
 
-        ScheduleUpdateHelper::scheduleUpdate($this->getPosition(), $this->getActivationTime());
+        $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), $this->getActivationTime());
         if ($this->isPressed()) return true;
 
         if (RedstoneCircuit::isCallEvent()) {

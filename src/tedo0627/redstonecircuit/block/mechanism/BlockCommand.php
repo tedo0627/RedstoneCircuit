@@ -36,8 +36,8 @@ use tedo0627\redstonecircuit\block\CommandBlockTrait;
 use tedo0627\redstonecircuit\block\entity\BlockEntityCommand;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
     use AnyFacingTrait;
@@ -190,7 +190,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
         $powered = BlockPowerHelper::isPowered($this);
         if ($powered === $this->isPowered()) return;
 
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isPowered());
             $event->call();
             $powered = $event->getNewPowered();
@@ -275,7 +275,7 @@ class BlockCommand extends Opaque implements IRedstoneComponent, CommandSender {
 
     protected function dispatch(): bool {
         $command = $this->getCommand();
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new CommandEvent($this, $command);
             $event->call();
             if ($event->isCancelled()) return false;

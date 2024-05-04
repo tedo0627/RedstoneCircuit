@@ -6,8 +6,8 @@ use pocketmine\block\tile\Container;
 use pocketmine\item\Item;
 use pocketmine\world\sound\ClickSound;
 use tedo0627\redstonecircuit\block\entity\BlockEntityDispenser;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockDispenseEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 use tedo0627\redstonecircuit\sound\ClickFailSound;
 
 class BlockDropper extends BlockDispenser {
@@ -24,7 +24,7 @@ class BlockDropper extends BlockDispenser {
         }
 
         $item = $inventory->getItem($slot);
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockDispenseEvent($this, clone $item);
             $event->call();
             if ($event->isCancelled()) return;

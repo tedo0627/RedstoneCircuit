@@ -17,7 +17,6 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
 use tedo0627\redstonecircuit\sound\AttachSound;
 use tedo0627\redstonecircuit\sound\DetachSound;
@@ -198,12 +197,9 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
     }
 
     private function callEvent(BlockTripwireHook $block, bool $powered): bool {
-        if (CustomConfig::isCallEvent()) {
-            $event = new BlockRedstonePowerUpdateEvent($block, $powered, $block->isPowered());
-            $event->call();
-            return $event->getNewPowered();
-        }
-        return $powered;
+        $event = new BlockRedstonePowerUpdateEvent($block, $powered, $block->isPowered());
+        $event->call();
+        return $event->getNewPowered();
     }
 
     public function getStrongPower(int $face): int {

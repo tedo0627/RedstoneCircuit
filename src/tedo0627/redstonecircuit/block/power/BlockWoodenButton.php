@@ -16,8 +16,8 @@ use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
 use tedo0627\redstonecircuit\block\ScheduleUpdateHelper;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockWoodenButton extends WoodenButton implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
@@ -26,7 +26,7 @@ class BlockWoodenButton extends WoodenButton implements IRedstoneComponent, ILin
     public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null, array &$returnedItems = []): bool {
         if ($this->isPressed()) return true;
 
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, !$this->isPressed(), $this->isPressed());
             $event->call();
         }
@@ -46,7 +46,7 @@ class BlockWoodenButton extends WoodenButton implements IRedstoneComponent, ILin
             if ($entities[$i] instanceof Arrow) return;
         }
 
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, !$this->isPressed(), $this->isPressed());
             $event->call();
         }
@@ -71,7 +71,7 @@ class BlockWoodenButton extends WoodenButton implements IRedstoneComponent, ILin
         ScheduleUpdateHelper::scheduleUpdate($this->getPosition(), $this->getActivationTime());
         if ($this->isPressed()) return true;
 
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, !$this->isPressed(), $this->isPressed());
             $event->call();
         }

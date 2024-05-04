@@ -11,8 +11,8 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstoneSignalUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockDaylightSensor extends DaylightSensor implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
@@ -42,7 +42,7 @@ class BlockDaylightSensor extends DaylightSensor implements IRedstoneComponent, 
         $signal = $this->recalculateSignalStrength();
         if ($oldSignal === $signal) return;
 
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstoneSignalUpdateEvent($this, $signal, $oldSignal);
             $event->call();
             $signal = $event->getNewSignal();

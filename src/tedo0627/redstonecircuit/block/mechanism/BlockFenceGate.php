@@ -7,8 +7,8 @@ use pocketmine\world\sound\DoorSound;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockFenceGate extends FenceGate implements IRedstoneComponent {
     use RedstoneComponentTrait;
@@ -17,7 +17,7 @@ class BlockFenceGate extends FenceGate implements IRedstoneComponent {
         $powered = BlockPowerHelper::isPowered($this);
         if ($powered === $this->isOpen()) return;
 
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isOpen());
             $event->call();
             $powered = $event->getNewPowered();

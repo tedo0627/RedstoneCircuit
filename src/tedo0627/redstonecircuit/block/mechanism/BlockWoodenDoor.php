@@ -14,8 +14,8 @@ use pocketmine\world\sound\DoorSound;
 use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockWoodenDoor extends WoodenDoor implements IRedstoneComponent {
     use RedstoneComponentTrait;
@@ -32,7 +32,7 @@ class BlockWoodenDoor extends WoodenDoor implements IRedstoneComponent {
         $powered = BlockPowerHelper::isPowered($this) || BlockPowerHelper::isPowered($other);
         if ($powered === $this->isPowered()) return;
 
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isPowered());
             $event->call();
             $powered = $event->getNewPowered();

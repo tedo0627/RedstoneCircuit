@@ -2,11 +2,11 @@
 
 namespace tedo0627\redstonecircuit;
 
-use pmmp\thread\ThreadSafeArray;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\AsyncTask;
 use tedo0627\redstonecircuit\loader\Loader;
 use tedo0627\redstonecircuit\registry\BlockLoader;
+use pmmp\thread\ThreadSafeArray;
 
 class RedstoneCircuit extends PluginBase {
 
@@ -105,7 +105,7 @@ class RedstoneCircuit extends PluginBase {
         $this->overrideBlock("tripwire", Ids::TRIPWIRE, fn($bid, $name, $info) => new BlockTripwire($bid, $name, $info));
         $this->overrideBlock("tripwire", Ids::TRIPWIRE_HOOK, fn($bid, $name, $info) => new BlockTripwireHook($bid, $name, $info));
         $this->addItemBlock("tripwire", Ids::TRIPWIRE, new ItemIdentifier(ItemIds::STRING, 0));
-        $this->overrideBlock("weighted_pressure_plate", Ids::HEAVY_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlate($bid, $name, $info));
+        $this->overrideBlock("weighted_pressure_plate", Ids::HEAVY_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateHeavy($bid, $name, $info));
         $this->overrideBlock("weighted_pressure_plate", Ids::LIGHT_WEIGHTED_PRESSURE_PLATE, fn($bid, $name, $info) => new BlockWeightedPressurePlateLight($bid, $name, $info));
 
         // transmission
@@ -127,8 +127,6 @@ class RedstoneCircuit extends PluginBase {
 
         CreativeInventory::reset();
         */
-        CustomConfig::load($this->getConfig());
-
         $blocks = $this->getConfig()->get("blocks", []);
         $blockConfig = ThreadSafeArray::fromArray($blocks);
 

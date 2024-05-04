@@ -11,8 +11,8 @@ use tedo0627\redstonecircuit\block\BlockUpdateHelper;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockRedstoneTorch extends RedstoneTorch implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
@@ -30,7 +30,7 @@ class BlockRedstoneTorch extends RedstoneTorch implements IRedstoneComponent, IL
 
     public function onScheduledUpdate(): void {
         $lit = !$this->isLit();
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $lit, $lit);
             $event->call();
             $lit = $event->getNewPowered();

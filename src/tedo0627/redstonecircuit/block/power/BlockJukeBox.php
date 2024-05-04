@@ -11,15 +11,15 @@ use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockJukeBox extends Jukebox implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
     use RedstoneComponentTrait;
 
     public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null): bool {
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $powered = $this->getRecord() !== null;
             $event = new BlockRedstonePowerUpdateEvent($this, !$powered, $powered);
             $event->call();

@@ -14,10 +14,7 @@ use tedo0627\redstonecircuit\block\power\BlockLever;
 use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
 use tedo0627\redstonecircuit\block\power\BlockStoneButton;
-use tedo0627\redstonecircuit\block\power\BlockStonePressurePlate;
-use tedo0627\redstonecircuit\block\power\BlockWeightedPressurePlate;
 use tedo0627\redstonecircuit\block\power\BlockWoodenButton;
-use tedo0627\redstonecircuit\block\power\BlockWoodenPressurePlate;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneComparator;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneRepeater;
 use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
@@ -33,12 +30,6 @@ use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
  * stone button
  * @method static BlockStoneButton POLISHED_BLACKSTONE_BUTTON()
  * @method static BlockStoneButton STONE_BUTTON()
- * stone pressure plate
- * @method static BlockStonePressurePlate POLISHED_BLACKSTONE_PRESSURE_PLATE()
- * @method static BlockStonePressurePlate STONE_PRESSURE_PLATE()
- * weighted pressure plate
- * @method static BlockWeightedPressurePlate WEIGHTED_PRESSURE_PLATE_HEAVY()
- * @method static BlockWeightedPressurePlate WEIGHTED_PRESSURE_PLATE_LIGHT()
  * wooden button
  * @method static BlockWoodenButton ACACIA_BUTTON()
  * @method static BlockWoodenButton BIRCH_BUTTON()
@@ -50,17 +41,6 @@ use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
  * @method static BlockWoodenButton OAK_BUTTON()
  * @method static BlockWoodenButton SPRUCE_BUTTON()
  * @method static BlockWoodenButton WARPED_BUTTON()
- * wooden pressure plate
- * @method static BlockWoodenPressurePlate ACACIA_PRESSURE_PLATE()
- * @method static BlockWoodenPressurePlate BIRCH_PRESSURE_PLATE()
- * @method static BlockWoodenPressurePlate CHERRY_PRESSURE_PLATE()
- * @method static BlockWoodenPressurePlate CRIMSON_PRESSURE_PLATE()
- * @method static BlockWoodenPressurePlate DARK_OAK_PRESSURE_PLATE()
- * @method static BlockWoodenPressurePlate JUNGLE_PRESSURE_PLATE()
- * @method static BlockWoodenPressurePlate MANGROVE_PRESSURE_PLATE()
- * @method static BlockWoodenPressurePlate OAK_PRESSURE_PLATE()
- * @method static BlockWoodenPressurePlate SPRUCE_PRESSURE_PLATE()
- * @method static BlockWoodenPressurePlate WARPED_PRESSURE_PLATE()
  *
  * transmission
  * @method static BlockRedstoneComparator REDSTONE_COMPARATOR()
@@ -113,24 +93,9 @@ class RedstoneComponent {
         self::registerCallback("polished_blackstone_button", fn($id, $name, $type) => new BlockStoneButton($id, $name, $type));
         self::registerCallback("stone_button", fn($id, $name, $type) => new BlockStoneButton($id, $name, $type));
 
-        // StonePressurePlate
-        self::registerCallback("polished_blackstone_pressure_plate", fn($id, $name, $type) => new BlockStonePressurePlate($id, $name, $type));
-        self::registerCallback("stone_pressure_plate", fn($id, $name, $type) => new BlockStonePressurePlate($id, $name, $type));
-
-        // WeightedPressurePlate
-        self::registerCallback("weighted_pressure_plate_heavy", fn($id, $name, $type) => new BlockWeightedPressurePlate($id, $name, $type, 10, 0.1));
-        self::registerCallback("weighted_pressure_plate_light", fn($id, $name, $type) => new BlockWeightedPressurePlate($id, $name, $type, 10, 1.0));
-
         // WoodenButton
         foreach (WoodType::cases() as $woodType) {
-            $baseName = mb_strtolower(str_replace(" ", "_", $woodType->getDisplayName())) . "_button";
-            self::registerCallback($baseName, fn($id, $name, $type) => new BlockWoodenButton($id, $name, $type, $woodType));
-        }
-
-        // WoodenPressurePlate
-        foreach (WoodType::cases() as $woodType) {
-            $baseName = mb_strtolower(str_replace(" ", "_", $woodType->getDisplayName())) . "_pressure_plate";
-            self::registerCallback($baseName, fn($id, $name, $type) => new BlockWoodenPressurePlate($id, $name, $type, $woodType));
+            self::registerCallback(mb_strtolower(str_replace(" ", "_", $woodType->getDisplayName())) . "_button", fn($id, $name, $type) => new BlockWoodenButton($id, $name, $type, $woodType));
         }
     }
 

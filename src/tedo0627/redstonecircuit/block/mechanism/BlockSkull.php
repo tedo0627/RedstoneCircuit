@@ -8,8 +8,8 @@ use tedo0627\redstonecircuit\block\BlockPowerHelper;
 use tedo0627\redstonecircuit\block\entity\BlockEntitySkull;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockSkull extends Skull implements IRedstoneComponent {
     use RedstoneComponentTrait;
@@ -35,7 +35,7 @@ class BlockSkull extends Skull implements IRedstoneComponent {
         $powered = BlockPowerHelper::isPowered($this);
         if ($powered === $this->isMouthMoving()) return;
 
-        if (CustomConfig::isCallEvent()) {
+        if (RedstoneCircuit::isCallEvent()) {
             $event = new BlockRedstonePowerUpdateEvent($this, $powered, $this->isMouthMoving());
             $event->call();
             $powered = $event->getNewPowered();

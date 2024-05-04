@@ -35,5 +35,4 @@ blocks:
   repeater: true
 
 event: false
-fixScheduleUpdate: false
 ...

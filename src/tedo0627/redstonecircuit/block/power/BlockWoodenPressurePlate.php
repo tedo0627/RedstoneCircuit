@@ -2,115 +2,99 @@
 
 namespace tedo0627\redstonecircuit\block\power;
 
-use pocketmine\block\BlockIdentifier;
-use pocketmine\block\BlockTypeInfo;
-use pocketmine\block\utils\WoodType;
+use pocketmine\block\Block;
+use pocketmine\block\utils\SupportType;
 use pocketmine\block\WoodenPressurePlate;
 use pocketmine\entity\Entity;
-use pocketmine\event\block\PressurePlateUpdateEvent;
 use pocketmine\item\Item;
+use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
 use pocketmine\player\Player;
-use pocketmine\world\sound\PressurePlateActivateSound;
-use pocketmine\world\sound\PressurePlateDeactivateSound;
+use pocketmine\world\sound\RedstonePowerOffSound;
+use pocketmine\world\sound\RedstonePowerOnSound;
 use tedo0627\redstonecircuit\block\BlockUpdateHelper;
 use tedo0627\redstonecircuit\block\ILinkRedstoneWire;
 use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
-use tedo0627\redstonecircuit\block\ScheduleUpdateHelper;
-use tedo0627\redstonecircuit\CustomConfig;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 
 class BlockWoodenPressurePlate extends WoodenPressurePlate implements IRedstoneComponent, ILinkRedstoneWire {
     use LinkRedstoneWireTrait;
     use RedstoneComponentTrait;
 
-    private readonly int $deactivationDelayTicks;
-
-    public function __construct(
-        BlockIdentifier $idInfo,
-        string $name,
-        BlockTypeInfo $typeInfo,
-        WoodType $woodType,
-        int $deactivationDelayTicks = 20
-    ) {
-        parent::__construct($idInfo, $name, $typeInfo, $woodType, $deactivationDelayTicks);
-        $this->deactivationDelayTicks = $deactivationDelayTicks;
-    }
-
-    public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []): bool {
-        parent::onBreak($item, $player, $returnedItems);
+    public function onBreak(Item $item, ?Player $player = null): bool {
+        parent::onBreak($item, $player);
         BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::DOWN);
         return true;
     }
 
-    protected function filterIrrelevantEntities(array $entities): array {
-        $entities = parent::filterIrrelevantEntities($entities);
-        return array_filter($entities, fn(Entity $e) => !($e instanceof Player && $e->isSpectator()));
+    public function onNearbyBlockChange(): void {
+        if ($this->canBeSupportedBy($this->getSide(Facing::DOWN))) return;
+        $this->getPosition()->getWorld()->useBreakOn($this->getPosition());
     }
 
     public function onScheduledUpdate(): void {
-        $world = $this->getPosition()->getWorld();
+        if (!$this->isPressed()) return;
 
-        $intersectionAABB = $this->getActivationBox();
-        $activatingEntities = $this->filterIrrelevantEntities($world->getNearbyEntities($intersectionAABB));
-        $entityCount = count($activatingEntities);
-
-        // Fix pressure plate delay
-        if ($entityCount > 0 && CustomConfig::isFixScheduleUpdate()) {
-            ScheduleUpdateHelper::scheduleUpdate($this->getPosition(), $this->deactivationDelayTicks);
+        $entities = $this->getPosition()->getWorld()->getNearbyEntities($this->getHitCollision());
+        if (count($entities) !== 0) {
+            $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 20);
+            return;
         }
 
-        if ($entityCount > 0 || $this->hasOutputSignal()) {
-            [$newState, $pressedChange] = $this->calculatePlateState($activatingEntities);
-
-            if (PressurePlateUpdateEvent::hasHandlers()) {
-                $ev = new PressurePlateUpdateEvent($this, $newState, $activatingEntities);
-                $ev->call();
-                $newState = $ev->isCancelled() ? null : $ev->getNewState();
-            }
-
-            // Add custom event
-            $oldPressed = $this->isPressed();
-            if ($newState instanceof self && $newState->isPressed() !== $oldPressed && CustomConfig::isCallEvent()) {
-                $event = new BlockRedstonePowerUpdateEvent($this, $newState->isPressed(), $oldPressed);
-                $event->call();
-                $newPressed = $event->getNewPowered();
-                if ($oldPressed === $newPressed) $newState = null;
-            }
-
-            if ($newState !== null) {
-                $world->setBlock($this->getPosition(), $newState);
-                // Update around redstone
-                BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::DOWN);
-
-                if ($pressedChange !== null) {
-                    $world->addSound($this->getPosition(), $pressedChange ?
-                        new PressurePlateActivateSound($this) :
-                        new PressurePlateDeactivateSound($this)
-                    );
-                }
-            }
-            if ($pressedChange ?? $this->hasOutputSignal() && !CustomConfig::isFixScheduleUpdate()) {
-                $world->scheduleDelayedBlockUpdate($this->getPosition(), $this->deactivationDelayTicks);
-            }
+        $pressed = false;
+        if (RedstoneCircuit::isCallEvent()) {
+            $event = new BlockRedstonePowerUpdateEvent($this, false, $this->isPressed());
+            $event->call();
+            $pressed = $event->getNewPowered();
         }
+        $this->setPressed($pressed);
+        $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+        $this->getPosition()->getWorld()->addSound($this->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOffSound());
+        BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::DOWN);
     }
 
     public function onEntityInside(Entity $entity): bool {
         if ($entity instanceof Player && $entity->isSpectator()) return true;
 
-        if (CustomConfig::isFixScheduleUpdate()) {
-            $this->onScheduledUpdate();
-        } else {
-            parent::onEntityInside($entity);
+        $entities = $this->getPosition()->getWorld()->getNearbyEntities($this->getHitCollision());
+        if (count($entities) <= 0) return true;
+
+        if (!$this->isPressed()) {
+            $pressed = true;
+            if (RedstoneCircuit::isCallEvent()) {
+                $event = new BlockRedstonePowerUpdateEvent($this, true, $this->isPressed());
+                $event->call();
+                $pressed = $event->getNewPowered();
+            }
+            $this->setPressed($pressed);
+            $this->getPosition()->getWorld()->setBlock($this->getPosition(), $this);
+            $this->getPosition()->getWorld()->addSound($this->getPosition()->add(0.5, 0.5, 0.5), new RedstonePowerOnSound());
+            BlockUpdateHelper::updateAroundDirectionRedstone($this, Facing::DOWN);
         }
+        $this->getPosition()->getWorld()->scheduleDelayedBlockUpdate($this->getPosition(), 20);
         return true;
     }
 
+    public function hasEntityCollision(): bool {
+        return true;
+    }
+
+    protected function getHitCollision(): AxisAlignedBB {
+        return new AxisAlignedBB(
+            $this->getPosition()->getX() + 0.0625,
+            $this->getPosition()->getY(),
+            $this->getPosition()->getZ() + 0.0625,
+            $this->getPosition()->getX() + 0.9375,
+            $this->getPosition()->getY() + 0.0625,
+            $this->getPosition()->getZ() + 0.9375
+        );
+    }
+
     public function getStrongPower(int $face): int {
-        return $this->isPressed() && $face === Facing::UP ? 15 : 0;
+        return $this->isPressed() && $face == Facing::UP ? 15 : 0;
     }
 
     public function getWeakPower(int $face): int {
@@ -119,5 +103,9 @@ class BlockWoodenPressurePlate extends WoodenPressurePlate implements IRedstoneC
 
     public function isPowerSource(): bool {
         return $this->isPressed();
+    }
+
+    private function canBeSupportedBy(Block $block): bool {
+        return !$block->getSupportType(Facing::UP)->equals(SupportType::NONE());
     }
 }

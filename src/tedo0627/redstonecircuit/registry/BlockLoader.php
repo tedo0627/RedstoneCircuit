@@ -8,9 +8,12 @@ use pocketmine\block\RedstoneLamp;
 use pocketmine\block\RedstoneRepeater;
 use pocketmine\block\RedstoneTorch;
 use pocketmine\block\RedstoneWire;
+use pocketmine\block\SimplePressurePlate;
 use pocketmine\block\StoneButton;
 use pocketmine\block\utils\LeverFacing;
+use pocketmine\block\WeightedPressurePlate;
 use pocketmine\block\WoodenButton;
+use pocketmine\block\WoodenPressurePlate;
 use pocketmine\data\bedrock\block\BlockStateNames as SNames;
 use pocketmine\data\bedrock\block\BlockStateStringValues;
 use pocketmine\data\bedrock\block\BlockTypeNames as BNames;
@@ -108,10 +111,40 @@ class BlockLoader {
             $alias = ["polished_blackstone_button", "stone_button"];
             for ($i = 0; $i < count($blocks); $i++) {
                 Helper::runtime(clone $blocks[$i]);
-                Helper::serialize(clone $blocks[$i], fn(StoneButton $block) => BlockStateSerializerHelper::encodeButton(clone $block, new Writer($names[$i])));
+                Helper::serialize(clone $blocks[$i], fn(StoneButton $block) => BlockStateSerializerHelper::encodeButton($block, new Writer($names[$i])));
                 Helper::deserialize($names[$i], fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeButton(clone $blocks[$i], $in));
                 Helper::stringToItemParser($alias[$i], clone $blocks[$i]);
                 Helper::vanillaBlocks($alias[$i], clone $blocks[$i]);
+            }
+        });
+        $this->add("stone_pressure_plate", function () {
+            $blocks = [Blocks::POLISHED_BLACKSTONE_PRESSURE_PLATE(), Blocks::STONE_PRESSURE_PLATE()];
+            $names = [BNames::POLISHED_BLACKSTONE_PRESSURE_PLATE, BNames::STONE_PRESSURE_PLATE];
+            $alias = ["polished_blackstone_pressure_plate", "stone_pressure_plate"];
+            for ($i = 0; $i < count($blocks); $i++) {
+                Helper::runtime(clone $blocks[$i]);
+                Helper::serialize(clone $blocks[$i], fn(SimplePressurePlate $block) => BlockStateSerializerHelper::encodeSimplePressurePlate($block, new Writer($names[$i])));
+                Helper::deserialize($names[$i], fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeSimplePressurePlate(clone $blocks[$i], $in));
+                Helper::stringToItemParser($alias[$i], clone $blocks[$i]);
+                Helper::vanillaBlocks($alias[$i], clone $blocks[$i]);
+            }
+        });
+        $this->add("weighted_pressure_plate", function () {
+            $blocks = [Blocks::WEIGHTED_PRESSURE_PLATE_HEAVY(), Blocks::WEIGHTED_PRESSURE_PLATE_LIGHT()];
+            $names = [BNames::HEAVY_WEIGHTED_PRESSURE_PLATE, BNames::LIGHT_WEIGHTED_PRESSURE_PLATE];
+            $alias = [
+                ["heavy_weighted_pressure_plate", "iron_pressure_plate", "weighted_pressure_plate_heavy"],
+                ["gold_pressure_plate", "light_weighted_pressure_plate", "weighted_pressure_plate_light"]
+            ];
+            $vanillaNames = ["weighted_pressure_plate_heavy", "weighted_pressure_plate_light"];
+            for ($i = 0; $i < count($blocks); $i++) {
+                Helper::runtime(clone $blocks[$i]);
+                Helper::serialize(clone $blocks[$i], fn(WeightedPressurePlate $block) => Writer::create($names[$i])
+                    ->writeInt(SNames::REDSTONE_SIGNAL, $block->getOutputSignalStrength())
+                );
+                Helper::deserialize($names[$i], fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeWeightedPressurePlate(clone $blocks[$i], $in));
+                Helper::stringToItemParser($alias[$i], clone $blocks[$i]);
+                Helper::vanillaBlocks($vanillaNames[$i], clone $blocks[$i]);
             }
         });
         $this->add("wooden_button", function () {
@@ -128,8 +161,28 @@ class BlockLoader {
             $alias = array_map(fn(string $str) => str_replace("minecraft:", "", $str), $names);
             for ($i = 0; $i < count($blocks); $i++) {
                 Helper::runtime(clone $blocks[$i]);
-                Helper::serialize(clone $blocks[$i], fn(WoodenButton $block) => BlockStateSerializerHelper::encodeButton(clone $block, new Writer($names[$i])));
+                Helper::serialize(clone $blocks[$i], fn(WoodenButton $block) => BlockStateSerializerHelper::encodeButton($block, new Writer($names[$i])));
                 Helper::deserialize($names[$i], fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeButton(clone $blocks[$i], $in));
+                Helper::stringToItemParser($alias[$i], clone $blocks[$i]);
+                Helper::vanillaBlocks($alias[$i], clone $blocks[$i]);
+            }
+        });
+        $this->add("wooden_pressure_plate", function () {
+            $blocks = [
+                Blocks::ACACIA_PRESSURE_PLATE(), Blocks::BIRCH_PRESSURE_PLATE(), Blocks::CHERRY_PRESSURE_PLATE(), Blocks::CRIMSON_PRESSURE_PLATE(),
+                Blocks::DARK_OAK_PRESSURE_PLATE(), Blocks::JUNGLE_PRESSURE_PLATE(), Blocks::MANGROVE_PRESSURE_PLATE(), Blocks::OAK_PRESSURE_PLATE(),
+                Blocks::SPRUCE_PRESSURE_PLATE(), Blocks::WARPED_PRESSURE_PLATE()
+            ];
+            $names = [
+                BNames::ACACIA_PRESSURE_PLATE, BNames::BIRCH_PRESSURE_PLATE, BNames::CHERRY_PRESSURE_PLATE, BNames::CRIMSON_PRESSURE_PLATE,
+                BNames::DARK_OAK_PRESSURE_PLATE, BNames::JUNGLE_PRESSURE_PLATE, BNames::MANGROVE_PRESSURE_PLATE, BNames::WOODEN_PRESSURE_PLATE,
+                BNames::SPRUCE_PRESSURE_PLATE, BNames::WARPED_PRESSURE_PLATE
+            ];
+            $alias = array_map(fn(string $str) => str_replace("minecraft:", "", $str), $names);
+            for ($i = 0; $i < count($blocks); $i++) {
+                Helper::runtime(clone $blocks[$i]);
+                Helper::serialize(clone $blocks[$i], fn(WoodenPressurePlate $block) => BlockStateSerializerHelper::encodeSimplePressurePlate($block, new Writer($names[$i])));
+                Helper::deserialize($names[$i], fn(BlockStateReader $in) => BlockStateDeserializerHelper::decodeSimplePressurePlate(clone $blocks[$i], $in));
                 Helper::stringToItemParser($alias[$i], clone $blocks[$i]);
                 Helper::vanillaBlocks($alias[$i], clone $blocks[$i]);
             }

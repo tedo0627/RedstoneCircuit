@@ -6,7 +6,7 @@ use pocketmine\block\Block;
 use pocketmine\block\Tripwire;
 use pocketmine\entity\Entity;
 use pocketmine\item\Item;
-use pocketmine\item\ItemIds;
+use pocketmine\item\VanillaItems;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
@@ -26,8 +26,8 @@ class BlockTripwire extends Tripwire {
             $face = $faces[$i];
             for ($j = 1; $j < 41; $j++) {
                 $block = $this->getSide($face, $j);
-                if ($block instanceof BlockTripwire) continue;
-                if ($block instanceof BlockTripwireHook && $block->getFacing() == Facing::opposite($face)) {
+                if ($block instanceof self) continue;
+                if ($block instanceof BlockTripwireHook && $block->getFacing() === Facing::opposite($face)) {
                     $block->tryConnect();
                 }
                 break;
@@ -35,8 +35,8 @@ class BlockTripwire extends Tripwire {
         }
     }
 
-    public function onBreak(Item $item, ?Player $player = null): bool {
-        parent::onBreak($item, $player);
+    public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []): bool {
+        parent::onBreak($item, $player, $returnedItems);
         if (!$this->isConnected()) return true;
 
         $faces = [Facing::SOUTH, Facing::WEST];
@@ -44,9 +44,9 @@ class BlockTripwire extends Tripwire {
             $face = $faces[$i];
             for ($j = 1; $j < 41; $j++) {
                 $block = $this->getSide($face, $j);
-                if ($block instanceof BlockTripwire) continue;
-                if ($block instanceof BlockTripwireHook && $block->getFacing() == Facing::opposite($face)) {
-                    $block->disconnect($j, $item->getId() !== ItemIds::SHEARS);
+                if ($block instanceof self) continue;
+                if ($block instanceof BlockTripwireHook && $block->getFacing() === Facing::opposite($face)) {
+                    $block->disconnect($j, VanillaItems::SHEARS()->equals($item, false, false));
                 }
                 break;
             }
@@ -76,15 +76,15 @@ class BlockTripwire extends Tripwire {
         $this->setTriggered(true);
         $world = $this->getPosition()->getWorld();
         $world->setBlock($this->getPosition(), $this);
-        $world->scheduleDelayedBlockUpdate($this->getPosition(), 1);
+        $world->scheduleDelayedBlockUpdate($this->getPosition(), 10);
 
         $faces = [Facing::SOUTH, Facing::WEST];
         for ($i = 0; $i < count($faces); $i++) {
             $face = $faces[$i];
             for ($j = 1; $j < 41; $j++) {
                 $block = $this->getSide($face, $j);
-                if ($block instanceof BlockTripwire) continue;
-                if ($block instanceof BlockTripwireHook && $block->getFacing() == Facing::opposite($face)) {
+                if ($block instanceof self) continue;
+                if ($block instanceof BlockTripwireHook && $block->getFacing() === Facing::opposite($face)) {
                     $block->trigger();
                 }
                 break;

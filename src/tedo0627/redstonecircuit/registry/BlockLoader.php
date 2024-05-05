@@ -10,6 +10,8 @@ use pocketmine\block\RedstoneTorch;
 use pocketmine\block\RedstoneWire;
 use pocketmine\block\SimplePressurePlate;
 use pocketmine\block\StoneButton;
+use pocketmine\block\Tripwire;
+use pocketmine\block\TripwireHook;
 use pocketmine\block\utils\LeverFacing;
 use pocketmine\block\WeightedPressurePlate;
 use pocketmine\block\WoodenButton;
@@ -128,6 +130,37 @@ class BlockLoader {
                 Helper::stringToItemParser($alias[$i], clone $blocks[$i]);
                 Helper::vanillaBlocks($alias[$i], clone $blocks[$i]);
             }
+        });
+        $this->add("tripwire", function () {
+            Helper::runtime(Blocks::TRIPWIRE());
+            Helper::serialize(Blocks::TRIPWIRE(), fn(Tripwire $block) => Writer::create(BNames::TRIP_WIRE)
+                ->writeBool(SNames::ATTACHED_BIT, $block->isConnected())
+                ->writeBool(SNames::DISARMED_BIT, $block->isDisarmed())
+                ->writeBool(SNames::POWERED_BIT, $block->isTriggered())
+                ->writeBool(SNames::SUSPENDED_BIT, $block->isSuspended())
+            );
+            Helper::deserialize(BNames::TRIP_WIRE, fn(BlockStateReader $in) => Blocks::TRIPWIRE()
+                ->setConnected($in->readBool(SNames::ATTACHED_BIT))
+                ->setDisarmed($in->readBool(SNames::DISARMED_BIT))
+                ->setSuspended($in->readBool(SNames::SUSPENDED_BIT))
+                ->setTriggered($in->readBool(SNames::POWERED_BIT))
+            );
+            Helper::stringToItemParser(["trip_wire", "tripwire"], Blocks::TRIPWIRE());
+            Helper::vanillaBlocks("tripwire", Blocks::TRIPWIRE());
+
+            Helper::runtime(Blocks::TRIPWIRE_HOOK());
+            Helper::serialize(Blocks::TRIPWIRE_HOOK(), fn(TripwireHook $block) => Writer::create(BNames::TRIPWIRE_HOOK)
+                ->writeBool(SNames::ATTACHED_BIT, $block->isConnected())
+                ->writeBool(SNames::POWERED_BIT, $block->isPowered())
+                ->writeLegacyHorizontalFacing($block->getFacing())
+            );
+            Helper::deserialize(BNames::TRIPWIRE_HOOK, fn(BlockStateReader $in) => Blocks::TRIPWIRE_HOOK()
+                ->setConnected($in->readBool(SNames::ATTACHED_BIT))
+                ->setFacing($in->readLegacyHorizontalFacing())
+                ->setPowered($in->readBool(SNames::POWERED_BIT))
+            );
+            Helper::stringToItemParser("tripwire_hook", Blocks::TRIPWIRE_HOOK());
+            Helper::vanillaBlocks("tripwire_hook", Blocks::TRIPWIRE_HOOK());
         });
         $this->add("weighted_pressure_plate", function () {
             $blocks = [Blocks::WEIGHTED_PRESSURE_PLATE_HEAVY(), Blocks::WEIGHTED_PRESSURE_PLATE_LIGHT()];

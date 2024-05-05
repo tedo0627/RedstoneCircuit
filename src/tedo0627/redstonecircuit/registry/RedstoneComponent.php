@@ -15,6 +15,8 @@ use tedo0627\redstonecircuit\block\power\BlockRedstone;
 use tedo0627\redstonecircuit\block\power\BlockRedstoneTorch;
 use tedo0627\redstonecircuit\block\power\BlockStoneButton;
 use tedo0627\redstonecircuit\block\power\BlockStonePressurePlate;
+use tedo0627\redstonecircuit\block\power\BlockTripwire;
+use tedo0627\redstonecircuit\block\power\BlockTripwireHook;
 use tedo0627\redstonecircuit\block\power\BlockWeightedPressurePlate;
 use tedo0627\redstonecircuit\block\power\BlockWoodenButton;
 use tedo0627\redstonecircuit\block\power\BlockWoodenPressurePlate;
@@ -36,6 +38,8 @@ use tedo0627\redstonecircuit\block\transmission\BlockRedstoneWire;
  * stone pressure plate
  * @method static BlockStonePressurePlate POLISHED_BLACKSTONE_PRESSURE_PLATE()
  * @method static BlockStonePressurePlate STONE_PRESSURE_PLATE()
+ * @method static BlockTripwire TRIPWIRE()
+ * @method static BlockTripwireHook TRIPWIRE_HOOK()
  * weighted pressure plate
  * @method static BlockWeightedPressurePlate WEIGHTED_PRESSURE_PLATE_HEAVY()
  * @method static BlockWeightedPressurePlate WEIGHTED_PRESSURE_PLATE_LIGHT()
@@ -116,6 +120,9 @@ class RedstoneComponent {
         // StonePressurePlate
         self::registerCallback("polished_blackstone_pressure_plate", fn($id, $name, $type) => new BlockStonePressurePlate($id, $name, $type));
         self::registerCallback("stone_pressure_plate", fn($id, $name, $type) => new BlockStonePressurePlate($id, $name, $type));
+
+        self::registerCallback("tripwire", fn($id, $name, $type) => new BlockTripwire($id, $name, $type));
+        self::registerCallback("tripwire_hook", fn($id, $name, $type) => new BlockTripwireHook($id, $name, $type));
 
         // WeightedPressurePlate
         self::registerCallback("weighted_pressure_plate_heavy", fn($id, $name, $type) => new BlockWeightedPressurePlate($id, $name, $type, 10, 0.1));

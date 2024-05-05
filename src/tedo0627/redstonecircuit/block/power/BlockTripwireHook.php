@@ -18,6 +18,7 @@ use tedo0627\redstonecircuit\block\IRedstoneComponent;
 use tedo0627\redstonecircuit\block\LinkRedstoneWireTrait;
 use tedo0627\redstonecircuit\block\RedstoneComponentTrait;
 use tedo0627\redstonecircuit\event\BlockRedstonePowerUpdateEvent;
+use tedo0627\redstonecircuit\RedstoneCircuit;
 use tedo0627\redstonecircuit\sound\AttachSound;
 use tedo0627\redstonecircuit\sound\DetachSound;
 
@@ -35,8 +36,8 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
         $this->tryConnect();
     }
 
-    public function onBreak(Item $item, ?Player $player = null): bool {
-        parent::onBreak($item, $player);
+    public function onBreak(Item $item, ?Player $player = null, array &$returnedItems = []): bool {
+        parent::onBreak($item, $player, $returnedItems);
         $this->disconnect();
         return true;
     }
@@ -56,7 +57,7 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
             }
 
             $world = $this->getPosition()->getWorld();
-            if (!$block instanceof BlockTripwireHook || $block->getFacing() !== Facing::opposite($this->getFacing())) {
+            if (!$block instanceof self || $block->getFacing() !== Facing::opposite($this->getFacing())) {
                 $sound = $this->isPowered() ? new RedstonePowerOffSound() : new DetachSound();
                 $world->addSound($this->getPosition()->add(0.5, 0.5, 0.5), $sound);
                 $this->setConnected(false);
@@ -89,7 +90,7 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
                 continue;
             }
 
-            if (!$block instanceof BlockTripwireHook) break;
+            if (!$block instanceof self) break;
             if ($block->getFacing() !== Facing::opposite($this->getFacing())) break;
 
             $this->setConnected(true);
@@ -122,7 +123,7 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
                 continue;
             }
 
-            if (!$block instanceof BlockTripwireHook) break;
+            if (!$block instanceof self) break;
             if ($block->getFacing() !== Facing::opposite($this->getFacing())) break;
 
             $world = $this->getPosition()->getWorld();
@@ -176,7 +177,7 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
                 continue;
             }
 
-            if (!$block instanceof BlockTripwireHook) break;
+            if (!$block instanceof self) break;
             if ($block->getFacing() !== Facing::opposite($this->getFacing())) break;
             if (!$triggered) break;
 
@@ -197,13 +198,17 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
     }
 
     private function callEvent(BlockTripwireHook $block, bool $powered): bool {
+        if (!RedstoneCircuit::isCallEvent()) {
+            return $powered;
+        }
+
         $event = new BlockRedstonePowerUpdateEvent($block, $powered, $block->isPowered());
         $event->call();
         return $event->getNewPowered();
     }
 
     public function getStrongPower(int $face): int {
-        return $this->isPowered() && $face == $this->getFacing() ? 15 : 0;
+        return $this->isPowered() && $face === $this->getFacing() ? 15 : 0;
     }
 
     public function getWeakPower(int $face): int {
@@ -215,6 +220,6 @@ class BlockTripwireHook extends TripwireHook implements IRedstoneComponent, ILin
     }
 
     private function canBeSupportedBy(Block $block): bool {
-        return $block->getSupportType($this->getFacing())->equals(SupportType::FULL());
+        return $block->getSupportType($this->getFacing()) === SupportType::FULL();
     }
 }
